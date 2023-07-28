@@ -11,9 +11,8 @@ import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MateriaServiceImpl implements MateriaService {
@@ -69,5 +68,37 @@ public class MateriaServiceImpl implements MateriaService {
         materiaPut.setNombre(materia.getNombre());
         materiaPut.setProfesor(profesorService.buscarProfesor(materia.getProfesorId()));
         return materiaPut;
+    }
+
+    public List<Materia> getAllMateriasSortedByNameAsc() {
+        List<Materia> materias = getAllMaterias();
+        materias.sort(Comparator.comparing(Materia::getNombre));
+        return materias;
+    }
+    public List<Materia> getAllMateriasSortedByNameDesc() {
+        List<Materia> materias = getAllMaterias();
+        materias.sort(Comparator.comparing(Materia::getNombre).reversed());
+        return materias;
+    }
+    public List<Materia> getAllMateriasSortedByCodAsc() {
+        List<Materia> materias = getAllMaterias();
+        materias.sort(Comparator.comparing(Materia::getMateriaId));
+        return materias;
+    }
+    public List<Materia> getAllMateriasSortedByCodDesc() {
+        List<Materia> materias = getAllMaterias();
+        materias.sort(Comparator.comparing(Materia::getMateriaId).reversed());
+        return materias;
+    }
+
+    public List<Materia> getAllMateriasByName(String nombre) {
+        List<Materia> materias = getAllMaterias();
+        List<Materia> materiasEncontradas = new ArrayList<>();
+        for (Materia materia : materias) {
+            if (materia.getNombre().toLowerCase().contains(nombre.toLowerCase())) {
+                materiasEncontradas.add(materia);
+            }
+        }
+        return materiasEncontradas;
     }
 }

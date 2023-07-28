@@ -2,7 +2,6 @@ package ar.edu.utn.frbb.tup.controller;
 
 import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.model.Materia;
-import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +38,7 @@ public class MateriaController {
             return ResponseEntity.badRequest().body("Falta el ID del profesor de la materia");
         }
         else {
-            Materia materiaCreada = materiaService.crearMateria(materiaDto);
-            return ResponseEntity.ok(materiaCreada);
+            return ResponseEntity.ok(materiaService.crearMateria(materiaDto));
         }
     }
 
@@ -51,12 +49,31 @@ public class MateriaController {
     }
 
     @GetMapping("/materia")
-    public List<Materia> obtenerTodasLasMaterias(@RequestParam("nombre") String nombre) {
-        return materiaService.getAllMaterias();
+    public List<Materia> getAllMateriasByName(@RequestParam("nombre") String nombre) {
+        return materiaService.getAllMateriasByName(nombre);
     }
 
     @GetMapping("/materia/{idMateria}")
     public Materia getMateriaById(@PathVariable Integer idMateria) throws MateriaNotFoundException {
         return materiaService.getMateriaById(idMateria);
+    }
+
+    @GetMapping("/materias")
+    public ResponseEntity<?> getMateriaByOrder(@RequestParam("order") String order) {
+        if (order.equals("nombre_asc")) {
+            return ResponseEntity.ok(materiaService.getAllMateriasSortedByNameAsc());
+        }
+        else if (order.equals("nombre_desc")) {
+            return ResponseEntity.ok(materiaService.getAllMateriasSortedByNameDesc());
+        }
+        else if (order.equals("codigo_asc")) {
+            return ResponseEntity.ok(materiaService.getAllMateriasSortedByCodAsc());
+        }
+        else if (order.equals("codigo_desc")) {
+            return ResponseEntity.ok(materiaService.getAllMateriasSortedByCodDesc());
+        }
+        else {
+            return ResponseEntity.badRequest().body("Tiene que especificar un orden.");
+        }
     }
 }

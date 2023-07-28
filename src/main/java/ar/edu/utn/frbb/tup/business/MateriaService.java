@@ -14,4 +14,13 @@ public interface MateriaService {
     Materia getMateriaById(int idMateria) throws MateriaNotFoundException;
 
     Materia putMateriaById(int idMateria, MateriaDto materia) throws MateriaNotFoundException;
+
+    List<Materia> getAllMateriasSortedByNameAsc();
+
+    List<Materia> getAllMateriasSortedByNameDesc();
+
+    List<Materia> getAllMateriasSortedByCodAsc();
+    List<Materia> getAllMateriasSortedByCodDesc();
+
+    List<Materia> getAllMateriasByName(String nombre);
 }
