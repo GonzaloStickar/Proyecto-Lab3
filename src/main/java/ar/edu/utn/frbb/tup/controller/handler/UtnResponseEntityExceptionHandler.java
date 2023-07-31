@@ -46,7 +46,7 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
             body = error;
         }
 
-        return new ResponseEntity(body, headers, status);
+        return new ResponseEntity<>(body, headers, status);
     }
 
 

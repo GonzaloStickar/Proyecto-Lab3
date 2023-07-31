@@ -1,7 +1,6 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Alumno;
-import ar.edu.utn.frbb.tup.persistence.exception.DaoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,13 +16,13 @@ public class AlumnoDaoMemoryImpl implements AlumnoDao {
     private static Map<Long, Alumno> repositorioAlumnos = new HashMap<>();
 
     @Override
-    public Alumno saveAlumno(Alumno alumno) {
+    public void saveAlumno(Alumno alumno) {
         Random random = new Random();
         for (Alumno a: repositorioAlumnos.values()) {
             System.out.println(a.getApellido());
         }
         alumno.setId(random.nextLong());
-        return repositorioAlumnos.put(alumno.getDni(), alumno);
+        repositorioAlumnos.put(alumno.getDni(), alumno);
     }
 
     @Override

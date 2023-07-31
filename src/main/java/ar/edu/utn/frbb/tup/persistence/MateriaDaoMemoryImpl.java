@@ -11,17 +11,15 @@ public class MateriaDaoMemoryImpl implements MateriaDao {
 
     private static final Map<Integer, Materia> repositorioMateria = new HashMap<>();
     @Override
-    public Materia save(Materia materia) {
+    public void save(Materia materia) {
         Random random = new Random();
         materia.setMateriaId(random.nextInt());
         repositorioMateria.put(materia.getMateriaId(), materia);
-        return materia;
     }
 
     @Override
     public Materia findById(int idMateria) throws MateriaNotFoundException {
-        for (Materia m:
-             repositorioMateria.values()) {
+        for (Materia m: repositorioMateria.values()) {
             if (idMateria == m.getMateriaId()) {
                 return m;
             }
