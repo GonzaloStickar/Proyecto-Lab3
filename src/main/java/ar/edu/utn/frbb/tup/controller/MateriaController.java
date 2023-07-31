@@ -18,12 +18,6 @@ public class MateriaController {
     @Autowired
     private MateriaService materiaService;
 
-//    @PostMapping("/materia")
-//    public Materia crearMateria(@RequestBody MateriaDto materiaDto) {
-//        materias.add(materiaService.crearMateria(materiaDto));
-//        return materiaService.crearMateria(materiaDto);
-//    }
-
     @PostMapping("/materia") //POST: /materia
     public ResponseEntity<?> crearMateria(@RequestBody MateriaDto materiaDto) {
 
@@ -42,6 +36,7 @@ public class MateriaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falta el ID del profesor de la materia");
         }
         else {
+            materiaService.crearMateria(materiaDto);
             return ResponseEntity.status(HttpStatus.OK).body(materiaDto);
         }
     }
