@@ -36,8 +36,7 @@ public class MateriaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falta el ID del profesor de la materia");
         }
         else {
-            materiaService.crearMateria(materiaDto);
-            return ResponseEntity.status(HttpStatus.OK).body(materiaDto);
+            return ResponseEntity.status(HttpStatus.OK).body(materiaService.getAllMaterias());
         }
     }
 

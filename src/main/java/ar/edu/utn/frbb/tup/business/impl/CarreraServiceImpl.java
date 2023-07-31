@@ -23,7 +23,7 @@ public class CarreraServiceImpl implements CarreraService {
         Carrera c = new Carrera();
         c.setNombre(carrera.getNombre());
         c.setCantidadCuatrimestres((carrera.getCantidadAnios()*12)/4);
-        c.setDepartamentoInt(carrera.getDepartamentoInt()); // En Departamento y Código, fijarse
+        c.setDepartamentoInt((getAllCarreras().size())+1); // En Departamento y Código, fijarse
         c.setCodigoCarrera(carrera.getCodigoCarrera());     // que no haya ningún otro con lo mismo...
         c.setMateriasList(new ArrayList<>());
         dao.save(c);

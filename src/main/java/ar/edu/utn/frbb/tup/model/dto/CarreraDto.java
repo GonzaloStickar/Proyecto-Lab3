@@ -3,7 +3,6 @@ package ar.edu.utn.frbb.tup.model.dto;
 public class CarreraDto {
     private String nombre;
     private int codigoCarrera;
-    private int departamentoInt;
     private int cantidadAnios;
 
     public String getNombre() {
@@ -20,14 +19,6 @@ public class CarreraDto {
 
     public void setCodigoCarrera(int codigoCarrera) {
         this.codigoCarrera = codigoCarrera;
-    }
-
-    public int getDepartamentoInt() {
-        return departamentoInt;
-    }
-
-    public void setDepartamentoInt(int departamentoInt) {
-        this.departamentoInt = departamentoInt;
     }
 
     public int getCantidadAnios() {

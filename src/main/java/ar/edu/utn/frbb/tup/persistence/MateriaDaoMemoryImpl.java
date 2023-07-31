@@ -1,5 +1,6 @@
 package ar.edu.utn.frbb.tup.persistence;
 
+import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,16 @@ public class MateriaDaoMemoryImpl implements MateriaDao {
     public void save(Materia materia) {
         Random random = new Random();
         materia.setMateriaId(random.nextInt());
-        repositorioMateria.put(materia.getMateriaId(), materia);
+        boolean crear=true;
+        for (Materia materiaId : repositorioMateria.values()) {
+            if (materia.getMateriaId() == materiaId.getMateriaId()) {
+                crear = false;
+                break;
+            }
+        }
+        if (crear) {
+            repositorioMateria.put(materia.getMateriaId(), materia);
+        }
     }
 
     @Override

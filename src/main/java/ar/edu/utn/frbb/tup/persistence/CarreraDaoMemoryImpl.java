@@ -19,13 +19,16 @@ public class CarreraDaoMemoryImpl implements CarreraDao {
     @Override
 
     public void save(Carrera carrera) {
-//        Random random = new Random();
-//        for (Alumno a: repositorioAlumnos.values()) {
-//            System.out.println(a.getApellido());
-//        }
-//        carrera.setId(random.nextLong());
-//        repositorioAlumnos.put(carrera.getDni(), carrera);
-        repositorioCarrera.put(carrera.getCodigoCarrera(),carrera);
+        boolean crear=true;
+        for (Carrera carreraCodigo : repositorioCarrera.values()) {
+            if (carrera.getCodigoCarrera() == carreraCodigo.getCodigoCarrera()) {
+                crear = false;
+                break;
+            }
+        }
+        if (crear) {
+            repositorioCarrera.put((repositorioCarrera.size())+1,carrera);
+        }
     }
 
     public Map<Integer, Carrera> getAllCarreras() {
