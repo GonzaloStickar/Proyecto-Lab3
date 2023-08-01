@@ -7,4 +7,6 @@ public interface MateriaDao {
     void save(Materia materia);
 
     Materia findById(int idMateria) throws MateriaNotFoundException;
+
+    void del(Materia delMateria);
 }

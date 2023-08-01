@@ -4,6 +4,7 @@ import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class MateriaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falta el ID del profesor de la materia");
         }
         else {
-            return ResponseEntity.status(HttpStatus.OK).body(materiaService.getAllMaterias());
+            return ResponseEntity.status(HttpStatus.OK).body(materiaService.crearMateria(materiaDto));
         }
     }
 
@@ -65,5 +66,16 @@ public class MateriaController {
             case "codigo_desc" -> ResponseEntity.ok(materiaService.getAllMateriasSortedByCodDesc());
             default -> ResponseEntity.badRequest().body("Tiene que especificar un orden.");
         };
+    }
+
+    @DeleteMapping("/materia/{idMateria}") //DELETE: /materia/{idMateria}
+    public ResponseEntity<?> delMateriaById(@PathVariable Integer idMateria) throws MateriaNotFoundException {
+        if (materiaService.checkMateriaId(idMateria)) {
+            materiaService.delMateriaById(idMateria);
+            return ResponseEntity.status(HttpStatus.OK).body("Materia eliminada.");
+        }
+        else {
+            throw new MateriaNotFoundException("Materia Not Found");
+        }
     }
 }

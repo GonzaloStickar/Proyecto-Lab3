@@ -1,5 +1,6 @@
 package ar.edu.utn.frbb.tup.business;
 
+import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
@@ -11,9 +12,13 @@ public interface MateriaService {
 
     List<Materia> getAllMaterias();
 
-    Materia getMateriaById(int idMateria) throws MateriaNotFoundException;
+    Materia getMateriaById(int materiaId) throws MateriaNotFoundException;
 
-    Materia putMateriaById(int idMateria, MateriaDto materia) throws MateriaNotFoundException;
+    Materia putMateriaById(int materiaId, MateriaDto materia) throws MateriaNotFoundException;
+
+    void delMateriaById(Integer materiaId) throws MateriaNotFoundException;
+
+    boolean checkMateriaId(Integer materiaId);
 
     List<Materia> getAllMateriasSortedByNameAsc();
 

@@ -7,6 +7,7 @@ import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.MateriaDao;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
+import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,9 +30,6 @@ public class MateriaServiceImpl implements MateriaService {
         m.setCuatrimestre(materia.getCuatrimestre());
         m.setProfesor(profesorService.buscarProfesor(materia.getProfesorId()));
         dao.save(m);
-//        if (m.getNombre().contains("a")) {
-//            throw new IllegalArgumentException();
-//        }
         return m;
     }
 
@@ -67,6 +65,25 @@ public class MateriaServiceImpl implements MateriaService {
         materiaPut.setNombre(materia.getNombre());
         materiaPut.setProfesor(profesorService.buscarProfesor(materia.getProfesorId()));
         return materiaPut;
+    }
+
+    public void delMateriaById(Integer materiaId) throws MateriaNotFoundException {
+        List<Materia> materiaList = getAllMaterias();
+        for (Materia materia : materiaList) {
+            if (materia.getMateriaId()==materiaId) {
+                dao.del(materia);
+                break;
+            }
+        }
+    }
+
+    public boolean checkMateriaId(Integer materiaId) {
+        for (Materia materia : getAllMaterias()) {
+            if (materia.getMateriaId()==materiaId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<Materia> getAllMateriasSortedByNameAsc() {
