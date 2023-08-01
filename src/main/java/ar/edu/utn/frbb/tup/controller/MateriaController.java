@@ -1,16 +1,12 @@
 package ar.edu.utn.frbb.tup.controller;
 
 import ar.edu.utn.frbb.tup.business.MateriaService;
-import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @RestController
 @RequestMapping("/")
@@ -42,19 +38,19 @@ public class MateriaController {
     }
 
     @PutMapping("/materia/{idMateria}") //PUT: /materia/{idMateria}
-    public Materia putMateriaById(@PathVariable Integer idMateria,
+    public ResponseEntity<?> putMateriaById(@PathVariable Integer idMateria,
                                   @RequestBody MateriaDto materiaDto) throws MateriaNotFoundException {
-        return materiaService.putMateriaById(idMateria,materiaDto);
+        return ResponseEntity.status(HttpStatus.OK).body(materiaService.putMateriaById(idMateria,materiaDto));
     }
 
     @GetMapping("/materia")
-    public List<Materia> getAllMateriasByName(@RequestParam("nombre") String nombre) {
-        return materiaService.getAllMateriasByName(nombre);
+    public ResponseEntity<?> getAllMateriasByName(@RequestParam("nombre") String nombre) {
+        return ResponseEntity.status(HttpStatus.OK).body(materiaService.getAllMateriasByName(nombre));
     }
 
     @GetMapping("/materia/{idMateria}")
-    public Materia getMateriaById(@PathVariable Integer idMateria) throws MateriaNotFoundException {
-        return materiaService.getMateriaById(idMateria);
+    public ResponseEntity<?> getMateriaById(@PathVariable Integer idMateria) throws MateriaNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK).body(materiaService.getMateriaById(idMateria));
     }
 
     @GetMapping("/materias")

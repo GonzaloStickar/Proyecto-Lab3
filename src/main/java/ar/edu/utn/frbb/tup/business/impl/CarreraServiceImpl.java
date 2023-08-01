@@ -2,12 +2,10 @@ package ar.edu.utn.frbb.tup.business.impl;
 
 import ar.edu.utn.frbb.tup.business.CarreraService;
 import ar.edu.utn.frbb.tup.model.Carrera;
-import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.persistence.CarreraDao;
 import ar.edu.utn.frbb.tup.persistence.CarreraDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
-import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,20 +42,17 @@ public class CarreraServiceImpl implements CarreraService {
         Carrera c = getCarreraById(idCarrera);
         c.setNombre(carrera.getNombre());
         c.setCantidadCuatrimestres((carrera.getCantidadAnios()*12)/4);
-        c.setDepartamentoInt((getAllCarreras().size())+1); // En Departamento y Código, fijarse
-        c.setCodigoCarrera(carrera.getCodigoCarrera());     // que no haya ningún otro con lo mismo...
-        c.setMateriasList(new ArrayList<>());
         return c;
     }
 
-    public void delCarreraById(Integer idCarrera) throws CarreraNotFoundException {
-        List<Carrera> carreraListList = getAllCarreras();
-        for (Carrera carrera : carreraListList) {
+    public Carrera delCarreraById(Integer idCarrera) throws CarreraNotFoundException {
+        for (Carrera carrera : getAllCarreras()) {
             if (carrera.getCodigoCarrera()==idCarrera) {
                 dao.del(carrera);
-                break;
+                return carrera;
             }
         }
+        throw new CarreraNotFoundException("No se encontro la carrera con el id: "+idCarrera);
     }
 
     public List<Carrera> getAllCarreras() {

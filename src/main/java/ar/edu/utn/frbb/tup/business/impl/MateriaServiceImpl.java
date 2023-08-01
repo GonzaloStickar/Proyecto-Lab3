@@ -7,7 +7,6 @@ import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.MateriaDao;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
-import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,12 +58,12 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Override
     public Materia putMateriaById(int idMateria, MateriaDto materia) throws MateriaNotFoundException {
-        Materia materiaPut = getMateriaById(idMateria);
-        materiaPut.setAnio(materia.getAnio());
-        materiaPut.setCuatrimestre(materia.getCuatrimestre());
-        materiaPut.setNombre(materia.getNombre());
-        materiaPut.setProfesor(profesorService.buscarProfesor(materia.getProfesorId()));
-        return materiaPut;
+        Materia m = getMateriaById(idMateria);
+        m.setAnio(materia.getAnio());
+        m.setCuatrimestre(materia.getCuatrimestre());
+        m.setNombre(materia.getNombre());
+        m.setProfesor(profesorService.buscarProfesor(materia.getProfesorId()));
+        return m;
     }
 
     public Materia delMateriaById(Integer materiaId) throws MateriaNotFoundException {
