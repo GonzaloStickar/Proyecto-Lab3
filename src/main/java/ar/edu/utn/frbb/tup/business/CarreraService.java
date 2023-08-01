@@ -17,7 +17,5 @@ public interface CarreraService {
 
     void delCarreraById(Integer idCarrera) throws CarreraNotFoundException;
 
-    boolean checkCarreraId(Integer idCarrera);
-
     List<Carrera> getAllCarreras();
 }

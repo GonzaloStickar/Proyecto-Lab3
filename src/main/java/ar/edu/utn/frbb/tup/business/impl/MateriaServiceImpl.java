@@ -67,23 +67,15 @@ public class MateriaServiceImpl implements MateriaService {
         return materiaPut;
     }
 
-    public void delMateriaById(Integer materiaId) throws MateriaNotFoundException {
+    public Materia delMateriaById(Integer materiaId) throws MateriaNotFoundException {
         List<Materia> materiaList = getAllMaterias();
         for (Materia materia : materiaList) {
             if (materia.getMateriaId()==materiaId) {
                 dao.del(materia);
-                break;
+                return materia;
             }
         }
-    }
-
-    public boolean checkMateriaId(Integer materiaId) {
-        for (Materia materia : getAllMaterias()) {
-            if (materia.getMateriaId()==materiaId) {
-                return true;
-            }
-        }
-        return false;
+        throw new MateriaNotFoundException("No se encontro la materia con el id: "+materiaId);
     }
 
     public List<Materia> getAllMateriasSortedByNameAsc() {

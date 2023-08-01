@@ -16,9 +16,7 @@ public interface MateriaService {
 
     Materia putMateriaById(int materiaId, MateriaDto materia) throws MateriaNotFoundException;
 
-    void delMateriaById(Integer materiaId) throws MateriaNotFoundException;
-
-    boolean checkMateriaId(Integer materiaId);
+    Materia delMateriaById(Integer materiaId) throws MateriaNotFoundException;
 
     List<Materia> getAllMateriasSortedByNameAsc();
 

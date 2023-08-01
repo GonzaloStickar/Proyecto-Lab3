@@ -60,15 +60,6 @@ public class CarreraServiceImpl implements CarreraService {
         }
     }
 
-    public boolean checkCarreraId(Integer idCarrera) {
-        for (Carrera carrera : getAllCarreras()) {
-            if (carrera.getCodigoCarrera()==idCarrera) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public List<Carrera> getAllCarreras() {
         List<Carrera> carrerasList = new ArrayList<>();
         Map<Integer, Carrera> carreras = new CarreraDaoMemoryImpl().getAllCarreras();
