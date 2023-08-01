@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 @Service
 public class MateriaDaoMemoryImpl implements MateriaDao {
@@ -14,19 +13,8 @@ public class MateriaDaoMemoryImpl implements MateriaDao {
     private static final Map<Integer, Materia> repositorioMateria = new HashMap<>();
 
     @Override
-    public void save(Materia materia) {
-        Random random = new Random();
-        materia.setMateriaId(random.nextInt());
-        boolean crear=true;
-        for (Materia materiaId : repositorioMateria.values()) {
-            if (materia.getMateriaId() == materiaId.getMateriaId()) {
-                crear = false;
-                break;
-            }
-        }
-        if (crear) {
-            repositorioMateria.put(materia.getMateriaId(), materia);
-        }
+    public void save(Materia m) {
+        repositorioMateria.put(m.getMateriaId(), m);
     }
 
     @Override

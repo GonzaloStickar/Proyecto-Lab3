@@ -28,6 +28,13 @@ public class MateriaServiceImpl implements MateriaService {
         m.setAnio(materiaDto.getAnio());
         m.setCuatrimestre(materiaDto.getCuatrimestre());
         m.setProfesor(profesorService.buscarProfesor(materiaDto.getProfesorId()));
+        Random random = new Random();
+        m.setMateriaId(random.nextInt());
+        for (Materia materia : dao.getAllMaterias().values()) {
+            if (materia.getMateriaId() == m.getMateriaId()) {
+                throw new MateriaServiceException("Ya existe una Materia con el mismo id.");
+            }
+        }
         dao.save(m);
         return m;
     }
@@ -40,6 +47,9 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Override
     public Materia getMateriaById(int idMateria) throws MateriaNotFoundException {
+        if (dao.getAllMaterias().size()==0) {
+            throw new MateriaNotFoundException("No hay materias.");
+        }
         return dao.findById(idMateria);
     }
 

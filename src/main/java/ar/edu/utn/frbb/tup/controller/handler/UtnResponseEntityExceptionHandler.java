@@ -1,5 +1,6 @@
 package ar.edu.utn.frbb.tup.controller.handler;
 
+import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,8 +15,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value
-            = {MateriaNotFoundException.class})
-    protected ResponseEntity<Object> handleMateriaNotFound(
+            = {MateriaNotFoundException.class, CarreraNotFoundException.class})
+    protected ResponseEntity<Object> handleNotFound(
             MateriaNotFoundException ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();
         CustomApiError error = new CustomApiError();
