@@ -3,11 +3,10 @@ package ar.edu.utn.frbb.tup.business.impl;
 import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.business.ProfesorService;
 import ar.edu.utn.frbb.tup.model.Materia;
-import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.MateriaDao;
-import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
+import ar.edu.utn.frbb.tup.persistence.exception.MateriaServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,32 +21,20 @@ public class MateriaServiceImpl implements MateriaService {
     private ProfesorService profesorService;
 
     @Override
-    public Materia crearMateria(MateriaDto materia) throws IllegalArgumentException {
+    public Materia crearMateria(MateriaDto materiaDto) throws MateriaServiceException {
+        checkMateriaDto(materiaDto);
         Materia m = new Materia();
-        m.setNombre(materia.getNombre());
-        m.setAnio(materia.getAnio());
-        m.setCuatrimestre(materia.getCuatrimestre());
-        m.setProfesor(profesorService.buscarProfesor(materia.getProfesorId()));
+        m.setNombre(materiaDto.getNombre());
+        m.setAnio(materiaDto.getAnio());
+        m.setCuatrimestre(materiaDto.getCuatrimestre());
+        m.setProfesor(profesorService.buscarProfesor(materiaDto.getProfesorId()));
         dao.save(m);
         return m;
     }
 
     @Override
     public List<Materia> getAllMaterias() {
-        Materia m = new Materia("labo 1", 2, 1, new Profesor("Lucho", "Salotto", "Lic"));
-        Materia m1 = new Materia("labo 2", 2, 1, new Profesor("Juan", "Perez", "Lic"));
-        List<Materia> materiasList = new ArrayList<>();
-        Map<Integer, Materia> materias = new MateriaDaoMemoryImpl().getAllMaterias();
-        for (Materia materia : materias.values()) {
-            if (!materiasList.contains(materia)) {
-                materiasList.add(materia);
-            }
-        }
-        if (!materiasList.contains(m) && !materiasList.contains(m1)) {
-            materiasList.add(m);
-            materiasList.add(m1);
-        }
-        return materiasList;
+        return new ArrayList<>(dao.getAllMaterias().values());
     }
 
 
@@ -57,24 +44,50 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     @Override
-    public Materia putMateriaById(int idMateria, MateriaDto materia) throws MateriaNotFoundException {
+    public Materia putMateriaById(int idMateria, MateriaDto materiaDto) throws MateriaNotFoundException, MateriaServiceException {
+        checkMateriaDto(materiaDto);
         Materia m = getMateriaById(idMateria);
-        m.setAnio(materia.getAnio());
-        m.setCuatrimestre(materia.getCuatrimestre());
-        m.setNombre(materia.getNombre());
-        m.setProfesor(profesorService.buscarProfesor(materia.getProfesorId()));
+        m.setAnio(materiaDto.getAnio());
+        m.setCuatrimestre(materiaDto.getCuatrimestre());
+        m.setNombre(materiaDto.getNombre());
+        m.setProfesor(profesorService.buscarProfesor(materiaDto.getProfesorId()));
         return m;
     }
 
     public Materia delMateriaById(Integer materiaId) throws MateriaNotFoundException {
-        List<Materia> materiaList = getAllMaterias();
-        for (Materia materia : materiaList) {
-            if (materia.getMateriaId()==materiaId) {
-                dao.del(materia);
-                return materia;
+        if (getAllMaterias().size()>0) {
+            for (Materia materia : getAllMaterias()) {
+                if (materia.getMateriaId() == materiaId) {
+                    dao.del(materia);
+                    return materia;
+                }
+            }
+            throw new MateriaNotFoundException("No se encontro la materia con el id: "+materiaId);
+        }
+        else {
+            throw new MateriaNotFoundException("No hay materias.");
+        }
+    }
+
+    public List<Materia> getAllMateriasSortedBy(String order) throws MateriaNotFoundException, MateriaServiceException {
+        if (getAllMaterias().size()>0) {
+            switch (order) {
+                case "nombre_asc" -> {
+                    return getAllMateriasSortedByNameAsc();
+                }
+                case "nombre_desc" -> {
+                    return getAllMateriasSortedByNameDesc();
+                }
+                case "codigo_asc" -> {
+                    return getAllMateriasSortedByCodAsc();
+                }
+                case "codigo_desc" -> {
+                    return getAllMateriasSortedByCodDesc();
+                }
+                default -> throw new MateriaServiceException("Especifique el orden.");
             }
         }
-        throw new MateriaNotFoundException("No se encontro la materia con el id: "+materiaId);
+        throw new MateriaNotFoundException("No hay materias para ordenar.");
     }
 
     public List<Materia> getAllMateriasSortedByNameAsc() {
@@ -98,7 +111,7 @@ public class MateriaServiceImpl implements MateriaService {
         return materias;
     }
 
-    public List<Materia> getAllMateriasByName(String nombre) {
+    public List<Materia> getAllMateriasByName(String nombre) throws MateriaNotFoundException {
         List<Materia> materias = getAllMaterias();
         List<Materia> materiasEncontradas = new ArrayList<>();
         for (Materia materia : materias) {
@@ -106,6 +119,26 @@ public class MateriaServiceImpl implements MateriaService {
                 materiasEncontradas.add(materia);
             }
         }
-        return materiasEncontradas;
+        if (materiasEncontradas.size()>0) {
+            return materiasEncontradas;
+        }
+        else {
+            throw new MateriaNotFoundException("No hay materias con el nombre: "+nombre);
+        }
+    }
+
+    public void checkMateriaDto(MateriaDto materiaDto) throws MateriaServiceException {
+        if (!materiaDto.getNombre().matches(".*[a-zA-Z]+.*")) {
+            throw new MateriaServiceException("Falta el nombre de la materia");
+        }
+        else if (materiaDto.getAnio() <= 0) {
+            throw new MateriaServiceException("Falta el año de la materia");
+        }
+        else if (materiaDto.getCuatrimestre() <= 0) {
+            throw new MateriaServiceException("Falta el cuatrimestre de la materia");
+        }
+        else if (materiaDto.getProfesorId() <= 0) {
+            throw new MateriaServiceException("Falta el ID del profesor de la materia");
+        }
     }
 }

@@ -16,7 +16,6 @@ public class AlumnoController {
     @PostMapping("/alumno")
     public Alumno crearAlumno(@RequestBody AlumnoDto alumnoDto) {
         return alumnoService.crearAlumno(alumnoDto);
-
     }
     @GetMapping("/alumno/buscar")
     public Alumno buscarAlumno(@RequestParam String apellido) {

@@ -4,8 +4,8 @@ import ar.edu.utn.frbb.tup.business.CarreraService;
 import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.persistence.CarreraDao;
-import ar.edu.utn.frbb.tup.persistence.CarreraDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
+import ar.edu.utn.frbb.tup.persistence.exception.CarreraServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +20,12 @@ public class CarreraServiceImpl implements CarreraService {
     private CarreraDao dao;
 
     @Override
-    public Carrera crearCarrera(CarreraDto carrera) throws IllegalArgumentException {
+    public Carrera crearCarrera(CarreraDto carreraDto) throws CarreraServiceException {
         Carrera c = new Carrera();
-        c.setNombre(carrera.getNombre());
-        c.setCantidadCuatrimestres((carrera.getCantidadAnios()*12)/4);
-        c.setDepartamentoInt((getAllCarreras().size())+1); // En Departamento y Código, fijarse
-        c.setCodigoCarrera(carrera.getCodigoCarrera());     // que no haya ningún otro con lo mismo...
+        checkCarreraDto(carreraDto);
+        c.setNombre(carreraDto.getNombre());
+        c.setCantidadCuatrimestres((carreraDto.getCantidadAnios()*12)/4);
+        c.setCodigoCarrera(carreraDto.getCodigoCarrera());
         c.setMateriasList(new ArrayList<>());
         dao.save(c);
 
@@ -38,10 +38,18 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public Carrera putCarreraById(Integer idCarrera, CarreraDto carrera) throws CarreraNotFoundException {
+    public Carrera putCarreraById(Integer idCarrera, CarreraDto carreraDto) throws CarreraNotFoundException, CarreraServiceException {
         Carrera c = getCarreraById(idCarrera);
-        c.setNombre(carrera.getNombre());
-        c.setCantidadCuatrimestres((carrera.getCantidadAnios()*12)/4);
+
+        if (!carreraDto.getNombre().matches(".*[a-zA-Z]+.*")) {
+            throw new CarreraServiceException("Falta el nombre de la carrera");
+        }
+        else if (carreraDto.getCantidadAnios() <= 0) {
+            throw new CarreraServiceException("Falta el año de la carrera");
+        }
+
+        c.setNombre(carreraDto.getNombre());
+        c.setCantidadCuatrimestres((carreraDto.getCantidadAnios()*12)/4);
         return c;
     }
 
@@ -57,12 +65,24 @@ public class CarreraServiceImpl implements CarreraService {
 
     public List<Carrera> getAllCarreras() {
         List<Carrera> carrerasList = new ArrayList<>();
-        Map<Integer, Carrera> carreras = new CarreraDaoMemoryImpl().getAllCarreras();
+        Map<Integer, Carrera> carreras = dao.getAllCarreras();
         for (Carrera carrera : carreras.values()) {
             if (!carrerasList.contains(carrera)) {
                 carrerasList.add(carrera);
             }
         }
         return carrerasList;
+    }
+
+    public void checkCarreraDto(CarreraDto carreraDto) throws CarreraServiceException {
+        if (!carreraDto.getNombre().matches(".*[a-zA-Z]+.*")) {
+            throw new CarreraServiceException("Falta el nombre de la carrera");
+        }
+        else if (carreraDto.getCantidadAnios() <= 0) {
+            throw new CarreraServiceException("Falta el año de la carrera");
+        }
+        else if (carreraDto.getCodigoCarrera() <= 0) {
+            throw new CarreraServiceException("Falta el código de la carrera");
+        }
     }
 }

@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.controller;
 import ar.edu.utn.frbb.tup.business.CarreraService;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
+import ar.edu.utn.frbb.tup.persistence.exception.CarreraServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,13 @@ public class CarreraController {
     private CarreraService carreraService;
 
     @PostMapping("/carrera") //POST: /carrera
-    public ResponseEntity<?> crearCarrera(@RequestBody CarreraDto carreraDto) {
-        carreraService.crearCarrera(carreraDto);
-        return ResponseEntity.status(HttpStatus.OK).body(carreraService.getAllCarreras());
+    public ResponseEntity<?> crearCarrera(@RequestBody CarreraDto carreraDto) throws CarreraServiceException {
+        return ResponseEntity.status(HttpStatus.OK).body(carreraService.crearCarrera(carreraDto));
     }
 
     @PutMapping("/carrera/{idCarrera}") //PUT: /carrera/{idCarrera}
     public ResponseEntity<?> putCarreraById(@PathVariable Integer idCarrera,
-                                  @RequestBody CarreraDto carreraDto) throws CarreraNotFoundException {
+                                  @RequestBody CarreraDto carreraDto) throws CarreraNotFoundException, CarreraServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(carreraService.putCarreraById(idCarrera,carreraDto));
     }
 

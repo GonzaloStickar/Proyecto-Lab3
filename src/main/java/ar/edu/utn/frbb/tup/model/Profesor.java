@@ -1,7 +1,6 @@
 package ar.edu.utn.frbb.tup.model;
 
 import java.util.List;
-import java.util.Random;
 
 public class Profesor {
 

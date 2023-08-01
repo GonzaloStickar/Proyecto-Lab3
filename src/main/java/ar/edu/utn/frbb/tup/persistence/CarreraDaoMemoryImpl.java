@@ -11,19 +11,14 @@ import java.util.Map;
 public class CarreraDaoMemoryImpl implements CarreraDao {
     private static final Map<Integer, Carrera> repositorioCarrera = new HashMap<>();
 
+    public static Integer contador = 0;
+
     @Override
 
     public void save(Carrera carrera) {
-        boolean crear=true;
-        for (Carrera carreraCodigo : repositorioCarrera.values()) {
-            if (carrera.getCodigoCarrera() == carreraCodigo.getCodigoCarrera()) {
-                crear = false;
-                break;
-            }
-        }
-        if (crear) {
-            repositorioCarrera.put((repositorioCarrera.size())+1,carrera);
-        }
+        carrera.setDepartamentoInt(contador);
+        contador+=1;
+        repositorioCarrera.put(contador,carrera);
     }
 
     @Override

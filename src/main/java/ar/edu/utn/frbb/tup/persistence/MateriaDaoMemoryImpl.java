@@ -12,6 +12,7 @@ import java.util.Random;
 public class MateriaDaoMemoryImpl implements MateriaDao {
 
     private static final Map<Integer, Materia> repositorioMateria = new HashMap<>();
+
     @Override
     public void save(Materia materia) {
         Random random = new Random();
