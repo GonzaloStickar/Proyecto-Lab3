@@ -1,9 +1,6 @@
 package ar.edu.utn.frbb.tup.controller.handler;
 
-import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
-import ar.edu.utn.frbb.tup.persistence.exception.CarreraServiceException;
-import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
-import ar.edu.utn.frbb.tup.persistence.exception.MateriaServiceException;
+import ar.edu.utn.frbb.tup.persistence.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +34,16 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
                 new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler(value = {AlumnoNotFoundException.class})
+    protected ResponseEntity<Object> handleAlumnoNotFound(
+            AlumnoNotFoundException ex, WebRequest request) {
+        String exceptionMessage = ex.getMessage();
+        CustomApiError error = new CustomApiError();
+        error.setErrorMessage(exceptionMessage);
+        return handleExceptionInternal(ex, error,
+                new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
     @ExceptionHandler(value
             = { IllegalArgumentException.class, IllegalStateException.class })
     protected ResponseEntity<Object> handleArgumentAndStateConflict(
@@ -63,6 +70,17 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
             = {MateriaServiceException.class})
     protected ResponseEntity<Object> handleMateriaServiceConflict(
             MateriaServiceException ex, WebRequest request) {
+        String exceptionMessage = ex.getMessage();
+        CustomApiError error = new CustomApiError();
+        error.setErrorMessage(exceptionMessage);
+        return handleExceptionInternal(ex, error,
+                new HttpHeaders(), ex.getHttpStatus(), request);
+    }
+
+    @ExceptionHandler(value
+            = {AlumnoServiceException.class})
+    protected ResponseEntity<Object> handleMateriaServiceConflict(
+            AlumnoServiceException ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();
         CustomApiError error = new CustomApiError();
         error.setErrorMessage(exceptionMessage);

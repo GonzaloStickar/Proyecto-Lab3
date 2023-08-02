@@ -5,7 +5,7 @@ import ar.edu.utn.frbb.tup.model.Asignatura;
 
 public class AsignaturaServiceImpl implements AsignaturaService {
     @Override
-    public Asignatura getAsignatura(int materiaId, long dni) {
+    public Asignatura getAsignatura(int materiaId, int dni) {
         return null;
     }
 
