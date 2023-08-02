@@ -1,7 +1,9 @@
 package ar.edu.utn.frbb.tup.controller.handler;
 
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
+import ar.edu.utn.frbb.tup.persistence.exception.CarreraServiceException;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
+import ar.edu.utn.frbb.tup.persistence.exception.MateriaServiceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +17,19 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value
-            = {MateriaNotFoundException.class, CarreraNotFoundException.class})
-    protected ResponseEntity<Object> handleNotFound(
+            = {MateriaNotFoundException.class})
+    protected ResponseEntity<Object> handleMateriaNotFound(
             MateriaNotFoundException ex, WebRequest request) {
+        String exceptionMessage = ex.getMessage();
+        CustomApiError error = new CustomApiError();
+        error.setErrorMessage(exceptionMessage);
+        return handleExceptionInternal(ex, error,
+                new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(value = {CarreraNotFoundException.class})
+    protected ResponseEntity<Object> handleCarreraNotFound(
+            CarreraNotFoundException ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();
         CustomApiError error = new CustomApiError();
         error.setErrorMessage(exceptionMessage);
@@ -27,17 +39,36 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
 
     @ExceptionHandler(value
             = { IllegalArgumentException.class, IllegalStateException.class })
-    protected ResponseEntity<Object> handleConflict(
+    protected ResponseEntity<Object> handleArgumentAndStateConflict(
             RuntimeException ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();
         CustomApiError error = new CustomApiError();
-        error.setErrorCode(1234);
         error.setErrorMessage(exceptionMessage);
         return handleExceptionInternal(ex, error,
                 new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
+    @ExceptionHandler(value
+            = {CarreraServiceException.class})
+    protected ResponseEntity<Object> handleCarreraServiceConflict(
+            CarreraServiceException ex, WebRequest request) {
+        String exceptionMessage = ex.getMessage();
+        CustomApiError error = new CustomApiError();
+        error.setErrorMessage(exceptionMessage);
+        return handleExceptionInternal(ex, error,
+                new HttpHeaders(), ex.getHttpStatus(), request);
+    }
 
+    @ExceptionHandler(value
+            = {MateriaServiceException.class})
+    protected ResponseEntity<Object> handleMateriaServiceConflict(
+            MateriaServiceException ex, WebRequest request) {
+        String exceptionMessage = ex.getMessage();
+        CustomApiError error = new CustomApiError();
+        error.setErrorMessage(exceptionMessage);
+        return handleExceptionInternal(ex, error,
+                new HttpHeaders(), ex.getHttpStatus(), request);
+    }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -46,9 +77,6 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
             error.setErrorMessage(ex.getMessage());
             body = error;
         }
-
         return new ResponseEntity<>(body, headers, status);
     }
-
-
 }

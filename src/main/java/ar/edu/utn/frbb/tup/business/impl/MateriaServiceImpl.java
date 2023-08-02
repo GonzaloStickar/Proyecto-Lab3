@@ -8,6 +8,7 @@ import ar.edu.utn.frbb.tup.persistence.MateriaDao;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,7 +33,7 @@ public class MateriaServiceImpl implements MateriaService {
         m.setMateriaId(random.nextInt());
         for (Materia materia : dao.getAllMaterias().values()) {
             if (materia.getMateriaId() == m.getMateriaId()) {
-                throw new MateriaServiceException("Ya existe una Materia con el mismo id.");
+                throw new MateriaServiceException("Ya existe una Materia con el mismo id.", HttpStatus.CONFLICT);
             }
         }
         dao.save(m);
@@ -48,7 +49,7 @@ public class MateriaServiceImpl implements MateriaService {
     @Override
     public Materia getMateriaById(int idMateria) throws MateriaNotFoundException {
         if (dao.getAllMaterias().size()==0) {
-            throw new MateriaNotFoundException("No hay materias.");
+            throw new MateriaNotFoundException("No hay materias."); //Podría tirar un Código = 204 - No Content, pero no muestra ningún mensaje.
         }
         return dao.findById(idMateria);
     }
@@ -94,7 +95,7 @@ public class MateriaServiceImpl implements MateriaService {
                 case "codigo_desc" -> {
                     return getAllMateriasSortedByCodDesc();
                 }
-                default -> throw new MateriaServiceException("Especifique el orden.");
+                default -> throw new MateriaServiceException("Especifique el orden.", HttpStatus.BAD_REQUEST);
             }
         }
         throw new MateriaNotFoundException("No hay materias para ordenar.");
@@ -139,16 +140,16 @@ public class MateriaServiceImpl implements MateriaService {
 
     public void checkMateriaDto(MateriaDto materiaDto) throws MateriaServiceException {
         if (!materiaDto.getNombre().matches(".*[a-zA-Z]+.*")) {
-            throw new MateriaServiceException("Falta el nombre de la materia");
+            throw new MateriaServiceException("Falta el nombre de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         else if (materiaDto.getAnio() <= 0) {
-            throw new MateriaServiceException("Falta el año de la materia");
+            throw new MateriaServiceException("Falta el año de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         else if (materiaDto.getCuatrimestre() <= 0) {
-            throw new MateriaServiceException("Falta el cuatrimestre de la materia");
+            throw new MateriaServiceException("Falta el cuatrimestre de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         else if (materiaDto.getProfesorId() <= 0) {
-            throw new MateriaServiceException("Falta el ID del profesor de la materia");
+            throw new MateriaServiceException("Falta el ID del profesor de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 }

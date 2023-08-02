@@ -18,7 +18,7 @@ public class CarreraController {
 
     @PostMapping("/carrera") //POST: /carrera
     public ResponseEntity<?> crearCarrera(@RequestBody CarreraDto carreraDto) throws CarreraServiceException {
-        return ResponseEntity.status(HttpStatus.OK).body(carreraService.crearCarrera(carreraDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(carreraService.crearCarrera(carreraDto));
     }
 
     @PutMapping("/carrera/{idCarrera}") //PUT: /carrera/{idCarrera}

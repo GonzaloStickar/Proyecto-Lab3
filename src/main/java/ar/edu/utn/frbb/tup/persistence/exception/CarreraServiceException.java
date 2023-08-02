@@ -1,7 +1,23 @@
 package ar.edu.utn.frbb.tup.persistence.exception;
 
-public class CarreraServiceException extends Throwable {
-    public CarreraServiceException(String message) {
+import org.springframework.http.HttpStatus;
+
+public class CarreraServiceException extends Exception {
+
+    private final String message;
+    private final HttpStatus httpStatus;
+    public CarreraServiceException(String message, HttpStatus httpStatus) {
         super(message);
+        this.message=message;
+        this.httpStatus=httpStatus;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 }
