@@ -18,7 +18,7 @@ public class MateriaController {
 
     @PostMapping("/materia") //POST: /materia
     public ResponseEntity<?> crearMateria(@RequestBody MateriaDto materiaDto) throws MateriaServiceException {
-        return ResponseEntity.status(HttpStatus.OK).body(materiaService.crearMateria(materiaDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(materiaService.crearMateria(materiaDto));
     }
 
     @PutMapping("/materia/{idMateria}") //PUT: /materia/{idMateria}
@@ -39,7 +39,7 @@ public class MateriaController {
 
     @GetMapping("/materias")
     public ResponseEntity<?> getMateriaByOrder(@RequestParam("order") String order) throws MateriaNotFoundException, MateriaServiceException {
-        return ResponseEntity.ok().body(materiaService.getAllMateriasSortedBy(order));
+        return ResponseEntity.status(HttpStatus.OK).body(materiaService.getAllMateriasSortedBy(order));
     }
 
     @DeleteMapping("/materia/{idMateria}") //DELETE: /materia/{idMateria}
