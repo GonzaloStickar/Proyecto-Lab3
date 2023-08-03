@@ -16,6 +16,14 @@ public class Alumno {
 
     private List<Asignatura> asignaturas;
 
+    public List<Asignatura> getAsignaturas() {
+        return asignaturas;
+    }
+
+    public void setAsignaturas(List<Asignatura> asignaturas) {
+        this.asignaturas = asignaturas;
+    }
+
     public Alumno() {
     }
     public Alumno(String nombre, String apellido, int dni) {

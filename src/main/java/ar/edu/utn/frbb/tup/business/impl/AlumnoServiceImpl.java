@@ -11,19 +11,21 @@ import ar.edu.utn.frbb.tup.persistence.exception.AlumnoNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-@Component
+@Service
 public class AlumnoServiceImpl implements AlumnoService {
 
     @Autowired
     private AlumnoDao dao;
-    private static final AsignaturaService asignaturaService = new AsignaturaServiceImpl();
+
+    @Autowired
+    private AsignaturaService asignaturaService;
 
     @Override
     public void aprobarAsignatura(int materiaId, int nota, int dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException {
@@ -54,10 +56,11 @@ public class AlumnoServiceImpl implements AlumnoService {
             Random random = new Random();
             a.setId(random.nextInt());
             for (Alumno alumno : dao.getAllAlumnos().values()) {
-                if (alumno.getId() == a.getId()) {
+                if (alumno.getDni() == a.getDni()) {
                     throw new AlumnoServiceException("Ya existe un Alumno con el mismo dni.", HttpStatus.CONFLICT);
                 }
             }
+            a.setAsignaturas(asignaturaService.getSomeAsignaturasRandomFromAsignaturasDao());
             dao.saveAlumno(a);
             return a;
         }
