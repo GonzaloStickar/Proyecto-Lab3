@@ -6,13 +6,14 @@ import ar.edu.utn.frbb.tup.model.exception.CorrelatividadesNoAprobadasException;
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoServiceException;
+import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
 
 import java.util.List;
 
 public interface AlumnoService {
-    void aprobarAsignatura(int materiaId, int nota, int dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException;
+    void aprobarAsignatura(int materiaId, int nota, int dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException, AlumnoNotFoundException;
 
-    Alumno crearAlumno(AlumnoDto alumno) throws AlumnoServiceException;
+    Alumno crearAlumno(AlumnoDto alumno) throws AlumnoServiceException, AsignaturaNotFoundException;
 
     Alumno getAlumnoById(Integer idAlumno) throws AlumnoNotFoundException;
 

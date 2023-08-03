@@ -9,11 +9,11 @@ public interface AlumnoDao {
 
     void saveAlumno(Alumno a);
 
-    Alumno findAlumno(String apellidoAlumno);
+    //Alumno findAlumnoByApellido(String apellidoAlumno) throws AlumnoNotFoundException;
 
     Alumno findById(int idAlumno) throws AlumnoNotFoundException;
 
-    Alumno loadAlumno(Integer dni);
+    Alumno loadAlumnoByDni(Integer dni) throws AlumnoNotFoundException;
 
     void del(Alumno idAlumno);
 

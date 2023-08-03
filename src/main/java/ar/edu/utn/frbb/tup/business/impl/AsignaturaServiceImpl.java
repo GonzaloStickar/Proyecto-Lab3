@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.business.impl;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDao;
+import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     AsignaturaDao dao;
 
     @Override
-    public Asignatura getAsignatura(int materiaId, int dni) {
+    public Asignatura getAsignatura(int materiaId) {
         return null;
     }
 
@@ -27,8 +28,11 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
 
 
-    public List<Asignatura> getSomeAsignaturasRandomFromAsignaturasDao() {
+    public List<Asignatura> getSomeAsignaturasRandomFromAsignaturasDao() throws AsignaturaNotFoundException {
         List<Asignatura> listaAsignaturas = dao.getAllAsignaturas();
+        if (listaAsignaturas.isEmpty()) {
+            throw new AsignaturaNotFoundException("No hay Asignaturas"); //Lo cual no va a suceder, ya que las Asignaturas estan "Hardcodeadas".
+        }
         ArrayList<Integer> listaNumerosRandom = new ArrayList<>();
         List<Asignatura> listaAsignaturasRandom = new ArrayList<>();
         while (listaNumerosRandom.size()<3) { //Cantidad de Asignaturas a asignar al Alumno (yo le asigno 3 solamente)

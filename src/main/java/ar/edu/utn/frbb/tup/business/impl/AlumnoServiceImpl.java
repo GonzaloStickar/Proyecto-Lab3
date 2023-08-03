@@ -9,6 +9,7 @@ import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDao;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoServiceException;
+import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,22 +29,23 @@ public class AlumnoServiceImpl implements AlumnoService {
     private AsignaturaService asignaturaService;
 
     @Override
-    public void aprobarAsignatura(int materiaId, int nota, int dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException {
-        Asignatura a = asignaturaService.getAsignatura(materiaId, dni);
+    public void aprobarAsignatura(int materiaId, int nota, int dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException, AlumnoNotFoundException {
+        Alumno alumno = dao.loadAlumnoByDni(dni);
+        Asignatura a = asignaturaService.getAsignatura(materiaId);
         for (Materia m: a.getMateria().getCorrelatividades()) {
-            Asignatura correlativa = asignaturaService.getAsignatura(m.getMateriaId(), dni);
+            Asignatura correlativa = asignaturaService.getAsignatura(m.getMateriaId());
             if (!EstadoAsignatura.APROBADA.equals(correlativa.getEstado())) {
                 throw new CorrelatividadesNoAprobadasException("La materia " + m.getNombre() + " debe estar aprobada para aprobar " + a.getNombreAsignatura());
             }
         }
         a.aprobarAsignatura(nota);
         asignaturaService.actualizarAsignatura(a);
-        Alumno alumno = dao.loadAlumno(dni);
+
         alumno.actualizarAsignatura(a);
         dao.saveAlumno(alumno);
     }
 
-    public Alumno crearAlumno(AlumnoDto alumnoDto) throws AlumnoServiceException {
+    public Alumno crearAlumno(AlumnoDto alumnoDto) throws AlumnoServiceException, AsignaturaNotFoundException {
         Alumno a = new Alumno();
         checkAlumnoDto(alumnoDto);
         if (alumnoDto.getDni() <= 0) {

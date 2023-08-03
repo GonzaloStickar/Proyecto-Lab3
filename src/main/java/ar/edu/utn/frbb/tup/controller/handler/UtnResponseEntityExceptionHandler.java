@@ -1,5 +1,6 @@
 package ar.edu.utn.frbb.tup.controller.handler;
 
+import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.persistence.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,16 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
                 new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler(value = {AsignaturaNotFoundException.class})
+    protected ResponseEntity<Object> handleAsignaturaNotFound(
+            AsignaturaNotFoundException ex, WebRequest request) {
+        String exceptionMessage = ex.getMessage();
+        CustomApiError error = new CustomApiError();
+        error.setErrorMessage(exceptionMessage);
+        return handleExceptionInternal(ex, error,
+                new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
     @ExceptionHandler(value
             = { IllegalArgumentException.class, IllegalStateException.class })
     protected ResponseEntity<Object> handleArgumentAndStateConflict(
@@ -57,7 +68,7 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
 
     @ExceptionHandler(value
             = {CarreraServiceException.class})
-    protected ResponseEntity<Object> handleCarreraServiceConflict(
+    protected ResponseEntity<Object> handleCarreraService(
             CarreraServiceException ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();
         CustomApiError error = new CustomApiError();
@@ -68,7 +79,7 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
 
     @ExceptionHandler(value
             = {MateriaServiceException.class})
-    protected ResponseEntity<Object> handleMateriaServiceConflict(
+    protected ResponseEntity<Object> handleMateriaService(
             MateriaServiceException ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();
         CustomApiError error = new CustomApiError();
@@ -79,8 +90,19 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
 
     @ExceptionHandler(value
             = {AlumnoServiceException.class})
-    protected ResponseEntity<Object> handleMateriaServiceConflict(
+    protected ResponseEntity<Object> handleAlumnoService(
             AlumnoServiceException ex, WebRequest request) {
+        String exceptionMessage = ex.getMessage();
+        CustomApiError error = new CustomApiError();
+        error.setErrorMessage(exceptionMessage);
+        return handleExceptionInternal(ex, error,
+                new HttpHeaders(), ex.getHttpStatus(), request);
+    }
+
+    @ExceptionHandler(value
+            = {AsignaturaServiceException.class})
+    protected ResponseEntity<Object> handleAsignaturaService(
+            AsignaturaServiceException ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();
         CustomApiError error = new CustomApiError();
         error.setErrorMessage(exceptionMessage);
