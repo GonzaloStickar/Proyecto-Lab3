@@ -11,8 +11,6 @@ import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
 import java.util.List;
 
 public interface AlumnoService {
-    void aprobarAsignatura(int materiaId, int nota, int dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException, AlumnoNotFoundException;
-
     Alumno crearAlumno(AlumnoDto alumno) throws AlumnoServiceException, AsignaturaNotFoundException;
 
     Alumno getAlumnoById(Integer idAlumno) throws AlumnoNotFoundException;

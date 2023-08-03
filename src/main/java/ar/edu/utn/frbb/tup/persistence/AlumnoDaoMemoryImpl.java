@@ -39,7 +39,7 @@ public class AlumnoDaoMemoryImpl implements AlumnoDao {
     }
 
     @Override
-    public Alumno loadAlumnoByDni(Integer dni) throws AlumnoNotFoundException {
+    public Alumno findAlumnoByDni(Integer dni) throws AlumnoNotFoundException {
         for (Alumno a: repositorioAlumnos.values()) {
             System.out.println(a.getApellido());
             if (dni == a.getDni()) {

@@ -1,11 +1,12 @@
 package ar.edu.utn.frbb.tup.controller;
 
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
+import ar.edu.utn.frbb.tup.model.Alumno;
+import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
-import ar.edu.utn.frbb.tup.persistence.exception.AlumnoNotFoundException;
-import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
-import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
-import ar.edu.utn.frbb.tup.persistence.exception.MateriaServiceException;
+import ar.edu.utn.frbb.tup.model.exception.CorrelatividadesNoAprobadasException;
+import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
+import ar.edu.utn.frbb.tup.persistence.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,10 @@ public class AsignaturaController {
 
     @Autowired
     private AsignaturaService asignaturaService;
-//    @PutMapping("/alumno/{idAlumno}/asignatura/{idAsignatura}") //PUT: /alumno/{idAlumno}/asignatura/{idAsignatura}
-//    public ResponseEntity<?> putEstadoAsignaturaByIdByAlumnoById(@PathVariable int idAlumno, @PathVariable int idAsignatura) throws AsignaturaNotFoundException {
-//        return ResponseEntity.status(HttpStatus.OK).body(asignaturaService.putAsignatura(idAlumno,idAsignatura));
-//    }
-//
-//    @PostMapping("/asignaturas")
-//    public ResponseEntity<?> getAllAsignaturas(@RequestBody MateriaDto materiaDto) throws AsignaturaNotFoundException {
-//        return ResponseEntity.status(HttpStatus.CREATED).body(asignaturaService.getAsignaturaRandom());
-//    }
+    @PutMapping("/alumno/{idAlumno}/asignatura/{idAsignatura}") //PUT: /alumno/{idAlumno}/asignatura/{idAsignatura}
+    public ResponseEntity<Alumno> putEstadoAsignaturaByIdByAlumnoById(@PathVariable int idAlumno,
+                                                                      @PathVariable int idAsignatura,
+                                                                      @RequestBody AsignaturaDto asignaturaDto) throws AsignaturaNotFoundException, AsignaturaServiceException, CorrelatividadesNoAprobadasException, EstadoIncorrectoException, AlumnoServiceException, AlumnoNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK).body(asignaturaService.putAsignatura(idAlumno,idAsignatura, asignaturaDto));
+    }
 }

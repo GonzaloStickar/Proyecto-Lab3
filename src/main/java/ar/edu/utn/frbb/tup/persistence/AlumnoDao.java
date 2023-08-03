@@ -2,6 +2,7 @@ package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoNotFoundException;
+import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
 
 import java.util.Map;
 
@@ -13,7 +14,7 @@ public interface AlumnoDao {
 
     Alumno findById(int idAlumno) throws AlumnoNotFoundException;
 
-    Alumno loadAlumnoByDni(Integer dni) throws AlumnoNotFoundException;
+    Alumno findAlumnoByDni(Integer dni) throws AlumnoNotFoundException;
 
     void del(Alumno idAlumno);
 
