@@ -46,12 +46,21 @@ public class Asignatura {
     }
 
     public void aprobarAsignatura(int nota) throws EstadoIncorrectoException {
-        if (!this.estado.equals(EstadoAsignatura.CURSADA)) {
-            throw new EstadoIncorrectoException("La materia debe estar cursada");
-        }
-        if (nota>=4) {
-            this.estado = EstadoAsignatura.APROBADA;
-            this.nota = nota;
+        if (this.estado.equals(EstadoAsignatura.CURSADA)) {
+            if (nota >= 4) {
+                this.estado = EstadoAsignatura.APROBADA;
+                this.nota = nota;
+            }
+        } else if (this.estado.equals(EstadoAsignatura.NO_CURSADA)) {
+            if (nota >= 4) {
+                this.estado = EstadoAsignatura.APROBADA;
+                this.nota = nota;
+            } else {
+                this.estado = EstadoAsignatura.CURSADA;
+                this.nota = nota;
+            }
+        } else {
+            throw new EstadoIncorrectoException("La materia ya está aprobada");
         }
     }
 

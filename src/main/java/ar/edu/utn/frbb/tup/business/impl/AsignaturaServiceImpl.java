@@ -48,8 +48,8 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         if (asignaturasAlumnoList.contains(asignatura)) {
             for (Asignatura a : asignaturasAlumnoList) {
                 if (a.equals(asignatura)) {
-                    //a.aprobarAsignatura(nota); //Esto es lo que tengo que implementar ahora.
-                    a.setNota(nota);
+                    a.aprobarAsignatura(nota); //Esto es lo que tengo que implementar ahora.
+                    //a.setNota(nota);
                     break;
                 }
             }
