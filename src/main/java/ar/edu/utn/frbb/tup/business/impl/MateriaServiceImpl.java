@@ -36,6 +36,7 @@ public class MateriaServiceImpl implements MateriaService {
                 throw new MateriaServiceException("Ya existe una Materia con el mismo id.", HttpStatus.CONFLICT);
             }
         }
+        m.setCorrelatividades(new ArrayList<>());
         dao.save(m);
         return m;
     }

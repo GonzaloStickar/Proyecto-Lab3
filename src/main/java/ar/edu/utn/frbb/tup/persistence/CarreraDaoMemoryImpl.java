@@ -16,7 +16,6 @@ public class CarreraDaoMemoryImpl implements CarreraDao {
     public static Integer contador = 0;
 
     @Override
-
     public void save(Carrera carrera) {
         carrera.setDepartamentoInt(contador);
         contador+=1;

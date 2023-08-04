@@ -3,9 +3,7 @@ package ar.edu.utn.frbb.tup.persistence;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
-import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
-import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
