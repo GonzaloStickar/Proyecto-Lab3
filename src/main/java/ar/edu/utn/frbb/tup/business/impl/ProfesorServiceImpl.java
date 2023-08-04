@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.business.impl;
 import ar.edu.utn.frbb.tup.business.ProfesorService;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.persistence.ProfesorDao;
+import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,7 @@ public class ProfesorServiceImpl implements ProfesorService {
     private ProfesorDao dao;
 
     @Override
-    public Profesor buscarProfesor(long id) {
+    public Profesor buscarProfesor(int id) throws ProfesorNotFoundException {
         return dao.get(id);
     }
 }

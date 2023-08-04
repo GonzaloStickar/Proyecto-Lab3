@@ -1,6 +1,5 @@
 package ar.edu.utn.frbb.tup.controller.handler;
 
-import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.exception.*;
 import org.springframework.http.HttpHeaders;
@@ -109,6 +108,17 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
         error.setErrorMessage(exceptionMessage);
         return handleExceptionInternal(ex, error,
                 new HttpHeaders(), ex.getHttpStatus(), request);
+    }
+
+    @ExceptionHandler(value
+            = {ProfesorNotFoundException.class})
+    protected ResponseEntity<Object> handleProfesorNotFound(
+            ProfesorNotFoundException ex, WebRequest request) {
+        String exceptionMessage = ex.getMessage();
+        CustomApiError error = new CustomApiError();
+        error.setErrorMessage(exceptionMessage);
+        return handleExceptionInternal(ex, error,
+                new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(value

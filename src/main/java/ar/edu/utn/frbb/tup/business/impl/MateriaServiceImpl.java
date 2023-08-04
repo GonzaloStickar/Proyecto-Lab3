@@ -1,5 +1,6 @@
 package ar.edu.utn.frbb.tup.business.impl;
 
+import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.business.ProfesorService;
 import ar.edu.utn.frbb.tup.model.Materia;
@@ -7,6 +8,7 @@ import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.MateriaDao;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaServiceException;
+import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,8 +23,11 @@ public class MateriaServiceImpl implements MateriaService {
     @Autowired
     private ProfesorService profesorService;
 
+    @Autowired
+    private AsignaturaService asignaturaService;
+
     @Override
-    public Materia crearMateria(MateriaDto materiaDto) throws MateriaServiceException {
+    public Materia crearMateria(MateriaDto materiaDto) throws MateriaServiceException, ProfesorNotFoundException {
         checkMateriaDto(materiaDto);
         Materia m = new Materia();
         m.setNombre(materiaDto.getNombre());
@@ -37,6 +42,7 @@ public class MateriaServiceImpl implements MateriaService {
             }
         }
         m.setCorrelatividades(new ArrayList<>());
+        asignaturaService.crearAsignatura(m);
         dao.save(m);
         return m;
     }
@@ -56,13 +62,14 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     @Override
-    public Materia putMateriaById(int idMateria, MateriaDto materiaDto) throws MateriaNotFoundException, MateriaServiceException {
+    public Materia putMateriaById(int idMateria, MateriaDto materiaDto) throws MateriaNotFoundException, MateriaServiceException, ProfesorNotFoundException {
         checkMateriaDto(materiaDto);
         Materia m = getMateriaById(idMateria);
         m.setAnio(materiaDto.getAnio());
         m.setCuatrimestre(materiaDto.getCuatrimestre());
         m.setNombre(materiaDto.getNombre());
         m.setProfesor(profesorService.buscarProfesor(materiaDto.getProfesorId()));
+        asignaturaService.actualizarAsignaturaByMateria(m);
         return m;
     }
 
@@ -73,6 +80,7 @@ public class MateriaServiceImpl implements MateriaService {
         else {
             for (Materia materia : dao.getAllMaterias().values()) {
                 if (materia.getMateriaId() == materiaId) {
+                    asignaturaService.delAsignaturaByMateriaId(materia.getMateriaId());
                     dao.del(materia);
                     return materia;
                 }

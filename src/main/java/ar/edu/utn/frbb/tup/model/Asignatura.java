@@ -11,8 +11,6 @@ public class Asignatura {
     private EstadoAsignatura estado;
     private Integer nota;
 
-    public Asignatura() {
-    }
     public Asignatura(Materia materia) {
         this.materia = materia;
         this.estado = EstadoAsignatura.NO_CURSADA;
@@ -40,6 +38,10 @@ public class Asignatura {
 
     public Materia getMateria() {
         return materia;
+    }
+
+    public void setMateria(Materia materia) {
+        this.materia = materia;
     }
 
     public void cursarAsignatura(){

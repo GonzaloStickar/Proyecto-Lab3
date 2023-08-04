@@ -4,6 +4,7 @@ import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaServiceException;
+import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,13 @@ public class MateriaController {
     private MateriaService materiaService;
 
     @PostMapping("/materia") //POST: /materia
-    public ResponseEntity<?> crearMateria(@RequestBody MateriaDto materiaDto) throws MateriaServiceException {
+    public ResponseEntity<?> crearMateria(@RequestBody MateriaDto materiaDto) throws MateriaServiceException, ProfesorNotFoundException {
         return ResponseEntity.status(HttpStatus.CREATED).body(materiaService.crearMateria(materiaDto));
     }
 
     @PutMapping("/materia/{idMateria}") //PUT: /materia/{idMateria}
     public ResponseEntity<?> putMateriaById(@PathVariable Integer idMateria,
-                                  @RequestBody MateriaDto materiaDto) throws MateriaNotFoundException, MateriaServiceException {
+                                  @RequestBody MateriaDto materiaDto) throws MateriaNotFoundException, MateriaServiceException, ProfesorNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(materiaService.putMateriaById(idMateria,materiaDto));
     }
 

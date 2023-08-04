@@ -1,11 +1,10 @@
 package ar.edu.utn.frbb.tup.business.impl;
 
-import ar.edu.utn.frbb.tup.business.AlumnoService;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
+import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
-import ar.edu.utn.frbb.tup.model.exception.CorrelatividadesNoAprobadasException;
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDao;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDao;
@@ -26,6 +25,13 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     @Autowired
     AsignaturaDao dao;
+
+    public void crearAsignatura(Materia materia) {
+        if (!(materia.getProfesor().getMateriasDictadas().contains(materia.getNombre()))) {
+            materia.getProfesor().agregarMateriaDictada(materia.getNombre());
+        }
+        dao.save(materia);
+    }
 
     @Override
     public Asignatura getAsignatura(int materiaId) throws AsignaturaNotFoundException {
@@ -85,8 +91,35 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return listaAsignaturasRandom;
     }
 
+    public List<Asignatura> getAllAsignaturas() {
+        return dao.getAllAsignaturas();
+    }
+
     public static int crearNumeroEntreRangoRandom(int min, int max) {
         Random random = new Random();
         return random.nextInt(max - min + 1) + min;
+    }
+
+    public void actualizarAsignaturaByMateria(Materia materia) {
+        for (Asignatura asignatura : getAllAsignaturas()) {
+            if (asignatura.getMateria().equals(materia)) {
+                  asignatura.setMateria(materia);
+            }
+        }
+    }
+
+    public Asignatura delAsignaturaByMateriaId(Integer materiaId) throws MateriaNotFoundException {
+        if (dao.getAllAsignaturas().size()==0) {
+            throw new MateriaNotFoundException("No hay materias.");
+        }
+        else {
+            for (Asignatura asignatura : dao.getAllAsignaturas()) {
+                if (asignatura.getMateria().getMateriaId() == materiaId) {
+                    dao.del(materiaId);
+                    return asignatura;
+                }
+            }
+            throw new MateriaNotFoundException("No se encontro la materia con el id: "+materiaId);
+        }
     }
 }

@@ -4,13 +4,13 @@ public class MateriaDto {
     private String nombre;
     private int anio;
     private int cuatrimestre;
-    private long profesorId;
+    private int profesorId;
 
-    public long getProfesorId() {
+    public int getProfesorId() {
         return profesorId;
     }
 
-    public void setProfesorId(long profesorId) {
+    public void setProfesorId(int profesorId) {
         this.profesorId = profesorId;
     }
 
