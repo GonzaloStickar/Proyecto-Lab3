@@ -10,7 +10,7 @@ public interface CarreraDao {
     void save(Carrera c);
     Carrera findById(int idCarrera) throws CarreraNotFoundException;
 
-    void del(Carrera idCarrera);
+    void del(Carrera idCarrera) throws CarreraNotFoundException;
 
     Map<Integer, Carrera> getAllCarreras();
 }

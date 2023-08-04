@@ -30,6 +30,7 @@ public class AlumnoDaoMemoryImpl implements AlumnoDao {
 
     @Override
     public Alumno findById(int idAlumno) throws AlumnoNotFoundException {
+        hayAlumnos();
         for (Alumno a: repositorioAlumnos.values()) {
             if (a.getId() == idAlumno) {
                 return a;
@@ -40,8 +41,8 @@ public class AlumnoDaoMemoryImpl implements AlumnoDao {
 
     @Override
     public Alumno findAlumnoByDni(Integer dni) throws AlumnoNotFoundException {
+        hayAlumnos();
         for (Alumno a: repositorioAlumnos.values()) {
-            System.out.println(a.getApellido());
             if (dni == a.getDni()) {
                 return a;
             }
@@ -49,7 +50,8 @@ public class AlumnoDaoMemoryImpl implements AlumnoDao {
         throw new AlumnoNotFoundException("No existe un alumno con el dni: "+dni);
     }
 
-    public void del(Alumno delAlumno) {
+    public void del(Alumno delAlumno) throws AlumnoNotFoundException {
+        hayAlumnos();
         for (Alumno alumno : repositorioAlumnos.values()) {
             if (alumno.getId() == delAlumno.getId()) {
                 repositorioAlumnos.values().remove(delAlumno);
@@ -60,5 +62,11 @@ public class AlumnoDaoMemoryImpl implements AlumnoDao {
 
     public Map<Integer, Alumno> getAllAlumnos() {
         return repositorioAlumnos;
+    }
+
+    public static void hayAlumnos() throws AlumnoNotFoundException {
+        if (repositorioAlumnos.values().size()==0) {
+            throw new AlumnoNotFoundException("No hay alumnos.");
+        }
     }
 }

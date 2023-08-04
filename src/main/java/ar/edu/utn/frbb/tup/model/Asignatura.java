@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.model;
 
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
+import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
@@ -60,7 +61,7 @@ public class Asignatura {
                 this.nota = nota;
             }
         } else {
-            throw new EstadoIncorrectoException("La materia ya está aprobada");
+            throw new EstadoIncorrectoException("La materia ya está aprobada", HttpStatus.CONFLICT);
         }
     }
 

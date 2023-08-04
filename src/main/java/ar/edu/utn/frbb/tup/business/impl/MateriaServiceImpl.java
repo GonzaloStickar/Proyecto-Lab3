@@ -41,16 +41,16 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     @Override
-    public List<Materia> getAllMaterias() {
-        return new ArrayList<>(dao.getAllMaterias().values());
+    public List<Materia> getAllMaterias() throws MateriaNotFoundException {
+        List<Materia> materias = new ArrayList<>(dao.getAllMaterias().values());
+        if (materias.size()==0) {
+            throw new MateriaNotFoundException("No hay materias.");
+        }
+        return materias;
     }
-
 
     @Override
     public Materia getMateriaById(int idMateria) throws MateriaNotFoundException {
-        if (dao.getAllMaterias().size()==0) {
-            throw new MateriaNotFoundException("No hay materias."); //Podría tirar un Código = 204 - No Content, pero no muestra ningún mensaje.
-        }
         return dao.findById(idMateria);
     }
 
@@ -66,8 +66,11 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     public Materia delMateriaById(Integer materiaId) throws MateriaNotFoundException {
-        if (getAllMaterias().size()>0) {
-            for (Materia materia : getAllMaterias()) {
+        if (dao.getAllMaterias().values().size()==0) {
+            throw new MateriaNotFoundException("No hay materias.");
+        }
+        else {
+            for (Materia materia : dao.getAllMaterias().values()) {
                 if (materia.getMateriaId() == materiaId) {
                     dao.del(materia);
                     return materia;
@@ -75,48 +78,42 @@ public class MateriaServiceImpl implements MateriaService {
             }
             throw new MateriaNotFoundException("No se encontro la materia con el id: "+materiaId);
         }
-        else {
-            throw new MateriaNotFoundException("No hay materias.");
-        }
     }
 
-    public List<Materia> getAllMateriasSortedBy(String order) throws MateriaNotFoundException, MateriaServiceException {
-        if (getAllMaterias().size()>0) {
-            switch (order) {
-                case "nombre_asc" -> {
-                    return getAllMateriasSortedByNameAsc();
-                }
-                case "nombre_desc" -> {
-                    return getAllMateriasSortedByNameDesc();
-                }
-                case "codigo_asc" -> {
-                    return getAllMateriasSortedByCodAsc();
-                }
-                case "codigo_desc" -> {
-                    return getAllMateriasSortedByCodDesc();
-                }
-                default -> throw new MateriaServiceException("Especifique el orden.", HttpStatus.BAD_REQUEST);
+    public List<Materia> getAllMateriasSortedBy(String order) throws MateriaServiceException, MateriaNotFoundException {
+        switch (order) {
+            case "nombre_asc" -> {
+                return getAllMateriasSortedByNameAsc();
             }
-        }
-        throw new MateriaNotFoundException("No hay materias para ordenar.");
+            case "nombre_desc" -> {
+                return getAllMateriasSortedByNameDesc();
+            }
+            case "codigo_asc" -> {
+                return getAllMateriasSortedByCodAsc();
+            }
+            case "codigo_desc" -> {
+                return getAllMateriasSortedByCodDesc();
+            }
+            default -> throw new MateriaServiceException("Especifique el orden.", HttpStatus.BAD_REQUEST);
+            }
     }
 
-    public List<Materia> getAllMateriasSortedByNameAsc() {
+    public List<Materia> getAllMateriasSortedByNameAsc() throws MateriaNotFoundException {
         List<Materia> materias = getAllMaterias();
         materias.sort(Comparator.comparing(Materia::getNombre));
         return materias;
     }
-    public List<Materia> getAllMateriasSortedByNameDesc() {
+    public List<Materia> getAllMateriasSortedByNameDesc() throws MateriaNotFoundException {
         List<Materia> materias = getAllMaterias();
         materias.sort(Comparator.comparing(Materia::getNombre).reversed());
         return materias;
     }
-    public List<Materia> getAllMateriasSortedByCodAsc() {
+    public List<Materia> getAllMateriasSortedByCodAsc() throws MateriaNotFoundException {
         List<Materia> materias = getAllMaterias();
         materias.sort(Comparator.comparing(Materia::getMateriaId));
         return materias;
     }
-    public List<Materia> getAllMateriasSortedByCodDesc() {
+    public List<Materia> getAllMateriasSortedByCodDesc() throws MateriaNotFoundException {
         List<Materia> materias = getAllMaterias();
         materias.sort(Comparator.comparing(Materia::getMateriaId).reversed());
         return materias;

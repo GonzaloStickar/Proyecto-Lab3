@@ -19,7 +19,7 @@ public class AlumnoController {
     private AlumnoService alumnoService;
 
     @PostMapping("/alumno") //POST: /alumno
-    public ResponseEntity<?> crearAlumno(@RequestBody AlumnoDto alumnoDto) throws AlumnoServiceException, AsignaturaNotFoundException {
+    public ResponseEntity<?> crearAlumno(@RequestBody AlumnoDto alumnoDto) throws AlumnoServiceException, AsignaturaNotFoundException, AlumnoNotFoundException {
         return ResponseEntity.status(HttpStatus.CREATED).body(alumnoService.crearAlumno(alumnoDto));
     }
 

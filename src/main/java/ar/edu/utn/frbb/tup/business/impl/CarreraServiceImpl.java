@@ -2,10 +2,12 @@ package ar.edu.utn.frbb.tup.business.impl;
 
 import ar.edu.utn.frbb.tup.business.CarreraService;
 import ar.edu.utn.frbb.tup.model.Carrera;
+import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.persistence.CarreraDao;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraServiceException;
+import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,40 +46,39 @@ public class CarreraServiceImpl implements CarreraService {
 
     @Override
     public Carrera getCarreraById(Integer idCarrera) throws CarreraNotFoundException {
-        if (dao.getAllCarreras().size()==0) {
-            throw new CarreraNotFoundException("No hay carreras.");
-        }
         return dao.findById(idCarrera);
     }
 
     @Override
     public Carrera putCarreraById(Integer idCarrera, CarreraDto carreraDto) throws CarreraNotFoundException, CarreraServiceException {
-        Carrera c = getCarreraById(idCarrera);
         checkCarreraDto(carreraDto);
+        Carrera c = getCarreraById(idCarrera);
         c.setNombre(carreraDto.getNombre());
         c.setCantidadCuatrimestres((carreraDto.getCantidadAnios()*12)/4);
         return c;
     }
 
     public Carrera delCarreraById(Integer idCarrera) throws CarreraNotFoundException {
-        for (Carrera carrera : getAllCarreras()) {
-            if (carrera.getCodigoCarrera()==idCarrera) {
-                dao.del(carrera);
-                return carrera;
-            }
+        if (dao.getAllCarreras().values().size()==0) {
+            throw new CarreraNotFoundException("No hay carreras.");
         }
-        throw new CarreraNotFoundException("No se encontro la carrera con el id: "+idCarrera);
+        else {
+            for (Carrera carrera : getAllCarreras()) {
+                if (carrera.getCodigoCarrera()==idCarrera) {
+                    dao.del(carrera);
+                    return carrera;
+                }
+            }
+            throw new CarreraNotFoundException("No se encontro la carrera con el id: "+idCarrera);
+        }
     }
 
-    public List<Carrera> getAllCarreras() {
-        List<Carrera> carrerasList = new ArrayList<>();
-        Map<Integer, Carrera> carreras = dao.getAllCarreras();
-        for (Carrera carrera : carreras.values()) {
-            if (!carrerasList.contains(carrera)) {
-                carrerasList.add(carrera);
-            }
+    public List<Carrera> getAllCarreras() throws CarreraNotFoundException {
+        List<Carrera> carreras = new ArrayList<>(dao.getAllCarreras().values());
+        if (carreras.size()==0) {
+            throw new CarreraNotFoundException("No hay carreras.");
         }
-        return carrerasList;
+        return carreras;
     }
 
     public void checkCarreraDto(CarreraDto carreraDto) throws CarreraServiceException {

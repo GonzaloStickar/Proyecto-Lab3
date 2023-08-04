@@ -48,8 +48,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         if (asignaturasAlumnoList.contains(asignatura)) {
             for (Asignatura a : asignaturasAlumnoList) {
                 if (a.equals(asignatura)) {
-                    a.aprobarAsignatura(nota); //Esto es lo que tengo que implementar ahora.
-                    //a.setNota(nota);
+                    a.aprobarAsignatura(nota);
                     break;
                 }
             }
@@ -63,7 +62,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     public static void checkAsignaturaDto(AsignaturaDto asignaturaDto) throws AsignaturaServiceException {
         if (asignaturaDto.getNota() <= 0 || asignaturaDto.getNota()>10) {
-            throw new AsignaturaServiceException("Falta el cuatrimestre de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new AsignaturaServiceException("Falta la nota de la asignatura", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 

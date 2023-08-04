@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.controller.handler;
 
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
+import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -103,6 +104,17 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
             = {AsignaturaServiceException.class})
     protected ResponseEntity<Object> handleAsignaturaService(
             AsignaturaServiceException ex, WebRequest request) {
+        String exceptionMessage = ex.getMessage();
+        CustomApiError error = new CustomApiError();
+        error.setErrorMessage(exceptionMessage);
+        return handleExceptionInternal(ex, error,
+                new HttpHeaders(), ex.getHttpStatus(), request);
+    }
+
+    @ExceptionHandler(value
+            = {EstadoIncorrectoException.class})
+    protected ResponseEntity<Object> handleEstadoIncorrecto(
+            EstadoIncorrectoException ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();
         CustomApiError error = new CustomApiError();
         error.setErrorMessage(exceptionMessage);

@@ -11,13 +11,11 @@ import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
 import java.util.List;
 
 public interface AlumnoService {
-    Alumno crearAlumno(AlumnoDto alumno) throws AlumnoServiceException, AsignaturaNotFoundException;
+    Alumno crearAlumno(AlumnoDto alumno) throws AlumnoServiceException, AsignaturaNotFoundException, AlumnoNotFoundException;
 
     Alumno getAlumnoById(Integer idAlumno) throws AlumnoNotFoundException;
 
     Alumno putAlumnoById(Integer idAlumno, AlumnoDto alumnoDto) throws AlumnoNotFoundException, AlumnoServiceException;
 
     Alumno delAlumnoById(Integer idAlumno) throws AlumnoNotFoundException;
-
-    List<Alumno> getAllAlumnos();
 }

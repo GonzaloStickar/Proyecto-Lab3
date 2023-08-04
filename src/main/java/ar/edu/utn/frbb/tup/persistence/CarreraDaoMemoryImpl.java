@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Carrera;
+import ar.edu.utn.frbb.tup.persistence.exception.AlumnoNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class CarreraDaoMemoryImpl implements CarreraDao {
 
     @Override
     public Carrera findById(int idCarerra) throws CarreraNotFoundException {
+        hayCarreras();
         for (Carrera c: repositorioCarrera.values()) {
             if (idCarerra == c.getCodigoCarrera()) {
                 return c;
@@ -32,7 +34,8 @@ public class CarreraDaoMemoryImpl implements CarreraDao {
         throw new CarreraNotFoundException("No se encontró la carrera con id " + idCarerra);
     }
 
-    public void del(Carrera delCarrera) {
+    public void del(Carrera delCarrera) throws CarreraNotFoundException {
+        hayCarreras();
         for (Carrera carrera : repositorioCarrera.values()) {
             if (carrera.getCodigoCarrera() == delCarrera.getCodigoCarrera()) {
                 repositorioCarrera.values().remove(delCarrera);
@@ -43,5 +46,11 @@ public class CarreraDaoMemoryImpl implements CarreraDao {
 
     public Map<Integer, Carrera> getAllCarreras() {
         return repositorioCarrera;
+    }
+
+    public static void hayCarreras() throws CarreraNotFoundException {
+        if (repositorioCarrera.values().size()==0) {
+            throw new CarreraNotFoundException("No hay carreras.");
+        }
     }
 }

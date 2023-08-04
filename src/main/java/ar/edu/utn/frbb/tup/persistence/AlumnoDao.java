@@ -16,7 +16,7 @@ public interface AlumnoDao {
 
     Alumno findAlumnoByDni(Integer dni) throws AlumnoNotFoundException;
 
-    void del(Alumno idAlumno);
+    void del(Alumno idAlumno) throws AlumnoNotFoundException;
 
     Map<Integer, Alumno> getAllAlumnos();
 }

@@ -18,16 +18,16 @@ public interface MateriaService {
 
     List<Materia> getAllMateriasSortedBy(String order) throws MateriaNotFoundException, MateriaServiceException;
 
-    List<Materia> getAllMateriasSortedByNameAsc();
+    List<Materia> getAllMateriasSortedByNameAsc() throws MateriaNotFoundException;
 
-    List<Materia> getAllMateriasSortedByNameDesc();
+    List<Materia> getAllMateriasSortedByNameDesc() throws MateriaNotFoundException;
 
-    List<Materia> getAllMateriasSortedByCodAsc();
-    List<Materia> getAllMateriasSortedByCodDesc();
+    List<Materia> getAllMateriasSortedByCodAsc() throws MateriaNotFoundException;
+    List<Materia> getAllMateriasSortedByCodDesc() throws MateriaNotFoundException;
 
     List<Materia> getAllMateriasByName(String nombre) throws MateriaNotFoundException;
 
-    List<Materia> getAllMaterias();
+    List<Materia> getAllMaterias() throws MateriaNotFoundException;
 
     void checkMateriaDto(MateriaDto materiaDto) throws MateriaServiceException;
 }

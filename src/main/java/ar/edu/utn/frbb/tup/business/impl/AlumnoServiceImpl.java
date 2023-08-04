@@ -4,8 +4,6 @@ import ar.edu.utn.frbb.tup.business.AlumnoService;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.model.*;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
-import ar.edu.utn.frbb.tup.model.exception.CorrelatividadesNoAprobadasException;
-import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDao;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoServiceException;
@@ -29,13 +27,14 @@ public class AlumnoServiceImpl implements AlumnoService {
     private AsignaturaService asignaturaService;
 
     @Override
-    public Alumno crearAlumno(AlumnoDto alumnoDto) throws AlumnoServiceException, AsignaturaNotFoundException {
+    public Alumno crearAlumno(AlumnoDto alumnoDto) throws AlumnoServiceException, AsignaturaNotFoundException, AlumnoNotFoundException {
         Alumno a = new Alumno();
         checkAlumnoDto(alumnoDto);
         if (alumnoDto.getDni() <= 0) {
             throw new AlumnoServiceException("Falta el dni del alumno",HttpStatus.UNPROCESSABLE_ENTITY);
         }
         else {
+            dao.getAllAlumnos();
             a.setNombre(alumnoDto.getNombre());
             a.setApellido(alumnoDto.getApellido());
             a.setDni(alumnoDto.getDni());
@@ -53,9 +52,6 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
 
     public Alumno getAlumnoById(Integer idAlumno) throws AlumnoNotFoundException {
-        if (dao.getAllAlumnos().size()==0) {
-            throw new AlumnoNotFoundException("No hay alumnos.");
-        }
         return dao.findById(idAlumno);
     }
 
@@ -76,24 +72,18 @@ public class AlumnoServiceImpl implements AlumnoService {
         }
     }
 
-    public List<Alumno> getAllAlumnos() {
-        List<Alumno> alumnosList = new ArrayList<>();
-        Map<Integer, Alumno> alumnos = dao.getAllAlumnos();
-        for (Alumno alumno : alumnos.values()) {
-            if (!alumnosList.contains(alumno)) {
-                alumnosList.add(alumno);
-            }
-        }
-        return alumnosList;
-    }
-
     public Alumno delAlumnoById(Integer idAlumno) throws AlumnoNotFoundException {
-        for (Alumno alumno : getAllAlumnos()) {
-            if (alumno.getId()==idAlumno) {
-                dao.del(alumno);
-                return alumno;
-            }
+        if (dao.getAllAlumnos().values().size()==0) {
+            throw new AlumnoNotFoundException("No hay alumnos.");
         }
-        throw new AlumnoNotFoundException("No se encontró el alumno con id " + idAlumno);
+        else {
+            for (Alumno alumno : dao.getAllAlumnos().values()) {
+                if (alumno.getId()==idAlumno) {
+                    dao.del(alumno);
+                    return alumno;
+                }
+            }
+            throw new AlumnoNotFoundException("No se encontró el alumno con id " + idAlumno);
+        }
     }
 }

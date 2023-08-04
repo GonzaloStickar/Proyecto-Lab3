@@ -10,7 +10,7 @@ public interface MateriaDao {
 
     Materia findById(int idMateria) throws MateriaNotFoundException;
 
-    void del(Materia delMateria);
+    void del(Materia delMateria) throws MateriaNotFoundException;
 
     Map<Integer, Materia> getAllMaterias();
 }
