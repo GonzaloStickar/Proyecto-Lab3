@@ -6,8 +6,6 @@ import ar.edu.utn.frbb.tup.persistence.exception.AlumnoNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoServiceException;
 import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
 
-import java.util.List;
-
 public interface AlumnoService {
     Alumno crearAlumno(AlumnoDto alumno) throws AlumnoServiceException, AsignaturaNotFoundException, AlumnoNotFoundException;
 

@@ -12,7 +12,6 @@ public class AlumnoServiceException extends Exception {
         this.httpStatus=httpStatus;
     }
 
-    @Override
     public String getMessage() {
         return message;
     }

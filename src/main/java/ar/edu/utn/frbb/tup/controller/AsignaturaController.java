@@ -17,6 +17,7 @@ public class AsignaturaController {
 
     @Autowired
     private AsignaturaService asignaturaService;
+
     @PutMapping("/alumno/{idAlumno}/asignatura/{idAsignatura}") //PUT: /alumno/{idAlumno}/asignatura/{idAsignatura}
     public ResponseEntity<Alumno> putEstadoAsignaturaByIdByAlumnoById(@PathVariable int idAlumno,
                                                                       @PathVariable int idAsignatura,

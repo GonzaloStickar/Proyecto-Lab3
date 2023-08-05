@@ -145,7 +145,7 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     public void checkMateriaDto(MateriaDto materiaDto) throws MateriaServiceException {
-        if (!materiaDto.getNombre().matches(".*[a-zA-Z]+.*")) {
+        if (!materiaDto.getNombre().matches(".*[a-zA-Z0-9]+.*")) {
             throw new MateriaServiceException("Falta el nombre de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         else if (materiaDto.getAnio() <= 0) {

@@ -12,14 +12,9 @@ public class ProfesorDaoMemoryImpl implements ProfesorDao{
 
     private static List<Profesor> repositorioProfesores = new ArrayList<>();
 
-    static {
-        repositorioProfesores.add(new Profesor("Pedro","Sánchez","Lic. COMPUTACIÓN",1));
-        repositorioProfesores.add(new Profesor("Ismael","Montesinos","Lic. COMPUTACIÓN",2));
-        repositorioProfesores.add(new Profesor("Luciano","Salotto","Lic. COMPUTACIÓN",3));
-        repositorioProfesores.add(new Profesor("Gregorio","Barbero","Lic. COMPUTACIÓN",4));
-        repositorioProfesores.add(new Profesor("Pepe","Sierra","Ing. COMPUTACIÓN",5));
-        repositorioProfesores.add(new Profesor("Vicenta","Peiro","Ing. COMPUTACIÓN",6));
-        repositorioProfesores.add(new Profesor("Manuela","Rivera","Ing. COMPUTACIÓN",7));
+    @Override
+    public void save(Profesor profesor) {
+        repositorioProfesores.add(profesor);
     }
 
     @Override

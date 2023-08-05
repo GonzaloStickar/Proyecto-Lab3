@@ -1,8 +1,8 @@
 package ar.edu.utn.frbb.tup.model;
 
-import ar.edu.utn.frbb.tup.model.exception.AsignaturaInexistenteException;
 import ar.edu.utn.frbb.tup.model.exception.CorrelatividadException;
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
+import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class Alumno {
         return this.asignaturas;
     }
 
-    public void aprobarAsignatura(Materia materia, int nota) throws EstadoIncorrectoException, CorrelatividadException, AsignaturaInexistenteException {
+    public void aprobarAsignatura(Materia materia, int nota) throws EstadoIncorrectoException, CorrelatividadException, AsignaturaNotFoundException {
         Asignatura asignaturaAAprobar = getAsignaturaAAprobar(materia);
 
         for (Materia correlativa :
@@ -88,14 +88,14 @@ public class Alumno {
         }
     }
 
-    private Asignatura getAsignaturaAAprobar(Materia materia) throws AsignaturaInexistenteException {
+    private Asignatura getAsignaturaAAprobar(Materia materia) throws AsignaturaNotFoundException {
 
         for (Asignatura a: asignaturas) {
             if (materia.getNombre().equals(a.getNombreAsignatura())) {
                 return a;
             }
         }
-        throw new AsignaturaInexistenteException("No se encontró la materia");
+        throw new AsignaturaNotFoundException("No se encontró la materia");
     }
 
     public boolean puedeAprobar(Asignatura asignatura) {

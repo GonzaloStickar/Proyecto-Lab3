@@ -21,10 +21,10 @@ import java.util.Random;
 public class AsignaturaServiceImpl implements AsignaturaService {
 
     @Autowired
-    AlumnoDao alumnoDao;
+    private AlumnoDao alumnoDao;
 
     @Autowired
-    AsignaturaDao dao;
+    private AsignaturaDao dao;
 
     public void crearAsignatura(Materia materia) {
         if (!(materia.getProfesor().getMateriasDictadas().contains(materia.getNombre()))) {
@@ -108,7 +108,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         }
     }
 
-    public Asignatura delAsignaturaByMateriaId(Integer materiaId) throws MateriaNotFoundException {
+    public void delAsignaturaByMateriaId(Integer materiaId) throws MateriaNotFoundException {
         if (dao.getAllAsignaturas().size()==0) {
             throw new MateriaNotFoundException("No hay materias.");
         }
@@ -116,7 +116,6 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             for (Asignatura asignatura : dao.getAllAsignaturas()) {
                 if (asignatura.getMateria().getMateriaId() == materiaId) {
                     dao.del(materiaId);
-                    return asignatura;
                 }
             }
             throw new MateriaNotFoundException("No se encontro la materia con el id: "+materiaId);

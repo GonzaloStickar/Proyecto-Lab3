@@ -11,7 +11,6 @@ public class AsignaturaServiceException extends Exception {
         this.httpStatus=httpStatus;
     }
 
-    @Override
     public String getMessage() {
         return message;
     }
