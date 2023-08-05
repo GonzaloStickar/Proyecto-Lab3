@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ProfesorDaoMemoryImpl implements ProfesorDao{
+public class ProfesorDaoMemoryImpl implements ProfesorDao {
 
     private static List<Profesor> repositorioProfesores = new ArrayList<>();
 
@@ -20,7 +20,7 @@ public class ProfesorDaoMemoryImpl implements ProfesorDao{
     @Override
     public Profesor get(int id) throws ProfesorNotFoundException {
         for (Profesor profesor : repositorioProfesores) {
-            if (profesor.getId()==id) {
+            if (profesor.getprofesorId()==id) {
                 return profesor;
             }
         }

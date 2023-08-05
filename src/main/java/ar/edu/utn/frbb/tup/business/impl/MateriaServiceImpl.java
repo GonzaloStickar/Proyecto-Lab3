@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.business.impl;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.business.ProfesorService;
+import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.MateriaDao;
@@ -41,10 +42,24 @@ public class MateriaServiceImpl implements MateriaService {
                 throw new MateriaServiceException("Ya existe una Materia con el mismo id.", HttpStatus.CONFLICT);
             }
         }
-        m.setCorrelatividades(new ArrayList<>());
+        List<String> materiasListParaCorrelatividades = new ArrayList<>();
+        for (Asignatura asignatura : asignaturaService.getAllAsignaturas()) {
+            int numeroRandomMateriaCorrelativa = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size())-1);
+            if (!(materiasListParaCorrelatividades.contains(asignatura.getMateria().getNombre())) && materiasListParaCorrelatividades.size()<3) {
+                if (!(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre().equals(materiaDto.getNombre()))) {
+                    materiasListParaCorrelatividades.add(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre());
+                }
+            }
+        }
+        m.setCorrelatividades(materiasListParaCorrelatividades);
         asignaturaService.crearAsignatura(m);
         dao.save(m);
         return m;
+    }
+
+    public static int crearNumeroEntreRangoRandom(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min + 1) + min;
     }
 
     @Override

@@ -41,7 +41,7 @@ public class Materia {
     private int cuatrimestre;
     private Profesor profesor;
 
-    private List<Materia> correlatividades;
+    private List<String> correlatividades;
 
     public Materia(){}
 
@@ -55,15 +55,15 @@ public class Materia {
         this.correlatividades = new ArrayList<>();
     }
 
-    public void agregarCorrelatividad(Materia m){
+    public void agregarCorrelatividad(String m){
         this.correlatividades.add(m);
     }
 
-    public List<Materia> getCorrelatividades(){
+    public List<String> getCorrelatividades(){
         return this.correlatividades;
     }
 
-    public void setCorrelatividades(List<Materia> correlatividades){
+    public void setCorrelatividades(List<String> correlatividades){
         this.correlatividades=correlatividades;
     }
 

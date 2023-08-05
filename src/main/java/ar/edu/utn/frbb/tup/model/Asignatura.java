@@ -48,19 +48,23 @@ public class Asignatura {
         this.estado = EstadoAsignatura.CURSADA;
     }
 
+    public void aprobarAsignatura(){
+        this.estado = EstadoAsignatura.CURSADA;
+    }
+
     public void aprobarAsignatura(int nota) throws EstadoIncorrectoException {
         if (this.estado.equals(EstadoAsignatura.CURSADA)) {
-            if (nota >= 4) {
-                this.estado = EstadoAsignatura.APROBADA;
-                this.nota = nota;
+            if (nota >= 6) {
+                aprobarAsignatura();
+                setNota(nota);
             }
         } else if (this.estado.equals(EstadoAsignatura.NO_CURSADA)) {
-            if (nota >= 4) {
-                this.estado = EstadoAsignatura.APROBADA;
-                this.nota = nota;
+            if (nota >= 6) {
+                aprobarAsignatura();
+                setNota(nota);
             } else {
-                this.estado = EstadoAsignatura.CURSADA;
-                this.nota = nota;
+                cursarAsignatura();
+                setNota(nota);
             }
         } else {
             throw new EstadoIncorrectoException("La materia ya está aprobada", HttpStatus.CONFLICT);

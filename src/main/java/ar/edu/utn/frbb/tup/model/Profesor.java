@@ -4,18 +4,17 @@ import java.util.ArrayList;
 
 public class Profesor {
 
-    private int id = 12;
+    private int profesorId = 12;
     private final String nombre;
     private final String apellido;
     private final String titulo;
 
     private ArrayList<String> materiasDictadas;
 
-    public Profesor(String nombre, String apellido, String titulo, int id) {
+    public Profesor(String nombre, String apellido, String titulo) {
         this.apellido = apellido;
         this.nombre = nombre;
         this.titulo = titulo;
-        this.id=id;
 
         this.materiasDictadas = new ArrayList<>();
     }
@@ -40,12 +39,12 @@ public class Profesor {
         return materiasDictadas;
     }
 
-    public int getId() {
-        return id;
+    public int getprofesorId() {
+        return profesorId;
     }
 
-    public void setId(int id) {
-        this.id=id;
+    public void setprofesorId(int id) {
+        this.profesorId=id;
     }
 
     public void setMateriasDictadas(ArrayList<String> materiasDictadas) {

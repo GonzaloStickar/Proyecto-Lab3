@@ -17,17 +17,22 @@ public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
     private static final List<Asignatura> repositorioAsignaturas = new ArrayList<>();
 
     static {
-        repositorioAsignaturas.add(new Asignatura(new Materia("Laboratorio 1",1,1, new Profesor("Pedro","Sánchez","Lic. COMPUTACIÓN",0))));
-        repositorioAsignaturas.add(new Asignatura(new Materia("Laboratorio 2",1,1,new Profesor("Ismael","Montesinos","Lic. COMPUTACIÓN",1))));
-        repositorioAsignaturas.add(new Asignatura(new Materia("Laboratorio 3",1,1, new Profesor("Luciano","Salotto","Lic. COMPUTACIÓN",2)))); //The best! :)
-        repositorioAsignaturas.add(new Asignatura(new Materia("Laboratorio 4",1,1, new Profesor("Gregorio","Barbero","Lic. COMPUTACIÓN",3))));
-        repositorioAsignaturas.add(new Asignatura(new Materia("Programación 1",1,1, new Profesor("Pepe","Sierra","Ing. COMPUTACIÓN",4))));
-        repositorioAsignaturas.add(new Asignatura(new Materia("Programación 2",1,1, new Profesor("Vicenta","Peiro","Ing. COMPUTACIÓN",5))));
-        repositorioAsignaturas.add(new Asignatura(new Materia("Programación 3",1,1, new Profesor("Manuela","Rivera","Ing. COMPUTACIÓN",6))));
+        repositorioAsignaturas.add(new Asignatura(new Materia("Laboratorio 1",1,1, new Profesor("Pedro","Sánchez","Lic. COMPUTACIÓN"))));
+        repositorioAsignaturas.add(new Asignatura(new Materia("Programación 1",1,1, new Profesor("Pepe","Sierra","Ing. COMPUTACIÓN"))));
+        repositorioAsignaturas.add(new Asignatura(new Materia("Programación 2",1,1, new Profesor("Vicenta","Peiro","Ing. COMPUTACIÓN"))));
+        repositorioAsignaturas.add(new Asignatura(new Materia("Laboratorio 2",1,1,new Profesor("Ismael","Montesinos","Lic. COMPUTACIÓN"))));
+        repositorioAsignaturas.add(new Asignatura(new Materia("Laboratorio 3",1,1, new Profesor("Luciano","Salotto","Lic. COMPUTACIÓN")))); //The best! :)
+        repositorioAsignaturas.add(new Asignatura(new Materia("Programación 3",1,1, new Profesor("Manuela","Rivera","Ing. COMPUTACIÓN"))));
+        repositorioAsignaturas.add(new Asignatura(new Materia("Laboratorio 4",1,1, new Profesor("Gregorio","Barbero","Lic. COMPUTACIÓN"))));
 
         int i=0;
         for (Asignatura asignatura : repositorioAsignaturas) {
+            if (i>0 && i%2==0) {
+                asignatura.getMateria().agregarCorrelatividad(repositorioAsignaturas.get((i-1)).getMateria().getNombre());
+                asignatura.getMateria().agregarCorrelatividad(repositorioAsignaturas.get((i-2)).getMateria().getNombre());
+            }
             asignatura.getMateria().setMateriaId(i);
+            asignatura.getMateria().getProfesor().setprofesorId(i);
             asignatura.getMateria().getProfesor().agregarMateriaDictada(asignatura.getMateria().getNombre());
             i++;
         }
