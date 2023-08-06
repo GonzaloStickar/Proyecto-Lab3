@@ -42,13 +42,14 @@ public class MateriaServiceImpl implements MateriaService {
                 throw new MateriaServiceException("Ya existe una Materia con el mismo id.", HttpStatus.CONFLICT);
             }
         }
-        //Correlativas random para la nueva materia creada.
         List<String> materiasListParaCorrelatividades = new ArrayList<>();
         for (Asignatura asignatura : asignaturaService.getAllAsignaturas()) {
             int numeroRandomMateriaCorrelativa = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size())-1);
             if (!(materiasListParaCorrelatividades.contains(asignatura.getMateria().getNombre())) && materiasListParaCorrelatividades.size()<3) {
-                if (!(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre().equals(materiaDto.getNombre()))) {
-                    materiasListParaCorrelatividades.add(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre());
+                if (!(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre().contains(materiaDto.getNombre()))) {
+                    if (!(materiasListParaCorrelatividades.contains(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre()))) {
+                        materiasListParaCorrelatividades.add(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre());
+                    }
                 }
             }
         }

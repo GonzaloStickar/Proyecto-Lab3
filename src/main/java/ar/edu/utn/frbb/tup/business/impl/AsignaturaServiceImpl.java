@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -78,21 +77,9 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         if (listaAsignaturas.isEmpty()) {
             throw new AsignaturaNotFoundException("No hay Asignaturas"); //Lo cual no va a suceder, ya que las Asignaturas estan "Hardcodeadas".
         }
-//        ArrayList<Integer> listaNumerosRandom = new ArrayList<>();
-//        List<Asignatura> listaAsignaturasRandom = new ArrayList<>();
-//        while (listaNumerosRandom.size()<3) { //Cantidad de Asignaturas a asignar al Alumno (yo le asigno 3 solamente)
-//            int i = crearNumeroEntreRangoRandom(0,(listaAsignaturas.size())-1);
-//            if (!listaNumerosRandom.contains(i)) {
-//                listaNumerosRandom.add(i);
-//            }
-//        }
-//        for (Integer numero : listaNumerosRandom) {
-//            listaAsignaturasRandom.add(listaAsignaturas.get(numero));
-//        }
         Asignatura asignatura = listaAsignaturas.get(crearNumeroEntreRangoRandom(0,(listaAsignaturas.size())-1));
         List<Asignatura> asignaturasConCorrelativas = new ArrayList<>();
-        checkAsignaturaCorrelativas(asignatura, asignaturasConCorrelativas);
-        return asignaturasConCorrelativas;
+        return checkAsignaturaCorrelativas(asignatura, asignaturasConCorrelativas);
     }
 
     public List<Asignatura> checkAsignaturaCorrelativas(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas) {
