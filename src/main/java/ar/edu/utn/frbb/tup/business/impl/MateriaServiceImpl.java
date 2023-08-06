@@ -42,6 +42,7 @@ public class MateriaServiceImpl implements MateriaService {
                 throw new MateriaServiceException("Ya existe una Materia con el mismo id.", HttpStatus.CONFLICT);
             }
         }
+        //Correlativas random para la nueva materia creada.
         List<String> materiasListParaCorrelatividades = new ArrayList<>();
         for (Asignatura asignatura : asignaturaService.getAllAsignaturas()) {
             int numeroRandomMateriaCorrelativa = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size())-1);

@@ -42,7 +42,7 @@ public class AlumnoServiceImpl implements AlumnoService {
                     throw new AlumnoServiceException("Ya existe un Alumno con el mismo dni.", HttpStatus.CONFLICT);
                 }
             }
-            a.setAsignaturas(asignaturaService.getSomeAsignaturasRandomFromAsignaturasDao());
+            a.setAsignaturas(asignaturaService.getSomeAsignaturaRandomFromAsignaturasDao());
             dao.saveAlumno(a);
             return a;
         }
