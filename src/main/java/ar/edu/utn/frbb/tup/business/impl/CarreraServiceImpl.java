@@ -6,6 +6,7 @@ import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.persistence.CarreraDao;
+import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaServiceException;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class CarreraServiceImpl implements CarreraService {
     private AsignaturaService asignaturaService;
 
     @Override
-    public Carrera crearCarrera(CarreraDto carreraDto) throws CarreraServiceException {
+    public Carrera crearCarrera(CarreraDto carreraDto) throws CarreraServiceException, AsignaturaServiceException {
         Carrera c = new Carrera();
         checkCarreraDto(carreraDto);
         if (carreraDto.getCodigoCarrera() <= 0) {
@@ -37,7 +38,11 @@ public class CarreraServiceImpl implements CarreraService {
             c.setCantidadCuatrimestres((carreraDto.getCantidadAnios()*12)/4);
             c.setCodigoCarrera(carreraDto.getCodigoCarrera());
 
-            int numero = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size())-1);
+            if (asignaturaService.getAllAsignaturas().isEmpty()) {
+                throw new AsignaturaServiceException("No hay asignaturas", HttpStatus.NOT_FOUND);
+            }
+
+            int numero = crearNumeroEntreRangoRandom(0,asignaturaService.getAllAsignaturas().size());
             ArrayList<Integer> numerosRandom = new ArrayList<>();
             while (numerosRandom.size()<numero) {
                 int numeroNuevo = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size())-1);

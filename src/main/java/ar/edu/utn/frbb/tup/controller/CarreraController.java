@@ -2,6 +2,7 @@ package ar.edu.utn.frbb.tup.controller;
 
 import ar.edu.utn.frbb.tup.business.CarreraService;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
+import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaServiceException;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class CarreraController {
     private CarreraService carreraService;
 
     @PostMapping("/carrera") //POST: /carrera
-    public ResponseEntity<?> crearCarrera(@RequestBody CarreraDto carreraDto) throws CarreraServiceException {
+    public ResponseEntity<?> crearCarrera(@RequestBody CarreraDto carreraDto) throws CarreraServiceException, AsignaturaServiceException {
         return ResponseEntity.status(HttpStatus.CREATED).body(carreraService.crearCarrera(carreraDto));
     }
 

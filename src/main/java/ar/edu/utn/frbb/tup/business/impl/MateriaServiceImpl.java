@@ -176,7 +176,7 @@ public class MateriaServiceImpl implements MateriaService {
         else if (materiaDto.getCuatrimestre() <= 0) {
             throw new MateriaServiceException("Falta el cuatrimestre de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        else if (materiaDto.getProfesorId() <= 0) {
+        else if (materiaDto.getProfesorId() < 0) {
             throw new MateriaServiceException("Falta el ID del profesor de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }

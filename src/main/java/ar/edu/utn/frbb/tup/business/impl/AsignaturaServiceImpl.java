@@ -107,13 +107,14 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     public List<Asignatura> getSomeAsignaturaRandomFromAsignaturasDao() throws AsignaturaNotFoundException {
         if (dao.getAllAsignaturas().isEmpty()) {
-            throw new AsignaturaNotFoundException("No hay Asignaturas"); //Lo cual no va a suceder, ya que las Asignaturas estan "Hardcodeadas".
+            throw new AsignaturaNotFoundException("No hay Asignaturas");
         }
         Asignatura asignatura = dao.getAllAsignaturas().get(crearNumeroEntreRangoRandom(0,(dao.getAllAsignaturas().size())-1));
         List<Asignatura> asignaturasConCorrelativas = new ArrayList<>();
-        checkAsignaturaCorrelativas(asignatura, estadoRandomAsignaturaSet(asignaturasConCorrelativas));
+        List<Asignatura> asignaturas = checkAsignaturaCorrelativas(asignatura, estadoRandomAsignaturaSet(asignaturasConCorrelativas));
 
-        for (Asignatura a : asignaturasConCorrelativas) {
+
+        for (Asignatura a : asignaturas) {
             if (a.getEstado().equals(EstadoAsignatura.APROBADA)) {
                 a.setNota(crearNumeroEntreRangoRandom(6,10));
             }
@@ -122,16 +123,16 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             }
         }
 
-        if (asignaturasConCorrelativas.size()>2) {
-            asignaturasConCorrelativas.get(1).cursarAsignatura();
-            asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).cursarAsignatura();
-            asignaturasConCorrelativas.get(1).setNota(crearNumeroEntreRangoRandom(0,5));
-            asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).setNota(crearNumeroEntreRangoRandom(0,5));
+        if (asignaturas.size()>2) {
+            asignaturas.get(1).cursarAsignatura();
+            asignaturas.get((asignaturas.size()) - 1).cursarAsignatura();
+            asignaturas.get(1).setNota(crearNumeroEntreRangoRandom(0,5));
+            asignaturas.get((asignaturas.size()) - 1).setNota(crearNumeroEntreRangoRandom(0,5));
         }
 
         asignatura.setEstado(EstadoAsignatura.NO_CURSADA);
         asignatura.setNota(0);
-        return asignaturasConCorrelativas;
+        return asignaturas;
     }
 
     public List<Asignatura> checkAsignaturaCorrelativas(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas) {
@@ -153,24 +154,22 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     public static List<Asignatura> estadoRandomAsignaturaSet(List<Asignatura> asignaturasConCorrelativas) {
         if (asignaturasConCorrelativas.size()>2) {
-//            int numero1 = crearNumeroEntreRangoRandom(0, 1);
-//            if (numero1 == 1) {
-//                asignaturasConCorrelativas.get(1).cursarAsignatura();
-//                asignaturasConCorrelativas.get(1).setNota(crearNumeroEntreRangoRandom(0, 5));
-//            } else {
-//                asignaturasConCorrelativas.get(1).aprobarAsignatura();
-//                asignaturasConCorrelativas.get(1).setNota(crearNumeroEntreRangoRandom(6, 10));
-//            }
-//            int numero2 = crearNumeroEntreRangoRandom(0, 1);
-//            if (numero2 == 1) {
-//                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).cursarAsignatura();
-//                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).setNota(crearNumeroEntreRangoRandom(0, 5));
-//            } else {
-//                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).aprobarAsignatura();
-//                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).setNota(crearNumeroEntreRangoRandom(6, 10));
-//            }
-            asignaturasConCorrelativas.get(1).cursarAsignatura();
-            asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).cursarAsignatura();
+            int numero1 = crearNumeroEntreRangoRandom(0, 1);
+            if (numero1 == 1) {
+                asignaturasConCorrelativas.get(1).cursarAsignatura();
+                asignaturasConCorrelativas.get(1).setNota(crearNumeroEntreRangoRandom(0, 5));
+            } else {
+                asignaturasConCorrelativas.get(1).aprobarAsignatura();
+                asignaturasConCorrelativas.get(1).setNota(crearNumeroEntreRangoRandom(6, 10));
+            }
+            int numero2 = crearNumeroEntreRangoRandom(0, 1);
+            if (numero2 == 1) {
+                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).cursarAsignatura();
+                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).setNota(crearNumeroEntreRangoRandom(0, 5));
+            } else {
+                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).aprobarAsignatura();
+                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).setNota(crearNumeroEntreRangoRandom(6, 10));
+            }
         }
         return asignaturasConCorrelativas;
     }
