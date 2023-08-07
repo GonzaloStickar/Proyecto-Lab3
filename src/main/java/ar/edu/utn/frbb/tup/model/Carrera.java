@@ -31,7 +31,7 @@ public class Carrera {
 
     public Carrera(String nombre, int cantidadAnios) {
         this.nombre = nombre;
-        this.cantidadCuatrimestres = cantidadAnios;
+        this.cantidadCuatrimestres = cantidadAnios * 3;
     }
 
     public String getNombre() {

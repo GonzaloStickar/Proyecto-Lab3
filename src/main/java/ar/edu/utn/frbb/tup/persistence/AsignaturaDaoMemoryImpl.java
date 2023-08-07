@@ -66,13 +66,8 @@ public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
         repositorioAsignaturas.add(a);
     }
 
-    public void del(Integer materiaId) throws MateriaNotFoundException {
-        for (Asignatura asignatura : repositorioAsignaturas) {
-            if (asignatura.getMateria().getMateriaId() == materiaId) {
-                repositorioAsignaturas.remove(asignatura);
-                break;
-            }
-        }
+    public void del(Materia delMateria) throws MateriaNotFoundException {
+        repositorioAsignaturas.removeIf(asignatura -> asignatura.getMateria().equals(delMateria));
     }
 
     public List<Asignatura> getAllAsignaturas() {

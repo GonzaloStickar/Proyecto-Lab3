@@ -41,6 +41,9 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     @Override
     public Alumno putAsignatura(int idAlumno, int idAsignatura, AsignaturaDto asignaturaDto) throws AlumnoNotFoundException, AsignaturaNotFoundException, AsignaturaServiceException, AlumnoServiceException {
         checkAsignaturaDto(asignaturaDto);
+        if (dao.getAllAsignaturas().isEmpty()) {
+            throw new AsignaturaServiceException("No hay asignaturas", HttpStatus.NOT_FOUND);
+        }
         return aprobarAsignatura(idAlumno, idAsignatura, asignaturaDto.getNota());
     }
 
@@ -191,17 +194,26 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         }
     }
 
-    public void delAsignaturaByMateriaId(Integer materiaId) throws MateriaNotFoundException {
-        if (dao.getAllAsignaturas().size()==0) {
-            throw new MateriaNotFoundException("No hay materias.");
+    public Materia delAsignaturaByMateria(Materia materia) throws MateriaNotFoundException {
+        if (dao.getAllAsignaturas().isEmpty()) {
+            throw new MateriaNotFoundException("No hay materias");
         }
         else {
+            List<Asignatura> asignaturasEliminar = new ArrayList<>();
             for (Asignatura asignatura : dao.getAllAsignaturas()) {
-                if (asignatura.getMateria().getMateriaId() == materiaId) {
-                    dao.del(materiaId);
+                if (asignatura.getMateria().equals(materia)) {
+                    asignaturasEliminar.add(asignatura);
                 }
             }
-            throw new MateriaNotFoundException("No se encontro la materia con el id: "+materiaId);
+            if (!asignaturasEliminar.isEmpty()) {
+                for (Asignatura asignaturaAEliminar : asignaturasEliminar) {
+                    dao.del(asignaturaAEliminar.getMateria());
+                }
+                return materia;
+            }
+            else {
+                throw new MateriaNotFoundException("No se encontró la materia con el id: "+materia.getMateriaId());
+            }
         }
     }
 }

@@ -48,16 +48,23 @@ public class AlumnoServiceImpl implements AlumnoService {
         }
     }
 
-    public Alumno getAlumnoById(Integer idAlumno) throws AlumnoNotFoundException {
+    public Alumno getAlumnoById(int idAlumno) throws AlumnoNotFoundException {
         return dao.findById(idAlumno);
     }
 
-    public Alumno putAlumnoById(Integer idAlumno, AlumnoDto alumnoDto) throws AlumnoNotFoundException, AlumnoServiceException {
+    public Alumno putAlumnoById(int idAlumno, AlumnoDto alumnoDto) throws AlumnoNotFoundException, AlumnoServiceException {
         Alumno a = getAlumnoById(idAlumno);
         checkAlumnoDto(alumnoDto);
+        checkCarreraDtoPut(a, alumnoDto);
         a.setNombre(alumnoDto.getNombre());
         a.setApellido(alumnoDto.getApellido());
         return a;
+    }
+
+    public static void checkCarreraDtoPut(Alumno alumno, AlumnoDto alumnoDto) throws AlumnoServiceException {
+        if (alumno.getNombre().equals(alumnoDto.getNombre()) && alumno.getApellido().equals(alumnoDto.getApellido())) {
+            throw new AlumnoServiceException("Este alumno ya fue actualizado con esos datos", HttpStatus.CONFLICT);
+        }
     }
 
     public void checkAlumnoDto(AlumnoDto alumnoDto) throws AlumnoServiceException {
@@ -69,7 +76,7 @@ public class AlumnoServiceImpl implements AlumnoService {
         }
     }
 
-    public Alumno delAlumnoById(Integer idAlumno) throws AlumnoNotFoundException {
+    public Alumno delAlumnoById(int idAlumno) throws AlumnoNotFoundException {
         if (dao.getAllAlumnos().values().size()==0) {
             throw new AlumnoNotFoundException("No hay alumnos.");
         }

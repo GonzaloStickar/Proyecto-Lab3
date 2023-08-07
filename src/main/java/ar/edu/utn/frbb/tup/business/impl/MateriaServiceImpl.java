@@ -80,8 +80,8 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Override
     public Materia putMateriaById(int idMateria, MateriaDto materiaDto) throws MateriaNotFoundException, MateriaServiceException, ProfesorNotFoundException {
-        checkMateriaDto(materiaDto);
         Materia m = getMateriaById(idMateria);
+        checkMateriaDtoPut(m, materiaDto);
         m.setAnio(materiaDto.getAnio());
         m.setCuatrimestre(materiaDto.getCuatrimestre());
         m.setNombre(materiaDto.getNombre());
@@ -91,13 +91,13 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     public Materia delMateriaById(Integer materiaId) throws MateriaNotFoundException {
-        if (dao.getAllMaterias().values().size()==0) {
+        if (dao.getAllMaterias().isEmpty()) {
             throw new MateriaNotFoundException("No hay materias.");
         }
         else {
             for (Materia materia : dao.getAllMaterias().values()) {
                 if (materia.getMateriaId() == materiaId) {
-                    asignaturaService.delAsignaturaByMateriaId(materia.getMateriaId());
+                    asignaturaService.delAsignaturaByMateria(materia);
                     dao.del(materia);
                     return materia;
                 }
@@ -158,6 +158,12 @@ public class MateriaServiceImpl implements MateriaService {
         }
         else {
             throw new MateriaNotFoundException("No hay materias con el nombre: "+nombre);
+        }
+    }
+
+    public static void checkMateriaDtoPut(Materia materia, MateriaDto materiaDto) throws MateriaServiceException {
+        if (materia.getNombre().equals(materiaDto.getNombre()) && materia.getCuatrimestre()==materiaDto.getCuatrimestre() && materia.getAnio()==materiaDto.getAnio() && materia.getProfesor().getprofesorId()==materiaDto.getProfesorId()) {
+            throw new MateriaServiceException("Esta materia ya fue actualizada con esos datos", HttpStatus.CONFLICT);
         }
     }
 

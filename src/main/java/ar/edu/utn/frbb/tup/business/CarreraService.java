@@ -12,11 +12,11 @@ public interface CarreraService {
 
     Carrera crearCarrera(CarreraDto inputData) throws CarreraServiceException, AsignaturaServiceException;
 
-    Carrera getCarreraById(Integer idCarrera) throws CarreraNotFoundException;
+    Carrera getCarreraById(int idCarrera) throws CarreraNotFoundException;
 
-    Carrera putCarreraById(Integer idCarrera,CarreraDto carreraDto) throws CarreraNotFoundException, CarreraServiceException;
+    Carrera putCarreraById(int idCarrera,CarreraDto carreraDto) throws CarreraNotFoundException, CarreraServiceException;
 
-    Carrera delCarreraById(Integer idCarrera) throws CarreraNotFoundException;
+    Carrera delCarreraById(int idCarrera) throws CarreraNotFoundException;
 
     List<Carrera> getAllCarreras() throws CarreraNotFoundException;
 

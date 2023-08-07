@@ -10,23 +10,12 @@ import java.util.Map;
 @Service
 public class AlumnoDaoMemoryImpl implements AlumnoDao {
 
-    private static Map<Integer, Alumno> repositorioAlumnos = new HashMap<>();
+    private static final Map<Integer, Alumno> repositorioAlumnos = new HashMap<>();
 
     @Override
     public void saveAlumno(Alumno alumno) {
         repositorioAlumnos.put(alumno.getDni(), alumno);
     }
-
-//    @Override
-//    public Alumno findAlumnoByApellido(String apellidoAlumno) throws AlumnoNotFoundException {
-//        for (Alumno a: repositorioAlumnos.values()) {
-//            System.out.println(a.getApellido());
-//            if (a.getApellido().equals(apellidoAlumno)){
-//                return a;
-//            }
-//        }
-//        throw new AlumnoNotFoundException("No se encontró el alumno con apellido: " + apellidoAlumno);
-//    }
 
     @Override
     public Alumno findById(int idAlumno) throws AlumnoNotFoundException {

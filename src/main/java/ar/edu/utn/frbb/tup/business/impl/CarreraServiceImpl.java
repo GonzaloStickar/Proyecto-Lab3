@@ -72,20 +72,21 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public Carrera getCarreraById(Integer idCarrera) throws CarreraNotFoundException {
+    public Carrera getCarreraById(int idCarrera) throws CarreraNotFoundException {
         return dao.findById(idCarrera);
     }
 
     @Override
-    public Carrera putCarreraById(Integer idCarrera, CarreraDto carreraDto) throws CarreraNotFoundException, CarreraServiceException {
+    public Carrera putCarreraById(int idCarrera, CarreraDto carreraDto) throws CarreraNotFoundException, CarreraServiceException {
         checkCarreraDto(carreraDto);
         Carrera c = getCarreraById(idCarrera);
+        checkCarreraDtoPut(c, carreraDto);
         c.setNombre(carreraDto.getNombre());
         c.setCantidadCuatrimestres((carreraDto.getCantidadAnios()*12)/4);
         return c;
     }
 
-    public Carrera delCarreraById(Integer idCarrera) throws CarreraNotFoundException {
+    public Carrera delCarreraById(int idCarrera) throws CarreraNotFoundException {
         if (dao.getAllCarreras().values().size()==0) {
             throw new CarreraNotFoundException("No hay carreras.");
         }
@@ -106,6 +107,12 @@ public class CarreraServiceImpl implements CarreraService {
             throw new CarreraNotFoundException("No hay carreras.");
         }
         return carreras;
+    }
+
+    public static void checkCarreraDtoPut(Carrera carrera, CarreraDto carreraDto) throws CarreraServiceException {
+        if (carrera.getNombre().equals(carreraDto.getNombre()) && (carrera.getCantidadCuatrimestres()/3)==carreraDto.getCantidadAnios()) {
+            throw new CarreraServiceException("Esta carrera ya fue actualizada con esos datos", HttpStatus.CONFLICT);
+        }
     }
 
     public void checkCarreraDto(CarreraDto carreraDto) throws CarreraServiceException {

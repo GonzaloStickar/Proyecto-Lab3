@@ -5,6 +5,7 @@ import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoServiceException;
 import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
+import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class AlumnoController {
     private AlumnoService alumnoService;
 
     @PostMapping("/alumno") //POST: /alumno
-    public ResponseEntity<?> crearAlumno(@RequestBody AlumnoDto alumnoDto) throws AlumnoServiceException, AsignaturaNotFoundException, AlumnoNotFoundException {
+    public ResponseEntity<?> crearAlumno(@RequestBody AlumnoDto alumnoDto) throws AlumnoServiceException, AsignaturaNotFoundException, AlumnoNotFoundException, AsignaturaServiceException {
         return ResponseEntity.status(HttpStatus.CREATED).body(alumnoService.crearAlumno(alumnoDto));
     }
 

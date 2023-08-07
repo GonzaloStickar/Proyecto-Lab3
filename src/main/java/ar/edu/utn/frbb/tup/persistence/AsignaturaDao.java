@@ -12,7 +12,7 @@ public interface AsignaturaDao {
 
     void save(Materia materia);
 
-    void del(Integer materiaId) throws MateriaNotFoundException;
+    void del(Materia delMateria) throws MateriaNotFoundException;
 
     Asignatura getAsignaturaById(int idAsignatura) throws AsignaturaNotFoundException;
 

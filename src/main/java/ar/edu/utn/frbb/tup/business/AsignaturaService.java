@@ -22,7 +22,7 @@ public interface AsignaturaService {
 
     void actualizarAsignaturaByMateria(Materia materia);
 
-    void delAsignaturaByMateriaId(Integer materiaId) throws MateriaNotFoundException;
+    Materia delAsignaturaByMateria(Materia materia) throws MateriaNotFoundException;
 
     List<Asignatura> getSomeAsignaturaRandomFromAsignaturasDao() throws AsignaturaNotFoundException;
 

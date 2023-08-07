@@ -10,9 +10,9 @@ import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaServiceException;
 public interface AlumnoService {
     Alumno crearAlumno(AlumnoDto alumno) throws AlumnoServiceException, AsignaturaNotFoundException, AlumnoNotFoundException, AsignaturaServiceException;
 
-    Alumno getAlumnoById(Integer idAlumno) throws AlumnoNotFoundException;
+    Alumno getAlumnoById(int idAlumno) throws AlumnoNotFoundException;
 
-    Alumno putAlumnoById(Integer idAlumno, AlumnoDto alumnoDto) throws AlumnoNotFoundException, AlumnoServiceException;
+    Alumno putAlumnoById(int idAlumno, AlumnoDto alumnoDto) throws AlumnoNotFoundException, AlumnoServiceException;
 
-    Alumno delAlumnoById(Integer idAlumno) throws AlumnoNotFoundException;
+    Alumno delAlumnoById(int idAlumno) throws AlumnoNotFoundException;
 }
