@@ -55,13 +55,13 @@ public class AlumnoServiceImpl implements AlumnoService {
     public Alumno putAlumnoById(int idAlumno, AlumnoDto alumnoDto) throws AlumnoNotFoundException, AlumnoServiceException {
         Alumno a = getAlumnoById(idAlumno);
         checkAlumnoDto(alumnoDto);
-        checkCarreraDtoPut(a, alumnoDto);
+        checkAlumnoDtoPut(a, alumnoDto);
         a.setNombre(alumnoDto.getNombre());
         a.setApellido(alumnoDto.getApellido());
         return a;
     }
 
-    public static void checkCarreraDtoPut(Alumno alumno, AlumnoDto alumnoDto) throws AlumnoServiceException {
+    public static void checkAlumnoDtoPut(Alumno alumno, AlumnoDto alumnoDto) throws AlumnoServiceException {
         if (alumno.getNombre().equals(alumnoDto.getNombre()) && alumno.getApellido().equals(alumnoDto.getApellido())) {
             throw new AlumnoServiceException("Este alumno ya fue actualizado con esos datos", HttpStatus.CONFLICT);
         }
@@ -73,6 +73,12 @@ public class AlumnoServiceImpl implements AlumnoService {
         }
         else if (!alumnoDto.getApellido().matches(".*[a-zA-Z]+.*")) {
             throw new AlumnoServiceException("Falta el apellido del alumno",HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    public void delMateriaAlumnoByMateriaDel(Materia materia) {
+        for (Alumno alumno : dao.getAllAlumnos().values()) {
+            alumno.getAsignaturas().removeIf(asignatura -> asignatura.getMateria().equals(materia));
         }
     }
 

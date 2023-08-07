@@ -1,5 +1,6 @@
 package ar.edu.utn.frbb.tup.business.impl;
 
+import ar.edu.utn.frbb.tup.business.AlumnoService;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.business.ProfesorService;
@@ -26,6 +27,9 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Autowired
     private AsignaturaService asignaturaService;
+
+    @Autowired
+    private AlumnoService alumnoService;
 
     @Override
     public Materia crearMateria(MateriaDto materiaDto) throws MateriaServiceException, ProfesorNotFoundException {
@@ -98,6 +102,7 @@ public class MateriaServiceImpl implements MateriaService {
             for (Materia materia : dao.getAllMaterias().values()) {
                 if (materia.getMateriaId() == materiaId) {
                     asignaturaService.delAsignaturaByMateria(materia);
+                    alumnoService.delMateriaAlumnoByMateriaDel(materia);
                     dao.del(materia);
                     return materia;
                 }

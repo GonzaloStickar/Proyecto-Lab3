@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class AsignaturaServiceImpl implements AsignaturaService {
@@ -114,8 +112,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         }
         Asignatura asignatura = dao.getAllAsignaturas().get(crearNumeroEntreRangoRandom(0,(dao.getAllAsignaturas().size())-1));
         List<Asignatura> asignaturasConCorrelativas = new ArrayList<>();
-        List<Asignatura> asignaturas = checkAsignaturaCorrelativas(asignatura, estadoRandomAsignaturaSet(asignaturasConCorrelativas));
-
+        List<Asignatura> asignaturas = checkAsignaturaCorrelativas(asignatura,estadoRandomAsignaturaSet(asignaturasConCorrelativas));
 
         for (Asignatura a : asignaturas) {
             if (a.getEstado().equals(EstadoAsignatura.APROBADA)) {
@@ -133,7 +130,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             asignaturas.get((asignaturas.size()) - 1).setNota(crearNumeroEntreRangoRandom(0,5));
         }
 
-        asignatura.setEstado(EstadoAsignatura.NO_CURSADA);
+        asignatura.setEstado(EstadoAsignatura.CURSADA);
         asignatura.setNota(0);
         return asignaturas;
     }
@@ -141,7 +138,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     public List<Asignatura> checkAsignaturaCorrelativas(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas) {
         if (!listaAsignaturasExtraCursadasAprobadas.contains(asignatura)) {
             if (asignatura.getEstado().equals(EstadoAsignatura.NO_CURSADA)) {
-                asignatura.aprobarAsignatura();
+                asignatura.aprobarAsignatura(); //Esto hace aprobar a todas las materias.
             }
             listaAsignaturasExtraCursadasAprobadas.add(asignatura);
         }
@@ -194,7 +191,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         }
     }
 
-    public Materia delAsignaturaByMateria(Materia materia) throws MateriaNotFoundException {
+    public void delAsignaturaByMateria(Materia materia) throws MateriaNotFoundException {
         if (dao.getAllAsignaturas().isEmpty()) {
             throw new MateriaNotFoundException("No hay materias");
         }
@@ -209,7 +206,6 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                 for (Asignatura asignaturaAEliminar : asignaturasEliminar) {
                     dao.del(asignaturaAEliminar.getMateria());
                 }
-                return materia;
             }
             else {
                 throw new MateriaNotFoundException("No se encontró la materia con el id: "+materia.getMateriaId());
