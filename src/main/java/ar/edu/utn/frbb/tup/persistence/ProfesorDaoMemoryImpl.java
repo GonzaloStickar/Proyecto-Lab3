@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class ProfesorDaoMemoryImpl implements ProfesorDao {
 
-    private static List<Profesor> repositorioProfesores = new ArrayList<>();
+    private static final List<Profesor> repositorioProfesores = new ArrayList<>();
 
     @Override
     public void save(Profesor profesor) {
@@ -29,5 +29,20 @@ public class ProfesorDaoMemoryImpl implements ProfesorDao {
 
     public List<Profesor> getAllProfesores() {
         return repositorioProfesores;
+    }
+
+    static {
+        repositorioProfesores.add(new Profesor("Pedro","Sánchez","Lic. COMPUTACIÓN"));
+        repositorioProfesores.add(new Profesor("Pepe","Sierra","Ing. COMPUTACIÓN"));
+        repositorioProfesores.add(new Profesor("Ismael","Montesinos","Lic. COMPUTACIÓN"));
+        repositorioProfesores.add(new Profesor("Vicenta","Peiro","Ing. COMPUTACIÓN"));
+        repositorioProfesores.add(new Profesor("Luciano","Salotto","Lic. COMPUTACIÓN")); //The best! :)
+        repositorioProfesores.add(new Profesor("Manuela","Rivera","Ing. COMPUTACIÓN"));
+        repositorioProfesores.add(new Profesor("Gregorio","Barbero","Lic. COMPUTACIÓN"));
+        int i=0;
+        for (Profesor profesor : repositorioProfesores) {
+            profesor.setprofesorId(i);
+            i++;
+        }
     }
 }
