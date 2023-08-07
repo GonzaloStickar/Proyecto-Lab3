@@ -49,7 +49,7 @@ public class Asignatura {
     }
 
     public void aprobarAsignatura(){
-        this.estado = EstadoAsignatura.CURSADA;
+        this.estado = EstadoAsignatura.APROBADA;
     }
 
     public void aprobarAsignatura(int nota) throws EstadoIncorrectoException {

@@ -165,7 +165,12 @@ public class MateriaServiceImpl implements MateriaService {
         if (!materiaDto.getNombre().matches(".*[a-zA-Z0-9]+.*")) {
             throw new MateriaServiceException("Falta el nombre de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        else if (materiaDto.getAnio() <= 0) {
+        for (Materia materia : dao.getAllMaterias().values()) {
+            if (materia.getNombre().equals(materiaDto.getNombre())) {
+                throw new MateriaServiceException("Ya existe una materia con el mismo nombre.",HttpStatus.CONFLICT);
+            }
+        }
+        if (materiaDto.getAnio() <= 0) {
             throw new MateriaServiceException("Falta el año de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         else if (materiaDto.getCuatrimestre() <= 0) {
