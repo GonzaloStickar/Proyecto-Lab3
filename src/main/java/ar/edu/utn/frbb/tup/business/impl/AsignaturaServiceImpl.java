@@ -6,7 +6,6 @@ import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
-import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDao;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDao;
 import ar.edu.utn.frbb.tup.persistence.exception.*;
@@ -40,26 +39,59 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
 
     @Override
-    public Alumno putAsignatura(int idAlumno, int idAsignatura, AsignaturaDto asignaturaDto) throws AlumnoNotFoundException, AsignaturaNotFoundException, AsignaturaServiceException, AlumnoServiceException, EstadoIncorrectoException {
+    public Alumno putAsignatura(int idAlumno, int idAsignatura, AsignaturaDto asignaturaDto) throws AlumnoNotFoundException, AsignaturaNotFoundException, AsignaturaServiceException, AlumnoServiceException {
         checkAsignaturaDto(asignaturaDto);
         return aprobarAsignatura(idAlumno, idAsignatura, asignaturaDto.getNota());
     }
 
     @Override
-    public Alumno aprobarAsignatura(int idAlumno, int idAsignatura, int nota) throws AlumnoNotFoundException, AsignaturaNotFoundException, AlumnoServiceException, EstadoIncorrectoException {
+    public Alumno aprobarAsignatura(int idAlumno, int idAsignatura, int nota) throws AlumnoNotFoundException, AsignaturaNotFoundException, AlumnoServiceException {
         Alumno alumno = alumnoDao.findById(idAlumno);
         Asignatura asignatura = getAsignatura(idAsignatura);
-
         List<Asignatura> asignaturasAlumnoList = new ArrayList<>(alumno.getAsignaturas());
 
+        List<String> correlatividadesAsignatura = getAsignatura(idAsignatura).getMateria().getCorrelatividades();
+
         if (asignaturasAlumnoList.contains(asignatura)) {
-            for (Asignatura a : asignaturasAlumnoList) {
-                if (a.equals(asignatura)) {
-                    a.aprobarAsignatura(nota);
-                    break;
+            if (!(asignatura.getEstado().equals(EstadoAsignatura.APROBADA))) {
+                if (asignaturasAlumnoList.size()>2) {
+                    for (Asignatura a : asignaturasAlumnoList) {
+                        if (a.equals(asignatura)) {
+                            for (String correlatividad : correlatividadesAsignatura) {
+                                Asignatura asignaturaCorrelativa = dao.getAsignaturaByName(correlatividad);
+                                if (nota>=6) {
+                                    if (asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA)) {
+                                        asignatura.aprobarAsignatura();
+                                    }
+                                    else {
+                                        throw new AlumnoServiceException("La materia " + correlatividad + " debe estar aprobada", HttpStatus.OK);
+                                    }
+                                }
+                                else {
+                                    if (asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.CURSADA)) {
+                                        asignatura.cursarAsignatura();
+                                    } else {
+                                        throw new AlumnoServiceException("La materia " + correlatividad + " debe estar cursada", HttpStatus.OK);
+                                    }
+                                }
+                                asignatura.setNota(nota);
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (nota>=6) {
+                        asignatura.aprobarAsignatura();
+                    }
+                    else {
+                        asignatura.cursarAsignatura();
+                    }
+                    asignatura.setNota(nota);
                 }
             }
-            alumno.setAsignaturas(asignaturasAlumnoList);
+            else {
+                throw new AlumnoServiceException("Esta materia ya está aprobada", HttpStatus.OK);
+            }
             return alumno;
         }
         else {
@@ -68,7 +100,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
 
     public static void checkAsignaturaDto(AsignaturaDto asignaturaDto) throws AsignaturaServiceException {
-        if (asignaturaDto.getNota() <= 0 || asignaturaDto.getNota()>10) {
+        if (asignaturaDto.getNota() < 0 || asignaturaDto.getNota()>10) {
             throw new AsignaturaServiceException("Falta la nota de la asignatura", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
@@ -86,14 +118,11 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                 a.setNota(crearNumeroEntreRangoRandom(6,10));
             }
             if (a.getEstado().equals(EstadoAsignatura.CURSADA)) {
-                a.setNota(crearNumeroEntreRangoRandom(0,5));
+                a.setNota(crearNumeroEntreRangoRandom(4,5));
             }
         }
 
         if (asignaturasConCorrelativas.size()>2) {
-            //Se puede hacer Random, primero voy a probar que no pueda Aprobar la Asignatura (Random "asignada),
-            //para que tire una exception que diga "No puede Aprobar esta materia si no tiene Aprobadas las correlativas
-            //correlativa 1 y correlativa 2 ó correlativa 3 (en caso de que tenga una materia creada por nosotros.
             asignaturasConCorrelativas.get(1).cursarAsignatura();
             asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).cursarAsignatura();
             asignaturasConCorrelativas.get(1).setNota(crearNumeroEntreRangoRandom(0,5));

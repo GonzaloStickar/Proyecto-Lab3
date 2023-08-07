@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.controller;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
+import ar.edu.utn.frbb.tup.model.exception.CorrelatividadException;
 import ar.edu.utn.frbb.tup.model.exception.CorrelatividadesNoAprobadasException;
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.exception.*;
@@ -21,7 +22,7 @@ public class AsignaturaController {
     @PutMapping("/alumno/{idAlumno}/asignatura/{idAsignatura}") //PUT: /alumno/{idAlumno}/asignatura/{idAsignatura}
     public ResponseEntity<Alumno> putEstadoAsignaturaByIdByAlumnoById(@PathVariable int idAlumno,
                                                                       @PathVariable int idAsignatura,
-                                                                      @RequestBody AsignaturaDto asignaturaDto) throws AsignaturaNotFoundException, AsignaturaServiceException, CorrelatividadesNoAprobadasException, EstadoIncorrectoException, AlumnoServiceException, AlumnoNotFoundException {
+                                                                      @RequestBody AsignaturaDto asignaturaDto) throws AsignaturaNotFoundException, AsignaturaServiceException, CorrelatividadesNoAprobadasException, EstadoIncorrectoException, AlumnoServiceException, AlumnoNotFoundException, CorrelatividadException {
         return ResponseEntity.status(HttpStatus.OK).body(asignaturaService.putAsignatura(idAlumno,idAsignatura, asignaturaDto));
     }
 }

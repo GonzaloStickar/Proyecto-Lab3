@@ -15,4 +15,6 @@ public interface AsignaturaDao {
     void del(Integer materiaId) throws MateriaNotFoundException;
 
     Asignatura getAsignaturaById(int idAsignatura) throws AsignaturaNotFoundException;
+
+    Asignatura getAsignaturaByName(String nombreMateria) throws AsignaturaNotFoundException;
 }

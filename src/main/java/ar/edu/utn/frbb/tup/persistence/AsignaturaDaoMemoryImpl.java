@@ -52,6 +52,15 @@ public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
         throw new AsignaturaNotFoundException("No se encontró la asignatura con id " + idMateria);
     }
 
+    public Asignatura getAsignaturaByName(String nombreMateria) throws AsignaturaNotFoundException {
+        for (Asignatura a: repositorioAsignaturas) {
+            if (nombreMateria.equals(a.getMateria().getNombre())) {
+                return a;
+            }
+        }
+        throw new AsignaturaNotFoundException("No se encontró la asignatura con el nombre " + nombreMateria);
+    }
+
     public void save(Materia materia) {
         Asignatura a = new Asignatura(materia);
         repositorioAsignaturas.add(a);

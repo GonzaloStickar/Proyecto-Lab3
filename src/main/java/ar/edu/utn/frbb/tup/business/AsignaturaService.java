@@ -4,6 +4,7 @@ import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
+import ar.edu.utn.frbb.tup.model.exception.CorrelatividadException;
 import ar.edu.utn.frbb.tup.model.exception.CorrelatividadesNoAprobadasException;
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.exception.*;
@@ -15,7 +16,7 @@ public interface AsignaturaService {
 
     void crearAsignatura(Materia materia);
 
-    Alumno putAsignatura(int idAlumno, int idAsignatura, AsignaturaDto asignaturaDto) throws AlumnoNotFoundException, AsignaturaNotFoundException, AsignaturaServiceException, CorrelatividadesNoAprobadasException, AlumnoServiceException, EstadoIncorrectoException;
+    Alumno putAsignatura(int idAlumno, int idAsignatura, AsignaturaDto asignaturaDto) throws AlumnoNotFoundException, AsignaturaNotFoundException, AsignaturaServiceException, CorrelatividadesNoAprobadasException, AlumnoServiceException, EstadoIncorrectoException, CorrelatividadException;
 
     List<Asignatura> getAllAsignaturas();
 
@@ -27,5 +28,5 @@ public interface AsignaturaService {
 
     List<Asignatura> checkAsignaturaCorrelativas(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas);
 
-    Alumno aprobarAsignatura(int idAlumno,int idAsignatura, int nota) throws AlumnoNotFoundException, AsignaturaNotFoundException, AlumnoServiceException, EstadoIncorrectoException, AsignaturaServiceException;
+    Alumno aprobarAsignatura(int idAlumno,int idAsignatura, int nota) throws AlumnoNotFoundException, AsignaturaNotFoundException, AlumnoServiceException, EstadoIncorrectoException, AsignaturaServiceException, CorrelatividadException;
 }
