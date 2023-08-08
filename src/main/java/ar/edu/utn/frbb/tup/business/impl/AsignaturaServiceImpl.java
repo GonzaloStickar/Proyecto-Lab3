@@ -32,83 +32,54 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
 
     @Override
-    public Asignatura getAsignatura(int materiaId) throws AsignaturaNotFoundException {
-        return dao.getAsignaturaById(materiaId);
-    }
-
-    @Override
-    public Alumno putAsignatura(int idAlumno, int idAsignatura, AsignaturaDto asignaturaDto) throws AlumnoNotFoundException, AsignaturaNotFoundException, AsignaturaServiceException, AlumnoServiceException {
+    public Alumno putAsignatura(int idAlumno, int idAsignatura, AsignaturaDto asignaturaDto) throws AlumnoNotFoundException, AsignaturaServiceException, AlumnoServiceException {
         checkAsignaturaDto(asignaturaDto);
         return aprobarAsignatura(idAlumno, idAsignatura, asignaturaDto.getNota());
     }
 
+    public static Asignatura buscarAsignaturaByNameAsignaturasAlumno(Alumno alumno, String nombreAsignaturaABuscar) {
+        for (Asignatura asignatura : alumno.getAsignaturas()) {
+            if (asignatura.getNombreAsignatura().equals(nombreAsignaturaABuscar)) {
+                return asignatura;
+            }
+        }
+        return null;
+    }
+
     @Override
-    public Alumno aprobarAsignatura(int idAlumno, int idAsignatura, int nota) throws AlumnoNotFoundException, AsignaturaNotFoundException, AlumnoServiceException, AsignaturaServiceException {
+    public Alumno aprobarAsignatura(int idAlumno, int idAsignatura, int nota) throws AlumnoNotFoundException, AlumnoServiceException, AsignaturaServiceException {
         Alumno alumno = alumnoDao.findById(idAlumno);
         if (alumno.getAsignaturas().isEmpty()) {
             throw new AsignaturaServiceException("El alumno no tiene asignaturas", HttpStatus.NOT_FOUND);
         }
-        Asignatura asignatura=null;
         for (Asignatura a : alumno.getAsignaturas()) {
-            if (a.getMateria().getMateriaId()==idAsignatura) {
-                asignatura = a;
-                break;
-            }
-        }
-        if (asignatura==null) {
-            throw new AsignaturaNotFoundException("El alumno no tiene registro de la asignatura con id: "+idAsignatura);
-        }
-        else {
-            List<Asignatura> asignaturasAlumnoList = new ArrayList<>(alumno.getAsignaturas());
-
-            List<String> correlatividadesAsignatura = getAsignatura(idAsignatura).getMateria().getCorrelatividades();
-
-            if (asignaturasAlumnoList.contains(asignatura)) {
-                if (!(asignatura.getEstado().equals(EstadoAsignatura.APROBADA))) {
-                    if (asignaturasAlumnoList.size()>2) {
-                        for (Asignatura a : asignaturasAlumnoList) {
-                            if (a.equals(asignatura)) {
-                                for (String correlatividad : correlatividadesAsignatura) {
-                                    Asignatura asignaturaCorrelativa = dao.getAsignaturaByName(correlatividad);
-                                    if (nota>=6) {
-                                        if (asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA)) {
-                                            asignatura.aprobarAsignatura();
-                                        }
-                                        else {
-                                            throw new AlumnoServiceException("La materia " + correlatividad + " debe estar aprobada", HttpStatus.OK);
-                                        }
-                                    }
-                                    else {
-                                        if (asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.CURSADA)) {
-                                            asignatura.cursarAsignatura();
-                                        } else {
-                                            throw new AlumnoServiceException("La materia " + correlatividad + " debe estar cursada", HttpStatus.OK);
-                                        }
-                                    }
-                                    asignatura.setNota(nota);
-                                }
+            if (a.getMateria().getMateriaId() == idAsignatura) {
+                if (a.getEstado().equals(EstadoAsignatura.CURSADA)) {
+                    for (String correlatividad : a.getMateria().getCorrelatividades()) {
+                        Asignatura asignaturaCorrelativa = buscarAsignaturaByNameAsignaturasAlumno(alumno, correlatividad);
+                        if (asignaturaCorrelativa != null) {
+                            if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA)) {
+                                throw new AlumnoServiceException("La materia " + correlatividad + " debe estar aprobada", HttpStatus.OK);
+                            }
+                            if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.CURSADA)) {
+                                throw new AlumnoServiceException("La materia " + correlatividad + " debe estar cursada", HttpStatus.OK);
                             }
                         }
                     }
-                    else {
-                        if (nota>=6) {
-                            asignatura.aprobarAsignatura();
-                        }
-                        else {
-                            asignatura.cursarAsignatura();
-                        }
-                        asignatura.setNota(nota);
-                    }
                 }
                 else {
-                    throw new AlumnoServiceException("Esta materia ya está aprobada", HttpStatus.OK);
+                    throw new AlumnoServiceException("Esta materia ya está aprobada", HttpStatus.BAD_REQUEST);
                 }
-                return alumno;
+            }
+            a.setNota(nota);
+            if (nota>=6) {
+                a.aprobarAsignatura();
             }
             else {
-                throw new AlumnoServiceException("El alumno no tiene registro de la asignatura con id: " + idAsignatura, HttpStatus.NOT_FOUND);
+                a.cursarAsignatura();
             }
         }
+        return alumno;
     }
 
     public static void checkAsignaturaDto(AsignaturaDto asignaturaDto) throws AsignaturaServiceException {

@@ -13,8 +13,6 @@ public interface AsignaturaService {
 
     Asignatura buscarAsignaturaPorNombre(String nombre);
 
-    Asignatura getAsignatura(int materiaId) throws AsignaturaNotFoundException;
-
     void crearAsignatura(Materia materia);
 
     Alumno putAsignatura(int idAlumno, int idAsignatura, AsignaturaDto asignaturaDto) throws AlumnoNotFoundException, AsignaturaNotFoundException, AsignaturaServiceException, AlumnoServiceException, EstadoIncorrectoException;
