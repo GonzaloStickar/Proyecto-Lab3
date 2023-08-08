@@ -130,23 +130,28 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     public List<Asignatura> checkAsignaturaCorrelativas(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas) {
         if (!listaAsignaturasExtraCursadasAprobadas.contains(asignatura)) {
-            boolean todasCorrelativasCursadasAprobadas = true;
-            for (String nombreCorrelativa : asignatura.getMateria().getCorrelatividades()) {
-                if (buscarAsignaturaPorNombre(nombreCorrelativa) == null || buscarAsignaturaPorNombre(nombreCorrelativa).getEstado() != EstadoAsignatura.APROBADA && buscarAsignaturaPorNombre(nombreCorrelativa).getEstado() != EstadoAsignatura.CURSADA) {
-                    todasCorrelativasCursadasAprobadas = false;
-                    break;
+            if (asignatura.getEstado() != EstadoAsignatura.APROBADA) {
+                boolean todasCorrelativasCursadasAprobadas = true;
+                for (String nombreCorrelativa : asignatura.getMateria().getCorrelatividades()) {
+                    Asignatura asignaturaCorrelativa = buscarAsignaturaPorNombre(nombreCorrelativa);
+                    if (asignaturaCorrelativa.getEstado() != EstadoAsignatura.APROBADA) {
+                        todasCorrelativasCursadasAprobadas = false;
+                        break;
+                    }
                 }
-            }
-            if (todasCorrelativasCursadasAprobadas) {
                 int numero = crearNumeroEntreRangoRandom(4, 10);
                 asignatura.setNota(numero);
-                if (numero >= 6) {
-                    asignatura.aprobarAsignatura();
-                } else {
-                    asignatura.cursarAsignatura();
+                if (todasCorrelativasCursadasAprobadas) {
+                    if (numero >= 6) {
+                        asignatura.aprobarAsignatura();
+                    }
+                    else {
+                        asignatura.cursarAsignatura();
+                    }
                 }
-            } else {
-                asignatura.setEstado(EstadoAsignatura.NO_CURSADA);
+                else {
+                    asignatura.cursarAsignatura(); // Cambio aquí, asignatura solo se cursa
+                }
             }
             listaAsignaturasExtraCursadasAprobadas.add(asignatura);
             for (String nombreCorrelativa : asignatura.getMateria().getCorrelatividades()) {
