@@ -112,66 +112,51 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         }
         Asignatura asignatura = dao.getAllAsignaturas().get(crearNumeroEntreRangoRandom(0,(dao.getAllAsignaturas().size())-1));
         List<Asignatura> asignaturasConCorrelativas = new ArrayList<>();
-        List<Asignatura> asignaturas = checkAsignaturaCorrelativas(asignatura,estadoRandomAsignaturaSet(asignaturasConCorrelativas));
-
+        List<Asignatura> asignaturas = new ArrayList<>(checkAsignaturaCorrelativas(asignatura,asignaturasConCorrelativas));
         for (Asignatura a : asignaturas) {
-            if (a.getEstado().equals(EstadoAsignatura.APROBADA)) {
-                a.setNota(crearNumeroEntreRangoRandom(6,10));
-            }
-            if (a.getEstado().equals(EstadoAsignatura.CURSADA)) {
-                a.setNota(crearNumeroEntreRangoRandom(4,5));
-            }
+            checkAsignaturaCorrelativas(a,asignaturasConCorrelativas);
         }
-
-        if (asignaturas.size()>2) {
-            asignaturas.get(1).cursarAsignatura();
-            asignaturas.get((asignaturas.size()) - 1).cursarAsignatura();
-            asignaturas.get(1).setNota(crearNumeroEntreRangoRandom(0,5));
-            asignaturas.get((asignaturas.size()) - 1).setNota(crearNumeroEntreRangoRandom(0,5));
-        }
-
-        asignatura.setEstado(EstadoAsignatura.CURSADA);
-        asignatura.setNota(0);
         return asignaturas;
+    }
+
+    public Asignatura buscarAsignaturaPorNombre(String nombreCorrelativa) {
+        for (Asignatura asignatura : getAllAsignaturas()) {
+            if (asignatura.getMateria().getNombre().equals(nombreCorrelativa)) {
+                return asignatura;
+            }
+        }
+        return null;
     }
 
     public List<Asignatura> checkAsignaturaCorrelativas(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas) {
         if (!listaAsignaturasExtraCursadasAprobadas.contains(asignatura)) {
-            if (asignatura.getEstado().equals(EstadoAsignatura.NO_CURSADA)) {
-                asignatura.aprobarAsignatura(); //Esto hace aprobar a todas las materias.
+            boolean todasCorrelativasCursadasAprobadas = true;
+            for (String nombreCorrelativa : asignatura.getMateria().getCorrelatividades()) {
+                if (buscarAsignaturaPorNombre(nombreCorrelativa) == null || buscarAsignaturaPorNombre(nombreCorrelativa).getEstado() != EstadoAsignatura.APROBADA && buscarAsignaturaPorNombre(nombreCorrelativa).getEstado() != EstadoAsignatura.CURSADA) {
+                    todasCorrelativasCursadasAprobadas = false;
+                    break;
+                }
+            }
+            if (todasCorrelativasCursadasAprobadas) {
+                int numero = crearNumeroEntreRangoRandom(4, 10);
+                asignatura.setNota(numero);
+                if (numero >= 6) {
+                    asignatura.aprobarAsignatura();
+                } else {
+                    asignatura.cursarAsignatura();
+                }
+            } else {
+                asignatura.setEstado(EstadoAsignatura.NO_CURSADA);
             }
             listaAsignaturasExtraCursadasAprobadas.add(asignatura);
-        }
-        for (String nombreCorrelativa : asignatura.getMateria().getCorrelatividades()) {
-            for (Asignatura asignaturaBuscar : getAllAsignaturas()) {
-                if (asignaturaBuscar.getMateria().getNombre().equals(nombreCorrelativa)) {
-                    checkAsignaturaCorrelativas(asignaturaBuscar, listaAsignaturasExtraCursadasAprobadas);
+            for (String nombreCorrelativa : asignatura.getMateria().getCorrelatividades()) {
+                Asignatura correlativa = buscarAsignaturaPorNombre(nombreCorrelativa);
+                if (correlativa != null) {
+                    checkAsignaturaCorrelativas(correlativa, listaAsignaturasExtraCursadasAprobadas);
                 }
             }
         }
         return listaAsignaturasExtraCursadasAprobadas;
-    }
-
-    public static List<Asignatura> estadoRandomAsignaturaSet(List<Asignatura> asignaturasConCorrelativas) {
-        if (asignaturasConCorrelativas.size()>2) {
-            int numero1 = crearNumeroEntreRangoRandom(0, 1);
-            if (numero1 == 1) {
-                asignaturasConCorrelativas.get(1).cursarAsignatura();
-                asignaturasConCorrelativas.get(1).setNota(crearNumeroEntreRangoRandom(0, 5));
-            } else {
-                asignaturasConCorrelativas.get(1).aprobarAsignatura();
-                asignaturasConCorrelativas.get(1).setNota(crearNumeroEntreRangoRandom(6, 10));
-            }
-            int numero2 = crearNumeroEntreRangoRandom(0, 1);
-            if (numero2 == 1) {
-                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).cursarAsignatura();
-                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).setNota(crearNumeroEntreRangoRandom(0, 5));
-            } else {
-                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).aprobarAsignatura();
-                asignaturasConCorrelativas.get((asignaturasConCorrelativas.size()) - 1).setNota(crearNumeroEntreRangoRandom(6, 10));
-            }
-        }
-        return asignaturasConCorrelativas;
     }
 
     public List<Asignatura> getAllAsignaturas() {

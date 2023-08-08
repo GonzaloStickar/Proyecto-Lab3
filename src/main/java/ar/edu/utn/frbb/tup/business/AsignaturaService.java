@@ -12,6 +12,9 @@ import ar.edu.utn.frbb.tup.persistence.exception.*;
 import java.util.List;
 
 public interface AsignaturaService {
+
+    Asignatura buscarAsignaturaPorNombre(String nombre);
+
     Asignatura getAsignatura(int materiaId) throws AsignaturaNotFoundException;
 
     void crearAsignatura(Materia materia);
@@ -27,6 +30,5 @@ public interface AsignaturaService {
     List<Asignatura> getSomeAsignaturaRandomFromAsignaturasDao() throws AsignaturaNotFoundException;
 
     List<Asignatura> checkAsignaturaCorrelativas(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas);
-
     Alumno aprobarAsignatura(int idAlumno,int idAsignatura, int nota) throws AlumnoNotFoundException, AsignaturaNotFoundException, AlumnoServiceException, EstadoIncorrectoException, AsignaturaServiceException, CorrelatividadException;
 }
