@@ -71,12 +71,16 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                     throw new AlumnoServiceException("Esta materia ya está aprobada", HttpStatus.BAD_REQUEST);
                 }
             }
-            a.setNota(nota);
-            if (nota>=6) {
-                a.aprobarAsignatura();
+            if (nota>=0 && nota <=10) {
+                if (nota>=6) {
+                    a.aprobarAsignatura();
+                }
+                else {
+                    a.cursarAsignatura();
+                }
             }
             else {
-                a.cursarAsignatura();
+                throw new AlumnoServiceException("La nota debe ser entre 0 y 10", HttpStatus.BAD_REQUEST);
             }
         }
         return alumno;
@@ -122,12 +126,52 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             }
         }
 
+        for (Asignatura a : asignaturasSinDuplicado) {
+            boolean puedeAprobar=true;
+//            checkAsignaturaCorrelativasV2(a,asignaturasSinDuplicado);
+            if (!(a.getMateria().getCorrelatividades().isEmpty())) {
+                for (String correlativa : a.getMateria().getCorrelatividades()) {
+                    Asignatura asignaturaCorrelativa = buscarAsignaturaPorNombreAsignaturas(correlativa,asignaturasSinDuplicado);
+                    if (asignaturaCorrelativa!=null) {
+                        if (asignaturaCorrelativa.getEstado() != EstadoAsignatura.NO_CURSADA) {
+                            if (!(asignaturaCorrelativa.getMateria().getCorrelatividades().isEmpty())) {
+                                for (String correlativaAsignaturaCorrelativa : asignaturaCorrelativa.getMateria().getCorrelatividades()) {
+                                    Asignatura asignaturaCorrelativaAsignaturaCorrelativa = buscarAsignaturaPorNombreAsignaturas(correlativaAsignaturaCorrelativa, asignaturasSinDuplicado);
+                                    if (asignaturaCorrelativaAsignaturaCorrelativa!=null) {
+                                        if (!(asignaturaCorrelativaAsignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA))) {
+                                            puedeAprobar=false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            puedeAprobar=false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (puedeAprobar) {
+                int numero = crearNumeroEntreRangoRandom(0,1);
+                if (numero==1) {
+                    a.aprobarAsignatura();
+                }
+                else {
+                    a.cursarAsignatura();
+                }
+            }
+            else {
+                a.setEstado(EstadoAsignatura.NO_CURSADA);
+            }
+        }
+
         return new ArrayList<>(asignaturasSinDuplicado);
     }
 
-    public Asignatura buscarAsignaturaPorNombre(String nombreCorrelativa) {
-        for (Asignatura asignatura : dao.getAllAsignaturas()) {
-            if (asignatura.getMateria().getNombre().equals(nombreCorrelativa)) {
+    public Asignatura buscarAsignaturaPorNombreAsignaturas(String correlativaNombre, List<Asignatura> listaAsignaturas) {
+        for (Asignatura asignatura : listaAsignaturas) {
+            if (asignatura.getNombreAsignatura().equals(correlativaNombre)) {
                 return asignatura;
             }
         }
@@ -138,7 +182,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         if (!listaAsignaturasExtraCursadasAprobadas.contains(asignatura)) {
             Asignatura asignaturaCopia = new Asignatura(asignatura.getMateria()); // Crear una copia de la asignatura
 
-            if (asignaturaCopia.getEstado() != EstadoAsignatura.APROBADA) {
+            if (asignaturaCopia.getEstado() != EstadoAsignatura.APROBADA) { // Utilizado para que no pueda aprobar si no tiene las correlativas aprobadas
                 boolean todasCorrelativasCursadasAprobadas = true;
                 for (String nombreCorrelativa : asignaturaCopia.getMateria().getCorrelatividades()) {
                     Asignatura asignaturaCorrelativa = buscarAsignaturaPorNombre(nombreCorrelativa);
@@ -152,15 +196,18 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                     asignaturaCopia.setNota(numero);
                     if (numero >= 6) {
                         asignaturaCopia.aprobarAsignatura();
-                    } else {
+                    }
+                    else {
                         asignaturaCopia.cursarAsignatura();
                     }
-                } else {
+                }
+                else {
                     int numero = crearNumeroEntreRangoRandom(4, 5);
                     asignaturaCopia.setNota(numero);
                     asignaturaCopia.cursarAsignatura();
                 }
             }
+
             listaAsignaturasExtraCursadasAprobadas.add(asignaturaCopia);
             for (String nombreCorrelativa : asignaturaCopia.getMateria().getCorrelatividades()) {
                 Asignatura correlativa = buscarAsignaturaPorNombre(nombreCorrelativa);
@@ -170,6 +217,65 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             }
         }
         return listaAsignaturasExtraCursadasAprobadas;
+    }
+
+//    public List<Asignatura> checkAsignaturaCorrelativasV2(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas) {
+//        if (!listaAsignaturasExtraCursadasAprobadas.contains(asignatura)) {
+//            Asignatura asignaturaCopia = new Asignatura(asignatura.getMateria());
+//            boolean todasAprobadas = true;
+//            for (String nombreCorrelativa : asignaturaCopia.getMateria().getCorrelatividades()) {
+//                Asignatura correlativa = buscarAsignaturaPorNombre(nombreCorrelativa);
+//                if (correlativa.getEstado() != EstadoAsignatura.APROBADA) {
+//                    asignaturaCopia.setEstado(EstadoAsignatura.NO_CURSADA);
+//                    todasAprobadas = false;
+//                    break;
+//                }
+//
+//                for (String nombreCorrelativaAsignatura : correlativa.getMateria().getCorrelatividades()) {
+//                    Asignatura correlativaCorrelativa = buscarAsignaturaPorNombre(nombreCorrelativaAsignatura);
+//                    if (correlativaCorrelativa == null || correlativaCorrelativa.getEstado() != EstadoAsignatura.APROBADA) {
+//                        asignaturaCopia.setEstado(EstadoAsignatura.NO_CURSADA);
+//                        todasAprobadas = false;
+//                        break;
+//                    }
+//                }
+//                if (!todasAprobadas) {
+//                    break;
+//                }
+//            }
+//
+//            if (asignaturaCopia.getEstado() != EstadoAsignatura.APROBADA) {
+//                int numero = crearNumeroEntreRangoRandom(4, 10);
+//                asignaturaCopia.setNota(numero);
+//                if (todasAprobadas) {
+//                    if (numero >= 6) {
+//                        asignaturaCopia.aprobarAsignatura();
+//                    } else {
+//                        asignaturaCopia.cursarAsignatura();
+//                    }
+//                } else {
+//                    asignaturaCopia.setEstado(EstadoAsignatura.NO_CURSADA);
+//                }
+//            }
+//
+//            listaAsignaturasExtraCursadasAprobadas.add(asignaturaCopia);
+//            for (String nombreCorrelativa : asignaturaCopia.getMateria().getCorrelatividades()) {
+//                Asignatura correlativa = buscarAsignaturaPorNombre(nombreCorrelativa);
+//                if (correlativa != null) {
+//                    checkAsignaturaCorrelativas(correlativa, listaAsignaturasExtraCursadasAprobadas);
+//                }
+//            }
+//        }
+//        return listaAsignaturasExtraCursadasAprobadas;
+//    }
+
+    public Asignatura buscarAsignaturaPorNombre(String nombreCorrelativa) {
+        for (Asignatura asignatura : dao.getAllAsignaturas()) {
+            if (asignatura.getMateria().getNombre().equals(nombreCorrelativa)) {
+                return asignatura;
+            }
+        }
+        return null;
     }
 
     public List<Asignatura> getAllAsignaturas() {
