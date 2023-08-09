@@ -27,7 +27,9 @@ public interface AsignaturaService {
 
     List<Asignatura> checkAsignaturaCorrelativas(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas);
 
-//    List<Asignatura> checkAsignaturaCorrelativasV2(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas);
+    void siCorrelativasAprobadasAsignaturaAprobada(Asignatura a, List<Asignatura> asignaturasSinDuplicado);
+
+    void siAprobadasCorrelativasAsignaturaCorrelativas(Asignatura a, List<Asignatura> asignaturasSinDuplicado);
 
     Alumno aprobarAsignatura(int idAlumno, int idAsignatura, int nota) throws AlumnoNotFoundException, AsignaturaNotFoundException, AlumnoServiceException, EstadoIncorrectoException, AsignaturaServiceException;
 }

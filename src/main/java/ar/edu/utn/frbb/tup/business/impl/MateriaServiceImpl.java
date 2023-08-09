@@ -47,9 +47,10 @@ public class MateriaServiceImpl implements MateriaService {
             }
         }
         List<String> materiasListParaCorrelatividades = new ArrayList<>();
+        int cantidadMateriasCorrelativas = crearNumeroEntreRangoRandom(0, (asignaturaService.getAllAsignaturas().size()));
         for (Asignatura asignatura : asignaturaService.getAllAsignaturas()) {
-            int numeroRandomMateriaCorrelativa = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size())-1);
-            if (!(materiasListParaCorrelatividades.contains(asignatura.getMateria().getNombre())) && materiasListParaCorrelatividades.size()<3) {
+            int numeroRandomMateriaCorrelativa = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size()-1));
+            if (!(materiasListParaCorrelatividades.contains(asignatura.getMateria().getNombre())) && materiasListParaCorrelatividades.size()<cantidadMateriasCorrelativas) {
                 if (!(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre().contains(materiaDto.getNombre()))) {
                     if (!(materiasListParaCorrelatividades.contains(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre()))) {
                         materiasListParaCorrelatividades.add(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre());
