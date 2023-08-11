@@ -99,119 +99,83 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         }
 
         Asignatura asignatura = asignaturasTemporal.get(crearNumeroEntreRangoRandom(0, asignaturasTemporal.size() - 1));
-        List<Asignatura> asignaturasConCorrelativas = new ArrayList<>();
-        List<Asignatura> asignaturas = checkAsignaturaCorrelativas(asignatura, asignaturasConCorrelativas);
+        List<Asignatura> asignaturas = checkAsignaturaCorrelativas(asignatura, new ArrayList<>());
 
-        List<Asignatura> asignaturasSinDuplicado = new ArrayList<>();
         for (Asignatura a : asignaturas) {
-            boolean asignaturaDuplicada = false;
-            for (Asignatura asignaturaEnListaSinDuplicado : asignaturasSinDuplicado) {
-                if (a.getMateria().equals(asignaturaEnListaSinDuplicado.getMateria())) {
-                    if (a.getEstado().equals(EstadoAsignatura.APROBADA) && asignaturaEnListaSinDuplicado.getEstado().ordinal() < EstadoAsignatura.APROBADA.ordinal()) {
-                        asignaturaEnListaSinDuplicado.setEstado(EstadoAsignatura.APROBADA);
-                    }
-                    else if (a.getEstado().equals(EstadoAsignatura.CURSADA) && asignaturaEnListaSinDuplicado.getEstado().equals(EstadoAsignatura.NO_CURSADA)) {
-                        asignaturaEnListaSinDuplicado.setEstado(EstadoAsignatura.CURSADA);
-                    }
-                    asignaturaDuplicada = true;
-                    break;
-                }
-            }
-            if (!asignaturaDuplicada) {
-                asignaturasSinDuplicado.add(a);
-            }
+            verificador(a, asignaturas);
         }
 
-        for (Asignatura a : asignaturasSinDuplicado) {
-            siCorrelativasAprobadasAsignaturaAprobada(a, asignaturasSinDuplicado);
-        }
-        for (Asignatura a : asignaturasSinDuplicado) {
-            siAprobadasCorrelativasAsignaturaCorrelativas(a, asignaturasSinDuplicado);
-        }
-
-        return new ArrayList<>(asignaturasSinDuplicado);
+        return new ArrayList<>(asignaturas);
     }
 
-    public void siCorrelativasAprobadasAsignaturaAprobada(Asignatura a, List<Asignatura> asignaturasSinDuplicado) {
-        if (a.getEstado() == EstadoAsignatura.CURSADA || a.getEstado() == EstadoAsignatura.APROBADA) {
-            boolean todasCorrelativasCursadas = true;
-            boolean todasCorrelativasAprobadas = true;
-            for (String correlativa : a.getMateria().getCorrelatividades()) {
-                Asignatura asignaturaCorrelativa = buscarAsignaturaPorNombreAsignaturas(correlativa, asignaturasSinDuplicado);
-                if (asignaturaCorrelativa == null) {
-                    todasCorrelativasCursadas = false;
-                    todasCorrelativasAprobadas = false;
-                    break;
-                }
-                if (asignaturaCorrelativa.getEstado() != EstadoAsignatura.CURSADA) {
-                    todasCorrelativasCursadas = false;
-                }
-                if (asignaturaCorrelativa.getEstado() != EstadoAsignatura.APROBADA) {
-                    todasCorrelativasAprobadas = false;
-                }
-            }
-            if (a.getEstado() == EstadoAsignatura.CURSADA) {
-                if (!todasCorrelativasCursadas) {
-                    a.setNota(0);
-                    a.setEstado(EstadoAsignatura.NO_CURSADA);
-                }
-                else {
-                    a.setNota(crearNumeroEntreRangoRandom(4, 5));
-                }
-            }
-            else if (a.getEstado() == EstadoAsignatura.APROBADA) {
-                if (!todasCorrelativasAprobadas) {
-                    a.setNota(crearNumeroEntreRangoRandom(4, 5));
-                    a.setEstado(EstadoAsignatura.CURSADA);
-                }
-                else {
-                    a.setNota(crearNumeroEntreRangoRandom(6, 10));
-                }
-            }
-        }
-        else {
-            a.setNota(0);
-            a.setEstado(EstadoAsignatura.NO_CURSADA);
-        }
-    }
-
-    public void siAprobadasCorrelativasAsignaturaCorrelativas(Asignatura a, List<Asignatura> asignaturasSinDuplicado) {
-        boolean puedeCursarCorrelativas = true;
-        if (!a.getMateria().getCorrelatividades().isEmpty()) {
-            for (String correlativa : a.getMateria().getCorrelatividades()) {
-                Asignatura asignaturaCorrelativa = buscarAsignaturaPorNombreAsignaturas(correlativa, asignaturasSinDuplicado);
-                if (asignaturaCorrelativa == null || asignaturaCorrelativa.getEstado() != EstadoAsignatura.APROBADA) {
-                    puedeCursarCorrelativas = false;
-                    break;
-                }
-                for (String correlativaCorrelativa : asignaturaCorrelativa.getMateria().getCorrelatividades()) {
-                    Asignatura asignaturaCorrelativaCorrelativa = buscarAsignaturaPorNombreAsignaturas(correlativaCorrelativa, asignaturasSinDuplicado);
-                    if (asignaturaCorrelativaCorrelativa == null || asignaturaCorrelativaCorrelativa.getEstado() != EstadoAsignatura.APROBADA) {
-                        puedeCursarCorrelativas = false;
+    public void verificador(Asignatura asignatura, List<Asignatura> asignaturasSinDuplicado) {
+        if (asignatura.getEstado() == EstadoAsignatura.CURSADA) {
+            boolean todasLasCorrelatividadesDeSusCorrelatividadesAprobadas = true;
+            boolean todasLasCorrelatividadesCursadasOAprobadas = true;
+            if (!(asignatura.getMateria().getCorrelatividades().isEmpty())) {
+                for (String nombreCorrelativaAsignatura : asignatura.getMateria().getCorrelatividades()) {
+                    Asignatura asignaturaCorrelativa = buscarAsignaturaPorNombreAsignaturas(nombreCorrelativaAsignatura, asignaturasSinDuplicado);
+                    if (asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.CURSADA) || asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA)) {
+                        if (!(asignaturaCorrelativa.getMateria().getCorrelatividades().isEmpty())) {
+                            for (String nombreCorrelativaDeCorrelativaDeAsignatura : asignaturaCorrelativa.getMateria().getCorrelatividades()) {
+                                Asignatura asignaturaCorrelativaDeCorrelativaDeAsignatura = buscarAsignaturaPorNombreAsignaturas(nombreCorrelativaDeCorrelativaDeAsignatura, asignaturasSinDuplicado);
+                                if (asignaturaCorrelativaDeCorrelativaDeAsignatura.getEstado() != EstadoAsignatura.APROBADA) {
+                                    todasLasCorrelatividadesDeSusCorrelatividadesAprobadas = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        todasLasCorrelatividadesCursadasOAprobadas=false;
                         break;
                     }
                 }
             }
-        }
-
-        if (a.getEstado() != EstadoAsignatura.APROBADA) {
-            if (puedeCursarCorrelativas) {
-                a.setNota(crearNumeroEntreRangoRandom(4, 5));
-                a.cursarAsignatura();
-            }
-            else {
-                a.setNota(0);
-                a.setEstado(EstadoAsignatura.NO_CURSADA);
+            if (!todasLasCorrelatividadesDeSusCorrelatividadesAprobadas || !todasLasCorrelatividadesCursadasOAprobadas) {
+                asignatura.setNota(0);
+                asignatura.setEstado(EstadoAsignatura.NO_CURSADA);
             }
         }
-        else {
-            a.setNota(crearNumeroEntreRangoRandom(6,10));
+        else if (asignatura.getEstado() == EstadoAsignatura.APROBADA) {
+            boolean todasLasCorrelatividadesDeSusCorrelatividadesAprobadas = true;
+            boolean todasLasCorrelatividadesAprobadas = true;
+            if (!(asignatura.getMateria().getCorrelatividades().isEmpty())) {
+                for (String nombreCorrelativaAsignatura : asignatura.getMateria().getCorrelatividades()) {
+                    Asignatura asignaturaCorrelativa = buscarAsignaturaPorNombreAsignaturas(nombreCorrelativaAsignatura, asignaturasSinDuplicado);
+                    if (asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA)) {
+                        if (!(asignaturaCorrelativa.getMateria().getCorrelatividades().isEmpty())) {
+                            for (String nombreCorrelativaDeCorrelativaDeAsignatura : asignaturaCorrelativa.getMateria().getCorrelatividades()) {
+                                Asignatura asignaturaCorrelativaDeCorrelativaDeAsignatura = buscarAsignaturaPorNombreAsignaturas(nombreCorrelativaDeCorrelativaDeAsignatura, asignaturasSinDuplicado);
+                                if (asignaturaCorrelativaDeCorrelativaDeAsignatura.getEstado() != EstadoAsignatura.APROBADA) {
+                                    todasLasCorrelatividadesDeSusCorrelatividadesAprobadas = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        todasLasCorrelatividadesAprobadas=false;
+                        break;
+                    }
+                }
+            }
+            if (!todasLasCorrelatividadesDeSusCorrelatividadesAprobadas || !todasLasCorrelatividadesAprobadas) {
+                asignatura.setNota(0);
+                asignatura.setEstado(EstadoAsignatura.NO_CURSADA);
+            }
         }
     }
 
     public List<Asignatura> checkAsignaturaCorrelativas(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas) {
-        if (!listaAsignaturasExtraCursadasAprobadas.contains(asignatura)) {
-            Asignatura asignaturaCopia = new Asignatura(asignatura.getMateria());
+        boolean agregarAsignatura = true;
+        Asignatura asignaturaCopia = new Asignatura(asignatura.getMateria());
+        for (Asignatura nombreAsignatura : listaAsignaturasExtraCursadasAprobadas) {
+            if (nombreAsignatura.getNombreAsignatura().equals(asignaturaCopia.getNombreAsignatura())) {
+                agregarAsignatura=false;
+            }
+        }
+        if (agregarAsignatura) {
             setEstadoRandom(asignaturaCopia);
             listaAsignaturasExtraCursadasAprobadas.add(asignaturaCopia);
             for (String nombreCorrelativa : asignaturaCopia.getMateria().getCorrelatividades()) {
@@ -221,6 +185,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                 }
             }
         }
+
         return listaAsignaturasExtraCursadasAprobadas;
     }
 
