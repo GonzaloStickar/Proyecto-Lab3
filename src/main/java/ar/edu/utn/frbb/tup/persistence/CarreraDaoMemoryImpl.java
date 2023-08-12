@@ -33,12 +33,7 @@ public class CarreraDaoMemoryImpl implements CarreraDao {
 
     public void del(Carrera delCarrera) throws CarreraNotFoundException {
         hayCarreras();
-        for (Carrera carrera : repositorioCarrera.values()) {
-            if (carrera.getCodigoCarrera() == delCarrera.getCodigoCarrera()) {
-                repositorioCarrera.values().remove(delCarrera);
-                break;
-            }
-        }
+        repositorioCarrera.remove(delCarrera.getCodigoCarrera());
     }
 
     public Map<Integer, Carrera> getAllCarreras() {
@@ -46,8 +41,6 @@ public class CarreraDaoMemoryImpl implements CarreraDao {
     }
 
     public static void hayCarreras() throws CarreraNotFoundException {
-        if (repositorioCarrera.values().size()==0) {
-            throw new CarreraNotFoundException("No hay carreras.");
-        }
+        if (repositorioCarrera.values().size()==0) throw new CarreraNotFoundException("No hay carreras.");
     }
 }

@@ -43,8 +43,6 @@ public class MateriaDaoMemoryImpl implements MateriaDao {
     }
 
     public static void hayMaterias() throws MateriaNotFoundException {
-        if (repositorioMateria.values().size()==0) {
-            throw new MateriaNotFoundException("No hay materias.");
+        if (repositorioMateria.values().size()==0) throw new MateriaNotFoundException("No hay materias.");
         }
-    }
 }

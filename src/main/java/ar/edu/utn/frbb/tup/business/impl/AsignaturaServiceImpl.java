@@ -28,7 +28,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         if (!(materia.getProfesor().getMateriasDictadas().contains(materia.getNombre()))) {
             materia.getProfesor().agregarMateriaDictada(materia.getNombre());
         }
-        dao.save(materia);
+        dao.save(new Asignatura(materia));
     }
 
     @Override

@@ -41,12 +41,11 @@ public class AlumnoDaoMemoryImpl implements AlumnoDao {
 
     public void del(Alumno delAlumno) throws AlumnoNotFoundException {
         hayAlumnos();
-        for (Alumno alumno : repositorioAlumnos.values()) {
+        for (Alumno alumno : repositorioAlumnos.values())
             if (alumno.getId() == delAlumno.getId()) {
                 repositorioAlumnos.values().remove(delAlumno);
                 break;
             }
-        }
     }
 
     public Map<Integer, Alumno> getAllAlumnos() {
