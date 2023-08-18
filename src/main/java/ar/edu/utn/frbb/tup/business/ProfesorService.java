@@ -5,6 +5,4 @@ import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
 
 public interface ProfesorService {
     Profesor buscarProfesor(int id) throws ProfesorNotFoundException;
-
-    void crearProfesor();
 }
