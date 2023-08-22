@@ -72,10 +72,7 @@ public class MateriaServiceImpl implements MateriaService {
     @Override
     public List<Materia> getAllMaterias() throws MateriaNotFoundException {
         List<Materia> materias = new ArrayList<>(dao.getAllMaterias().values());
-        if (materias.size()==0) {
-            throw new MateriaNotFoundException("No hay materias.");
-        }
-        return materias;
+        if (materias.size()==0) throw new MateriaNotFoundException("No hay materias."); else return materias;
     }
 
     @Override
@@ -154,42 +151,19 @@ public class MateriaServiceImpl implements MateriaService {
     public List<Materia> getAllMateriasByName(String nombre) throws MateriaNotFoundException {
         List<Materia> materias = getAllMaterias();
         List<Materia> materiasEncontradas = new ArrayList<>();
-        for (Materia materia : materias) {
-            if (materia.getNombre().toLowerCase().contains(nombre.toLowerCase())) {
-                materiasEncontradas.add(materia);
-            }
-        }
-        if (materiasEncontradas.size()>0) {
-            return materiasEncontradas;
-        }
-        else {
-            throw new MateriaNotFoundException("No hay materias con el nombre: "+nombre);
-        }
+        for (Materia materia : materias) if (materia.getNombre().toLowerCase().contains(nombre.toLowerCase())) materiasEncontradas.add(materia);
+        if (materiasEncontradas.size()>0) return materiasEncontradas; else throw new MateriaNotFoundException("No hay materias con el nombre: "+nombre);
     }
 
     public static void checkMateriaDtoPut(Materia materia, MateriaDto materiaDto) throws MateriaServiceException {
-        if (materia.getNombre().equals(materiaDto.getNombre()) && materia.getCuatrimestre()==materiaDto.getCuatrimestre() && materia.getAnio()==materiaDto.getAnio() && materia.getProfesor().getprofesorId()==materiaDto.getProfesorId()) {
-            throw new MateriaServiceException("Esta materia ya fue actualizada con esos datos", HttpStatus.CONFLICT);
-        }
+        if (materia.getNombre().equals(materiaDto.getNombre()) && materia.getCuatrimestre()==materiaDto.getCuatrimestre() && materia.getAnio()==materiaDto.getAnio() && materia.getProfesor().getprofesorId()==materiaDto.getProfesorId()) throw new MateriaServiceException("Esta materia ya fue actualizada con esos datos", HttpStatus.CONFLICT);
     }
 
     public void checkMateriaDto(MateriaDto materiaDto) throws MateriaServiceException {
-        if (!materiaDto.getNombre().matches(".*[a-zA-Z0-9]+.*")) {
-            throw new MateriaServiceException("Falta el nombre de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        for (Materia materia : dao.getAllMaterias().values()) {
-            if (materia.getNombre().equals(materiaDto.getNombre())) {
-                throw new MateriaServiceException("Ya existe una materia con el mismo nombre.",HttpStatus.CONFLICT);
-            }
-        }
-        if (materiaDto.getAnio() <= 0) {
-            throw new MateriaServiceException("Falta el año de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        else if (materiaDto.getCuatrimestre() <= 0) {
-            throw new MateriaServiceException("Falta el cuatrimestre de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        else if (materiaDto.getProfesorId() < 0) {
-            throw new MateriaServiceException("Falta el ID del profesor de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+        if (!materiaDto.getNombre().matches(".*[a-zA-Z0-9]+.*")) throw new MateriaServiceException("Falta el nombre de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
+        for (Materia materia : dao.getAllMaterias().values()) if (materia.getNombre().equals(materiaDto.getNombre())) throw new MateriaServiceException("Ya existe una materia con el mismo nombre.",HttpStatus.CONFLICT);
+        if (materiaDto.getAnio() <= 0) throw new MateriaServiceException("Falta el año de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
+        else if (materiaDto.getCuatrimestre() <= 0) throw new MateriaServiceException("Falta el cuatrimestre de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
+        else if (materiaDto.getProfesorId() < 0) throw new MateriaServiceException("Falta el ID del profesor de la materia", HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
