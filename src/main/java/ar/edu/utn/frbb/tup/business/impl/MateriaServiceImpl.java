@@ -110,21 +110,11 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     public List<Materia> getAllMateriasSortedBy(String order) throws MateriaServiceException, MateriaNotFoundException {
-        switch (order) {
-            case "nombre_asc" -> {
-                return getAllMateriasSortedByNameAsc();
-            }
-            case "nombre_desc" -> {
-                return getAllMateriasSortedByNameDesc();
-            }
-            case "codigo_asc" -> {
-                return getAllMateriasSortedByCodAsc();
-            }
-            case "codigo_desc" -> {
-                return getAllMateriasSortedByCodDesc();
-            }
-            default -> throw new MateriaServiceException("Especifique el orden.", HttpStatus.BAD_REQUEST);
-            }
+        if ("nombre_asc".equals(order)) return getAllMateriasSortedByNameAsc();
+        else if ("nombre_desc".equals(order)) return getAllMateriasSortedByNameDesc();
+        else if ("codigo_asc".equals(order)) return getAllMateriasSortedByCodAsc();
+        else if ("codigo_desc".equals(order)) return getAllMateriasSortedByCodDesc();
+        else throw new MateriaServiceException("Especifique el orden.", HttpStatus.BAD_REQUEST);
     }
 
     public List<Materia> getAllMateriasSortedByNameAsc() throws MateriaNotFoundException {

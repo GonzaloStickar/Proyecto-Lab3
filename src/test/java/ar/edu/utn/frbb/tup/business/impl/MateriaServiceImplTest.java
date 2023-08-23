@@ -26,8 +26,8 @@ class MateriaServiceImplTest {
     @Mock
     private MateriaDao dao;
 
-    @InjectMocks
-    private MateriaServiceImpl materiaService;
+    @Mock
+    private MateriaServiceImpl materiaServiceImpl;
 
     @Mock
     private ProfesorService profesorService;
@@ -37,6 +37,9 @@ class MateriaServiceImplTest {
 
     @Mock
     private AlumnoService alumnoService;
+
+    @InjectMocks
+    private MateriaServiceImpl materiaService;
 
     @BeforeEach
     void setUp() {
@@ -50,6 +53,8 @@ class MateriaServiceImplTest {
 
     @Test
     void crearNumeroEntreRangoRandom() {
+        int numero = MateriaServiceImpl.crearNumeroEntreRangoRandom(1, 3);
+        assertTrue(numero>=1 && numero<=3);
     }
 
     @Test
@@ -78,32 +83,74 @@ class MateriaServiceImplTest {
     }
 
     @Test
-    void delMateriaById() {
+    void delMateriaById() throws MateriaNotFoundException {
+        if (dao.getAllMaterias().isEmpty()) {
+            assertThrows(MateriaNotFoundException.class, () -> materiaService.delMateriaById(1));
+        }
+        else {
+            List<Materia> materias = new ArrayList<>();
+            Materia materia1 = new Materia("Physics",1,1,new Profesor("p","g","L"));
+            Materia materia2 = new Materia("Math",1,1,new Profesor("p","g","L"));
+            Materia materia3 = new Materia("Chemistry",1,1,new Profesor("p","g","L"));
+            materia1.setMateriaId(1);
+            materia2.setMateriaId(2);
+            materia3.setMateriaId(3);
+            materias.add(materia1);
+            materias.add(materia2);
+            materias.add(materia3);
+
+            //Simular que están las materias en el dao
+            Map<Integer, Materia> materiasMap = new HashMap<>();
+            for (Materia materia : materias) {
+                materiasMap.put(materia.getMateriaId(), materia);
+            }
+            Mockito.when(dao.getAllMaterias()).thenReturn(materiasMap);
+
+
+
+        }
     }
 
     @Test
-    void getAllMateriasSortedBy() throws MateriaNotFoundException {
-//        String order = "nombre_asc";
-//        Mockito.when(materiaService.getAllMateriasByName("nombre_asc")).thenReturn(getAllMateriasSortedByNameAsc());
-//        Mockito.when(materiaService.getAllMateriasByName("nombre_desc")).thenReturn(materiasEncontradas);
-//        Mockito.when(materiaService.getAllMateriasByName("codigo_asc")).thenReturn(materiasEncontradas);
-//        Mockito.when(materiaService.getAllMateriasByName("codigo_desc")).thenReturn(materiasEncontradas);
-//
-//        switch (order) {
-//            case "nombre_asc" -> {
-//                return getAllMateriasSortedByNameAsc();
-//            }
-//            case "nombre_desc" -> {
-//                return getAllMateriasSortedByNameDesc();
-//            }
-//            case "codigo_asc" -> {
-//                return getAllMateriasSortedByCodAsc();
-//            }
-//            case "codigo_desc" -> {
-//                return getAllMateriasSortedByCodDesc();
-//            }
-//            default -> throw new MateriaServiceException("Especifique el orden.", HttpStatus.BAD_REQUEST);
-//        }
+    void getAllMateriasSortedBy() throws MateriaNotFoundException, MateriaServiceException {
+        List<Materia> materias = new ArrayList<>();
+        Materia materia1 = new Materia("Physics",1,1,new Profesor("p","g","L"));
+        Materia materia2 = new Materia("Math",1,1,new Profesor("p","g","L"));
+        Materia materia3 = new Materia("Chemistry",1,1,new Profesor("p","g","L"));
+        materia1.setMateriaId(1);
+        materia2.setMateriaId(2);
+        materia3.setMateriaId(3);
+        materias.add(materia1);
+        materias.add(materia2);
+        materias.add(materia3);
+
+        Map<Integer, Materia> materiasMap = new HashMap<>();
+        for (Materia materia : materias) {
+            materiasMap.put(materia.getMateriaId(), materia);
+        }
+        Mockito.when(dao.getAllMaterias()).thenReturn(materiasMap);
+
+        List<Materia> sortedByNombreAsc = new ArrayList<>(materias);
+        sortedByNombreAsc.sort(Comparator.comparing(Materia::getNombre));
+        List<Materia> resultNombreAsc = materiaService.getAllMateriasSortedBy("nombre_asc");
+        assertEquals(sortedByNombreAsc, resultNombreAsc);
+
+        List<Materia> sortedByNombreDesc = new ArrayList<>(materias);
+        sortedByNombreDesc.sort(Comparator.comparing(Materia::getNombre).reversed());
+        List<Materia> resultNombreDesc = materiaService.getAllMateriasSortedBy("nombre_desc");
+        assertEquals(sortedByNombreDesc, resultNombreDesc);
+
+        List<Materia> sortedByCodAsc = new ArrayList<>(materias);
+        sortedByCodAsc.sort(Comparator.comparing(Materia::getMateriaId));
+        List<Materia> resultCodAsc = materiaService.getAllMateriasSortedBy("codigo_asc");
+        assertEquals(sortedByCodAsc, resultCodAsc);
+
+        List<Materia> sortedByCodDesc = new ArrayList<>(materias);
+        sortedByCodDesc.sort(Comparator.comparing(Materia::getMateriaId).reversed());
+        List<Materia> resultCodDesc = materiaService.getAllMateriasSortedBy("codigo_desc");
+        assertEquals(sortedByCodDesc, resultCodDesc);
+
+        assertThrows(MateriaServiceException.class, () -> materiaService.getAllMateriasSortedBy("orden_erroneo"));
     }
 
     @Test

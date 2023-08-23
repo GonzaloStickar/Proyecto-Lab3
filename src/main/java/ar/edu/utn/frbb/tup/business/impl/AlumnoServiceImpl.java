@@ -79,6 +79,9 @@ public class AlumnoServiceImpl implements AlumnoService {
     public void delMateriaAlumnoByMateriaDel(Materia materia) {
         for (Alumno alumno : dao.getAllAlumnos().values()) {
             alumno.getAsignaturas().removeIf(asignatura -> asignatura.getMateria().equals(materia));
+            for (Asignatura asignatura : alumno.getAsignaturas()) {
+                asignatura.getMateria().getCorrelatividades().remove(materia.getNombre());
+            }
         }
     }
 
