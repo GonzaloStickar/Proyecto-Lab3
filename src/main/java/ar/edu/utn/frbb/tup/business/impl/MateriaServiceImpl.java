@@ -41,23 +41,10 @@ public class MateriaServiceImpl implements MateriaService {
         m.setProfesor(profesorService.buscarProfesor(materiaDto.getProfesorId()));
         Random random = new Random();
         m.setMateriaId(random.nextInt());
-        for (Materia materia : dao.getAllMaterias().values()) {
-            if (materia.getMateriaId() == m.getMateriaId()) {
-                throw new MateriaServiceException("Ya existe una Materia con el mismo id.", HttpStatus.CONFLICT);
-            }
-        }
+        for (Materia materia : dao.getAllMaterias().values()) {if (materia.getMateriaId() == m.getMateriaId()) {throw new MateriaServiceException("Ya existe una Materia con el mismo id.", HttpStatus.CONFLICT);}}
         List<String> materiasListParaCorrelatividades = new ArrayList<>();
         int cantidadMateriasCorrelativas = crearNumeroEntreRangoRandom(0, (asignaturaService.getAllAsignaturas().size()));
-        for (Asignatura asignatura : asignaturaService.getAllAsignaturas()) {
-            int numeroRandomMateriaCorrelativa = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size()-1));
-            if (!(materiasListParaCorrelatividades.contains(asignatura.getMateria().getNombre())) && materiasListParaCorrelatividades.size()<cantidadMateriasCorrelativas) {
-                if (!(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre().contains(materiaDto.getNombre()))) {
-                    if (!(materiasListParaCorrelatividades.contains(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre()))) {
-                        materiasListParaCorrelatividades.add(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre());
-                    }
-                }
-            }
-        }
+        for (Asignatura asignatura : asignaturaService.getAllAsignaturas()) {int numeroRandomMateriaCorrelativa = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size()-1));if (!(materiasListParaCorrelatividades.contains(asignatura.getMateria().getNombre())) && materiasListParaCorrelatividades.size()<cantidadMateriasCorrelativas) if (!(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre().contains(materiaDto.getNombre()))) if (!(materiasListParaCorrelatividades.contains(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre()))) materiasListParaCorrelatividades.add(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre());}
         m.setCorrelatividades(materiasListParaCorrelatividades);
         asignaturaService.crearAsignatura(m);
         dao.save(m);

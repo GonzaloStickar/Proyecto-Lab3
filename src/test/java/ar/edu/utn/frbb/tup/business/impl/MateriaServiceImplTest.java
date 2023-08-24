@@ -3,19 +3,20 @@ package ar.edu.utn.frbb.tup.business.impl;
 import ar.edu.utn.frbb.tup.business.AlumnoService;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.business.ProfesorService;
+import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.MateriaDao;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.MateriaServiceException;
+import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 
 import java.util.*;
 
@@ -47,8 +48,50 @@ class MateriaServiceImplTest {
     }
 
     @Test
-    void crearMateria() {
+    void crearMateria() throws ProfesorNotFoundException, MateriaServiceException {
+        Materia materia = new Materia("materia 1", 1, 1, new Profesor("pepe", "gonzalez", "Lic. Computación"));
+        materia.setMateriaId(1);
 
+        MateriaDto materiaDto = new MateriaDto();
+        materiaDto.setNombre("pepe1");
+        materiaDto.setAnio(1);
+        materiaDto.setCuatrimestre(1);
+        materiaDto.setProfesorId(1);
+
+        materia.setNombre(materiaDto.getNombre());
+        materia.setAnio(materiaDto.getAnio());
+        materia.setCuatrimestre(materiaDto.getCuatrimestre());
+        materia.setProfesor(new Profesor("pepito", "gonzalez", "lic Computación"));
+
+        materiaService.crearMateria(materiaDto);
+
+        Materia mat = new Materia();
+        Random random = new Random();
+        mat.setMateriaId(random.nextInt());
+        mat.setMateriaId(1);
+        dao.save(mat);
+        for (Materia m : dao.getAllMaterias().values()) {
+            if (m.getMateriaId() == materia.getMateriaId()) {
+                assertThrows(MateriaNotFoundException.class, () -> materiaService.crearMateria(new MateriaDto()));
+            }
+        }
+        List<String> materiasListParaCorrelatividades = new ArrayList<>();
+        int cantidadMateriasCorrelativas = MateriaServiceImpl.crearNumeroEntreRangoRandom(0, (asignaturaService.getAllAsignaturas().size()));
+        for (Asignatura asignatura : asignaturaService.getAllAsignaturas()) {
+            MateriaServiceImpl.crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size()-1));
+            int numeroRandomMateriaCorrelativa = MateriaServiceImpl.crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size()-1));
+            if (!(materiasListParaCorrelatividades.contains(asignatura.getMateria().getNombre())) && materiasListParaCorrelatividades.size()<cantidadMateriasCorrelativas) {
+                if (!(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre().contains(materiaDto.getNombre()))) {
+                    if (!(materiasListParaCorrelatividades.contains(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre()))) {
+                        materiasListParaCorrelatividades.add(asignaturaService.getAllAsignaturas().get(numeroRandomMateriaCorrelativa).getMateria().getNombre());
+                    }
+                }
+            }
+        }
+        materia.setCorrelatividades(materiasListParaCorrelatividades);
+        asignaturaService.crearAsignatura(materia);
+        dao.save(materia);
+        assertEquals(materia.getNombre(),materiaDto.getNombre());
     }
 
     @Test
@@ -79,7 +122,27 @@ class MateriaServiceImplTest {
     }
 
     @Test
-    void putMateriaById() {
+    void putMateriaById() throws MateriaNotFoundException, ProfesorNotFoundException, MateriaServiceException {
+        Materia materia = new Materia("materia 1", 1, 1, new Profesor("pepe", "gonzalez", "Lic. Computación"));
+        materia.setMateriaId(123);
+        dao.save(materia);
+        Mockito.when(dao.findById(123)).thenReturn(materia);
+        Materia materiaEncontrada = materiaService.getMateriaById(123);
+        assertEquals(materia, materiaEncontrada);
+
+        MateriaDto materiaDto = new MateriaDto();
+        materiaDto.setAnio(1);
+        materiaDto.setProfesorId(1);
+        materiaDto.setCuatrimestre(1);
+        materiaDto.setNombre("pepe");
+
+        materia.setAnio(materiaDto.getAnio());
+        materia.setCuatrimestre(materiaDto.getCuatrimestre());
+        materia.setNombre(materiaDto.getNombre());
+        materia.setProfesor(new Profesor("pepito", "gonzalez", "lic Computación"));
+        materiaService.putMateriaById(materia.getMateriaId(), materiaDto);
+        Mockito.verify(asignaturaService).actualizarAsignaturaByMateria(materia);
+        assertEquals(materia.getNombre(), materiaDto.getNombre());
     }
 
     @Test
@@ -87,28 +150,32 @@ class MateriaServiceImplTest {
         if (dao.getAllMaterias().isEmpty()) {
             assertThrows(MateriaNotFoundException.class, () -> materiaService.delMateriaById(1));
         }
-        else {
-            List<Materia> materias = new ArrayList<>();
-            Materia materia1 = new Materia("Physics",1,1,new Profesor("p","g","L"));
-            Materia materia2 = new Materia("Math",1,1,new Profesor("p","g","L"));
-            Materia materia3 = new Materia("Chemistry",1,1,new Profesor("p","g","L"));
-            materia1.setMateriaId(1);
-            materia2.setMateriaId(2);
-            materia3.setMateriaId(3);
-            materias.add(materia1);
-            materias.add(materia2);
-            materias.add(materia3);
+        List<Materia> materias = new ArrayList<>();
+        Materia materia1 = new Materia("Physics",1,1,new Profesor("p","g","L"));
+        Materia materia2 = new Materia("Math",1,1,new Profesor("p","g","L"));
+        Materia materia3 = new Materia("Chemistry",1,1,new Profesor("p","g","L"));
+        materia1.setMateriaId(1);
+        materia2.setMateriaId(2);
+        materia3.setMateriaId(3);
+        materias.add(materia1);
+        materias.add(materia2);
+        materias.add(materia3);
 
-            //Simular que están las materias en el dao
-            Map<Integer, Materia> materiasMap = new HashMap<>();
-            for (Materia materia : materias) {
-                materiasMap.put(materia.getMateriaId(), materia);
-            }
-            Mockito.when(dao.getAllMaterias()).thenReturn(materiasMap);
-
-
-
+        //Simular que están las materias en el dao
+        Map<Integer, Materia> materiasMap = new HashMap<>();
+        for (Materia materia : materias) {
+            materiasMap.put(materia.getMateriaId(), materia);
         }
+        Mockito.when(dao.getAllMaterias()).thenReturn(materiasMap);
+
+        Materia materiaElegida = materias.get(1);
+        Materia materiaEliminada = materiaService.delMateriaById(materiaElegida.getMateriaId());
+
+        Mockito.verify(asignaturaService).delAsignaturaByMateria(materiaElegida);
+        Mockito.verify(alumnoService).delMateriaAlumnoByMateriaDel(materiaElegida);
+        Mockito.verify(dao).del(materiaElegida);
+        assertEquals(materiaElegida, materiaEliminada);
+        assertThrows(MateriaNotFoundException.class, () -> materiaService.delMateriaById(4));
     }
 
     @Test
