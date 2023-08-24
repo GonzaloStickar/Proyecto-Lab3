@@ -30,40 +30,29 @@ public class CarreraServiceImpl implements CarreraService {
     public Carrera crearCarrera(CarreraDto carreraDto) throws CarreraServiceException, AsignaturaServiceException {
         Carrera c = new Carrera();
         checkCarreraDto(carreraDto);
-        if (carreraDto.getCodigoCarrera() <= 0) {
-            throw new CarreraServiceException("Falta el código de la carrera", HttpStatus.UNPROCESSABLE_ENTITY);
+        if (carreraDto.getCodigoCarrera() <= 0) throw new CarreraServiceException("Falta el código de la carrera", HttpStatus.UNPROCESSABLE_ENTITY);
+        if (asignaturaService.getAllAsignaturas().isEmpty()) throw new AsignaturaServiceException("No hay asignaturas", HttpStatus.NOT_FOUND);
+        c.setNombre(carreraDto.getNombre());
+        c.setCantidadCuatrimestres((carreraDto.getCantidadAnios()*12)/4);
+        c.setCodigoCarrera(carreraDto.getCodigoCarrera());
+
+        int numero = crearNumeroEntreRangoRandom(0,asignaturaService.getAllAsignaturas().size());
+        ArrayList<Integer> numerosRandom = new ArrayList<>();
+        while (numerosRandom.size()<numero) {
+            int numeroNuevo = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size())-1);
+            if (!numerosRandom.contains(numeroNuevo)) {
+                numerosRandom.add(numeroNuevo);
+            }
         }
-        else {
-            c.setNombre(carreraDto.getNombre());
-            c.setCantidadCuatrimestres((carreraDto.getCantidadAnios()*12)/4);
-            c.setCodigoCarrera(carreraDto.getCodigoCarrera());
-
-            if (asignaturaService.getAllAsignaturas().isEmpty()) {
-                throw new AsignaturaServiceException("No hay asignaturas", HttpStatus.NOT_FOUND);
-            }
-
-            int numero = crearNumeroEntreRangoRandom(0,asignaturaService.getAllAsignaturas().size());
-            ArrayList<Integer> numerosRandom = new ArrayList<>();
-            while (numerosRandom.size()<numero) {
-                int numeroNuevo = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size())-1);
-                if (!numerosRandom.contains(numeroNuevo)) {
-                    numerosRandom.add(numeroNuevo);
-                }
-            }
-            List<Materia> materias = new ArrayList<>();
-            for (Integer n : numerosRandom) {
-                materias.add(asignaturaService.getAllAsignaturas().get(n).getMateria());
-            }
-
-            c.setMateriasList(materias);
-            for (Carrera carrera : dao.getAllCarreras().values()) {
-                if (carrera.getCodigoCarrera() == c.getCodigoCarrera()) {
-                    throw new CarreraServiceException("Ya existe una Carrera con el mismo código.", HttpStatus.CONFLICT);
-                }
-            }
-            dao.save(c);
-            return c;
+        List<Materia> materias = new ArrayList<>();
+        for (Integer n : numerosRandom) {
+            materias.add(asignaturaService.getAllAsignaturas().get(n).getMateria());
         }
+
+        c.setMateriasList(materias);
+        for (Carrera carrera : dao.getAllCarreras().values()) if (carrera.getCodigoCarrera() == c.getCodigoCarrera()) throw new CarreraServiceException("Ya existe una Carrera con el mismo código.", HttpStatus.CONFLICT);
+        dao.save(c);
+        return c;
     }
 
     public static int crearNumeroEntreRangoRandom(int min, int max) {
@@ -103,24 +92,16 @@ public class CarreraServiceImpl implements CarreraService {
 
     public List<Carrera> getAllCarreras() throws CarreraNotFoundException {
         List<Carrera> carreras = new ArrayList<>(dao.getAllCarreras().values());
-        if (carreras.size()==0) {
-            throw new CarreraNotFoundException("No hay carreras.");
-        }
-        return carreras;
+        if (carreras.size()==0) throw new CarreraNotFoundException("No hay carreras.");else return carreras;
     }
 
     public static void checkCarreraDtoPut(Carrera carrera, CarreraDto carreraDto) throws CarreraServiceException {
-        if (carrera.getNombre().equals(carreraDto.getNombre()) && (carrera.getCantidadCuatrimestres()/3)==carreraDto.getCantidadAnios()) {
-            throw new CarreraServiceException("Esta carrera ya fue actualizada con esos datos", HttpStatus.CONFLICT);
-        }
+        if (carrera.getNombre().equals(carreraDto.getNombre()) && (carrera.getCantidadCuatrimestres()/3)==carreraDto.getCantidadAnios()) throw new CarreraServiceException("Esta carrera ya fue actualizada con esos datos", HttpStatus.CONFLICT);
     }
 
     public void checkCarreraDto(CarreraDto carreraDto) throws CarreraServiceException {
-        if (!carreraDto.getNombre().matches(".*[a-zA-Z]+.*")) {
-            throw new CarreraServiceException("Falta el nombre de la carrera",HttpStatus.UNPROCESSABLE_ENTITY);
-        }  //Código = 422 - La petición estaba bien formada pero no se pudo seguir debido a errores de semántica.
-        else if (carreraDto.getCantidadAnios() <= 0) {
-            throw new CarreraServiceException("Falta el año de la carrera",HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+        if (!carreraDto.getNombre().matches(".*[a-zA-Z]+.*")) throw new CarreraServiceException("Falta el nombre de la carrera",HttpStatus.UNPROCESSABLE_ENTITY);
+        else if (carreraDto.getCantidadAnios() <= 0) throw new CarreraServiceException("Falta el año de la carrera",HttpStatus.UNPROCESSABLE_ENTITY);
+        //Código = 422 - La petición estaba bien formada pero no se pudo seguir debido a errores de semántica.
     }
 }
