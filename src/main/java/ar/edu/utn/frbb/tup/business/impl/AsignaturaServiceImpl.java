@@ -194,12 +194,8 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         if (numero>0) {
             int nota = crearNumeroEntreRangoRandom(4,10);
             asignatura.setNota(nota);
-            if (numero==1) {
-                asignatura.aprobarAsignatura();
-            }
-            else {
-                asignatura.cursarAsignatura();
-            }
+            if (numero==1 || nota>=6) {
+                asignatura.aprobarAsignatura();} else {asignatura.cursarAsignatura();}
         }
         else {
             asignatura.setNota(0);
@@ -237,7 +233,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     public void actualizarAsignaturaByMateria(Materia materia) {
         for (Asignatura asignatura : getAllAsignaturas()) {
             if (asignatura.getMateria().equals(materia)) {
-                  asignatura.setMateria(materia);
+                asignatura.setMateria(materia);
             }
         }
     }
