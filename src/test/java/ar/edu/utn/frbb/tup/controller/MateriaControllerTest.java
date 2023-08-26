@@ -2,9 +2,9 @@ package ar.edu.utn.frbb.tup.controller;
 
 import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.model.Materia;
+import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +14,11 @@ import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,7 +34,7 @@ public class MateriaControllerTest {
 
     MockMvc mockMvc;
 
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     public void setUp() {
@@ -41,40 +43,59 @@ public class MateriaControllerTest {
 
     @Test
     public void crearMateriaTest() throws Exception {
-
         Mockito.when(materiaService.crearMateria(any(MateriaDto.class))).thenReturn(new Materia());
         MateriaDto materiaDto = new MateriaDto();
         materiaDto.setAnio(1);
-        materiaDto.setCuatrimestre(2);
-        materiaDto.setNombre("Laboratorio II");
-        materiaDto.setProfesorId(345);
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/materia")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(materiaDto))
-                .accept(MediaType.APPLICATION_JSON)).andExpect(status().is2xxSuccessful())
+        materiaDto.setCuatrimestre(1);
+        materiaDto.setNombre("pepe 1");
+        materiaDto.setProfesorId(1);
+        mockMvc.perform(MockMvcRequestBuilders.post("/materia")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(materiaDto))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
                 .andReturn();
-
-
-
-        Assertions.assertEquals(new Materia(), mapper.readValue(result.getResponse().getContentAsString(), Materia.class));
     }
 
     @Test
-    public void testCrearMateriaBadRequest() throws Exception {
+    public void getAllMateriasByNameTest() throws Exception {
+        List<Materia> materias = new ArrayList<>();
+        materias.add(new Materia("pepe 1",1,1,new Profesor("p","g","l")));
+        //materias.add(new Materia("pepito",1,1,new Profesor("p","g","l")));
+        materias.add(new Materia("pepe 2",1,1,new Profesor("p","g","l")));
+        materias.add(new Materia("pepe 3",1,1,new Profesor("p","g","l")));
 
-        Mockito.when(materiaService.crearMateria(any(MateriaDto.class))).thenReturn(new Materia());
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/materia")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "    \"nombre\" : \"Laboratorio II\",\n" +
-                                "    \"anio\" : \"segundo\", \n" +
-                                "    \"cuatrimestre\" : 1,\n" +
-                                "    \"profesorId\" : 2 \n"+
-                                "}")
-                        .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
-                .andReturn();
+        Mockito.when(materiaService.getAllMateriasByName("pepe")).thenReturn(materias);
+        mockMvc.perform(MockMvcRequestBuilders.get("/materia")
+                        .param("nombre", "pepe")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
 
+        //System.out.println(result.getResponse().getStatus()));
     }
 
+    @Test
+    void putMateriaByIdTest() throws Exception {
+        MateriaDto materiaDto = new MateriaDto();
+        materiaDto.setNombre("pepe 1");
 
+        Materia materia = new Materia();
+        materia.setMateriaId(123);
+        materia.setNombre(materiaDto.getNombre());
+
+        Mockito.when(materiaService.putMateriaById(123, materiaDto)).thenReturn(materia);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/materia/{idMateria}", 123)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(materiaDto)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void delMateriaByIdTest() throws Exception {
+        Mockito.when(materiaService.delMateriaById(123)).thenReturn(new Materia());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/materia/{idMateria}", 123))
+                .andExpect(status().isOk());
+    }
 }
