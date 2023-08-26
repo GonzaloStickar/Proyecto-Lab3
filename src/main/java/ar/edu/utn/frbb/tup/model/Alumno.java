@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Alumno {
-    private Integer id;
+    private int id;
 
     private String nombre;
     private String apellido;

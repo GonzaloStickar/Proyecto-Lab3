@@ -25,9 +25,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     private AsignaturaDao dao;
 
     public void crearAsignatura(Materia materia) {
-        if (!(materia.getProfesor().getMateriasDictadas().contains(materia.getNombre()))) {
-            materia.getProfesor().agregarMateriaDictada(materia.getNombre());
-        }
+        if (!(materia.getProfesor().getMateriasDictadas().contains(materia.getNombre()))) {materia.getProfesor().agregarMateriaDictada(materia.getNombre());}
         dao.save(new Asignatura(materia));
     }
 
@@ -40,18 +38,13 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     public static Asignatura buscarAsignaturaByNameAsignaturasAlumno(Alumno alumno, String nombreAsignaturaABuscar) {
         for (Asignatura asignatura : alumno.getAsignaturas()) {
             if (asignatura.getNombreAsignatura().equals(nombreAsignaturaABuscar)) {
-                return asignatura;
-            }
-        }
-        return null;
+                return asignatura;}}return null;
     }
 
     @Override
     public Alumno aprobarAsignatura(int idAlumno, int idAsignatura, int nota) throws AlumnoNotFoundException, AlumnoServiceException, AsignaturaServiceException {
         Alumno alumno = alumnoDao.findById(idAlumno);
-        if (alumno.getAsignaturas().isEmpty()) {
-            throw new AsignaturaServiceException("El alumno no tiene asignaturas", HttpStatus.NOT_FOUND);
-        }
+        if (alumno.getAsignaturas().isEmpty()) {throw new AsignaturaServiceException("El alumno no tiene asignaturas", HttpStatus.NOT_FOUND);}
         for (Asignatura a : alumno.getAsignaturas()) {
             if (a.getMateria().getMateriaId() == idAsignatura) {
                 if (a.getEstado() != (EstadoAsignatura.APROBADA)) {
@@ -62,10 +55,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                                 throw new AlumnoServiceException("La materia " + correlativa + " debe estar aprobada", HttpStatus.OK);
                             }
                             if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.CURSADA)) {
-                                throw new AlumnoServiceException("La materia " + correlativa + " debe estar cursada", HttpStatus.OK);
-                            }
-                        }
-                    }
+                                throw new AlumnoServiceException("La materia " + correlativa + " debe estar cursada", HttpStatus.OK);}}}
                 }
                 else {
                     throw new AlumnoServiceException("Esta materia ya está aprobada", HttpStatus.BAD_REQUEST);
@@ -83,9 +73,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
 
     public static void checkAsignaturaDto(AsignaturaDto asignaturaDto) throws AsignaturaServiceException {
-        if (asignaturaDto.getNota() < 0 || asignaturaDto.getNota()>10) {
-            throw new AsignaturaServiceException("Falta la nota de la asignatura, debe estar entre 0 y 10", HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+        if (asignaturaDto.getNota() < 0 || asignaturaDto.getNota()>10) {throw new AsignaturaServiceException("Falta la nota de la asignatura, debe estar entre 0 y 10", HttpStatus.UNPROCESSABLE_ENTITY);}
     }
 
     public List<Asignatura> getSomeAsignaturaRandomFromAsignaturasDao() throws AsignaturaNotFoundException {
@@ -119,11 +107,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                         if (!(asignaturaCorrelativa.getMateria().getCorrelatividades().isEmpty())) {
                             for (String nombreCorrelativaDeCorrelativaDeAsignatura : asignaturaCorrelativa.getMateria().getCorrelatividades()) {
                                 Asignatura asignaturaCorrelativaDeCorrelativaDeAsignatura = buscarAsignaturaPorNombreAsignaturas(nombreCorrelativaDeCorrelativaDeAsignatura, asignaturasSinDuplicado);
-                                if (asignaturaCorrelativaDeCorrelativaDeAsignatura.getEstado() != EstadoAsignatura.APROBADA) {
-                                    todasLasCorrelatividadesDeSusCorrelatividadesAprobadas = false;
-                                    break;
-                                }
-                            }
+                                if (asignaturaCorrelativaDeCorrelativaDeAsignatura.getEstado() != EstadoAsignatura.APROBADA) {todasLasCorrelatividadesDeSusCorrelatividadesAprobadas = false;break;}}
                         }
                     }
                     else {
@@ -147,10 +131,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                         if (!(asignaturaCorrelativa.getMateria().getCorrelatividades().isEmpty())) {
                             for (String nombreCorrelativaDeCorrelativaDeAsignatura : asignaturaCorrelativa.getMateria().getCorrelatividades()) {
                                 Asignatura asignaturaCorrelativaDeCorrelativaDeAsignatura = buscarAsignaturaPorNombreAsignaturas(nombreCorrelativaDeCorrelativaDeAsignatura, asignaturasSinDuplicado);
-                                if (asignaturaCorrelativaDeCorrelativaDeAsignatura.getEstado() != EstadoAsignatura.APROBADA) {
-                                    todasLasCorrelatividadesDeSusCorrelatividadesAprobadas = false;
-                                    break;
-                                }
+                                if (asignaturaCorrelativaDeCorrelativaDeAsignatura.getEstado() != EstadoAsignatura.APROBADA) {todasLasCorrelatividadesDeSusCorrelatividadesAprobadas = false;break;}
                             }
                         }
                     }
@@ -170,19 +151,13 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     public List<Asignatura> checkAsignaturaCorrelativas(Asignatura asignatura, List<Asignatura> listaAsignaturasExtraCursadasAprobadas) {
         boolean agregarAsignatura = true;
         Asignatura asignaturaCopia = new Asignatura(asignatura.getMateria());
-        for (Asignatura nombreAsignatura : listaAsignaturasExtraCursadasAprobadas) {
-            if (nombreAsignatura.getNombreAsignatura().equals(asignaturaCopia.getNombreAsignatura())) {
-                agregarAsignatura=false;
-            }
-        }
+        for (Asignatura nombreAsignatura : listaAsignaturasExtraCursadasAprobadas) {if (nombreAsignatura.getNombreAsignatura().equals(asignaturaCopia.getNombreAsignatura())) {agregarAsignatura=false;}}
         if (agregarAsignatura) {
             setEstadoRandom(asignaturaCopia);
             listaAsignaturasExtraCursadasAprobadas.add(asignaturaCopia);
             for (String nombreCorrelativa : asignaturaCopia.getMateria().getCorrelatividades()) {
                 Asignatura correlativa = buscarAsignaturaPorNombre(nombreCorrelativa);
-                if (correlativa != null) {
-                    checkAsignaturaCorrelativas(correlativa, listaAsignaturasExtraCursadasAprobadas);
-                }
+                if (correlativa != null) {checkAsignaturaCorrelativas(correlativa, listaAsignaturasExtraCursadasAprobadas);}
             }
         }
 
@@ -195,12 +170,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             int nota = crearNumeroEntreRangoRandom(4,10);
             asignatura.setNota(nota);
             if (numero==1 || nota>=6) {
-                asignatura.aprobarAsignatura();} else {asignatura.cursarAsignatura();}
-        }
-        else {
-            asignatura.setNota(0);
-            asignatura.setEstado(EstadoAsignatura.NO_CURSADA);
-        }
+                asignatura.aprobarAsignatura();asignatura.setNota(crearNumeroEntreRangoRandom(4,10));} else {asignatura.cursarAsignatura();}} else {asignatura.setNota(0);asignatura.setEstado(EstadoAsignatura.NO_CURSADA);}
     }
 
     public Asignatura buscarAsignaturaPorNombreAsignaturas(String correlativaNombre, List<Asignatura> listaAsignaturas) {
@@ -215,9 +185,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     public Asignatura buscarAsignaturaPorNombre(String nombreCorrelativa) {
         for (Asignatura asignatura : dao.getAllAsignaturas()) {
             if (asignatura.getMateria().getNombre().equals(nombreCorrelativa)) {
-                return asignatura;
-            }
-        }
+                return asignatura;}}
         return null;
     }
 
@@ -231,11 +199,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
 
     public void actualizarAsignaturaByMateria(Materia materia) {
-        for (Asignatura asignatura : getAllAsignaturas()) {
-            if (asignatura.getMateria().equals(materia)) {
-                asignatura.setMateria(materia);
-            }
-        }
+        for (Asignatura asignatura : getAllAsignaturas()) {if (asignatura.getMateria().equals(materia)) {asignatura.setMateria(materia);}}
     }
 
     public void delAsignaturaByMateria(Materia materia) throws MateriaNotFoundException {

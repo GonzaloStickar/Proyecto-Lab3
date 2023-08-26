@@ -45,26 +45,23 @@ class AsignaturaServiceImplTest {
 
     @Test
     void putAsignatura() throws AsignaturaServiceException, AlumnoServiceException, AlumnoNotFoundException {
+        Alumno alumno = new Alumno("Speedy", "Gonzales", 1);
+
         List<Asignatura> asignaturas = new ArrayList<>();
         Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
-        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
-        asignatura1.getMateria().setMateriaId(1);
-        asignatura2.getMateria().setMateriaId(2);
-        asignatura1.setEstado(EstadoAsignatura.NO_CURSADA);
-        asignatura2.setEstado(EstadoAsignatura.NO_CURSADA);
-        asignaturas.add(asignatura1);
-        asignaturas.add(asignatura2);
 
-        List<Asignatura> asignaturasList = new ArrayList<>(asignaturas);
-        Alumno alumno = new Alumno("Speedy", "Gonzales",1);
-        alumno.setId(123);
-        alumno.setAsignaturas(asignaturasList);
+        asignatura1.getMateria().setMateriaId(1);
+        asignatura1.setEstado(EstadoAsignatura.CURSADA);
+
+        asignaturas.add(asignatura1);
 
         AsignaturaDto asignaturaDto = new AsignaturaDto();
         asignaturaDto.setNota(6);
 
-//        asignaturaService.aprobarAsignatura(alumno.getId(),asignatura2.getMateria().getMateriaId(), asignaturaDto.getNota());
-//        Mockito.verify(asignaturaService).aprobarAsignatura(alumno.getId(), asignatura2.getMateria().getMateriaId(), asignaturaDto.getNota());
+        alumno.setAsignaturas(asignaturas);
+        Mockito.when(alumnoDao.findById(123)).thenReturn(alumno);
+
+        asignaturaService.putAsignatura(123,1, asignaturaDto);
     }
 
     @Test
@@ -83,24 +80,35 @@ class AsignaturaServiceImplTest {
 
     @Test
     void aprobarAsignatura() throws AlumnoNotFoundException, AsignaturaServiceException, AlumnoServiceException {
+        Alumno alumno = new Alumno("Speedy", "Gonzales", 1);
+
         List<Asignatura> asignaturas = new ArrayList<>();
         Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura3 = new Asignatura(new Materia("pepe 3",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura4 = new Asignatura(new Materia("pepe 4",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+
         asignatura1.getMateria().setMateriaId(1);
-        asignatura1.setEstado(EstadoAsignatura.NO_CURSADA);
+        asignatura1.setEstado(EstadoAsignatura.CURSADA);
+        asignatura2.getMateria().setMateriaId(2);
+        asignatura2.getMateria().getCorrelatividades().add("pepe 1");
+        asignatura2.setEstado(EstadoAsignatura.NO_CURSADA);
+        asignatura3.setEstado(EstadoAsignatura.APROBADA);
+        asignatura3.getMateria().setMateriaId(3);
+        asignatura4.setEstado(EstadoAsignatura.NO_CURSADA);
+        asignatura4.getMateria().setMateriaId(4);
+
         asignaturas.add(asignatura1);
+        asignaturas.add(asignatura2);
+        asignaturas.add(asignatura3);
 
-        List<Asignatura> asignaturasList = new ArrayList<>(asignaturas);
-        Alumno al = new Alumno("Speedy", "Gonzales",1);
-        al.setId(123);
-        al.setAsignaturas(asignaturasList);
+        alumno.setAsignaturas(asignaturas);
+        Mockito.when(alumnoDao.findById(123)).thenReturn(alumno);
 
-        AsignaturaDto asignaturaDto = new AsignaturaDto();
-        asignaturaDto.setNota(6);
-
-        Mockito.when(alumnoDao.findById(123)).thenReturn(al);
-        Alumno alumno = alumnoDao.findById(123);
-
-        asignaturaService.aprobarAsignatura(alumno.getId(),asignatura1.getMateria().getMateriaId(),asignaturaDto.getNota());
+        assertThrows(AlumnoServiceException.class, () -> asignaturaService.aprobarAsignatura(123, 2, 5));
+        assertThrows(AlumnoServiceException.class, () -> asignaturaService.aprobarAsignatura(123, 2, 6));
+        assertThrows(AlumnoServiceException.class, () -> asignaturaService.aprobarAsignatura(123, 3, 8));
+        asignaturaService.aprobarAsignatura(123,4, 8);
     }
 
     @Test
@@ -158,6 +166,8 @@ class AsignaturaServiceImplTest {
         Asignatura asignatura6 = new Asignatura(new Materia("pepe 6",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
         Asignatura asignatura7 = new Asignatura(new Materia("pepe 7",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
         Asignatura asignatura8 = new Asignatura(new Materia("pepe 8",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura9 = new Asignatura(new Materia("pepe 9",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura10 = new Asignatura(new Materia("pepe 10",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
         Asignatura asignatura13 = new Asignatura(new Materia("pepe 13",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
         Asignatura asignatura14 = new Asignatura(new Materia("pepe 14",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
         Asignatura asignatura15 = new Asignatura(new Materia("pepe 15",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
@@ -184,6 +194,10 @@ class AsignaturaServiceImplTest {
         asignatura15.setEstado(EstadoAsignatura.APROBADA);
         asignatura16.getMateria().getCorrelatividades().add("pepe 15");
 
+        asignatura10.getMateria().getCorrelatividades().add("pepe 9");
+        asignatura9.setEstado(EstadoAsignatura.NO_CURSADA);
+        asignatura10.setEstado(EstadoAsignatura.CURSADA);
+
         asignaturasSinDuplicado.add(asignatura1);
         asignaturasSinDuplicado.add(asignatura2);
         asignaturasSinDuplicado.add(asignatura3);
@@ -196,6 +210,8 @@ class AsignaturaServiceImplTest {
         asignaturasSinDuplicado.add(asignatura14);
         asignaturasSinDuplicado.add(asignatura15);
         asignaturasSinDuplicado.add(asignatura16);
+        asignaturasSinDuplicado.add(asignatura9);
+        asignaturasSinDuplicado.add(asignatura10);
 
         for (Asignatura asignatura : asignaturasSinDuplicado) {
             asignaturaService.verificador(asignatura, asignaturasSinDuplicado);
@@ -222,6 +238,7 @@ class AsignaturaServiceImplTest {
             int nota = AsignaturaServiceImpl.crearNumeroEntreRangoRandom(4,10);
             asignatura.setNota(nota);
             if (numero==1 || nota>=6) {
+                asignatura.setNota(AsignaturaServiceImpl.crearNumeroEntreRangoRandom(4,10));
                 asignatura.aprobarAsignatura();
             }
             else {
@@ -254,10 +271,23 @@ class AsignaturaServiceImplTest {
 
     @Test
     void buscarAsignaturaPorNombre() {
-        Materia materia = new Materia("pepe 1",1,1, new Profesor("pepe", "gonzalez", "Lic. Computación"));
-        Asignatura asignatura = new Asignatura(materia);
-        asignaturaService.buscarAsignaturaPorNombre(materia.getNombre());
-        assertEquals(materia.getNombre(), asignatura.getMateria().getNombre());
+        List<Asignatura> asignaturas = new ArrayList<>();
+        Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura3 = new Asignatura(new Materia("pepe 3",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        asignatura1.getMateria().setMateriaId(1);
+        asignatura2.getMateria().setMateriaId(2);
+        asignatura3.getMateria().setMateriaId(3);
+        asignaturas.add(asignatura1);
+        asignaturas.add(asignatura2);
+        asignaturas.add(asignatura3);
+
+        List<Asignatura> asignaturasList = new ArrayList<>(asignaturas);
+        asignaturaService.buscarAsignaturaPorNombre(asignatura1.getMateria().getNombre());
+        assertEquals(asignatura1.getMateria().getNombre(), asignaturasList.get(0).getMateria().getNombre());
+        Mockito.when(dao.getAllAsignaturas()).thenReturn(asignaturasList);
+        asignaturaService.buscarAsignaturaPorNombre(asignatura1.getMateria().getNombre());
+        assertEquals(asignatura1.getMateria().getNombre(), asignaturasList.get(0).getMateria().getNombre());
     }
 
     @Test
