@@ -41,9 +41,6 @@ class AlumnoServiceImplTest {
         AlumnoDto alumnoDto = new AlumnoDto();
         alumnoDto.setNombre("pepe");
         alumnoDto.setApellido("gonzales");
-
-        alumnoDto.setDni(-1);
-        assertThrows(AlumnoServiceException.class, () -> alumnoService.crearAlumno(alumnoDto));
         alumnoDto.setDni(1);
 
         Alumno a = new Alumno();

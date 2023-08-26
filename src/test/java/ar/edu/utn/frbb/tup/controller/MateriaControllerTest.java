@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -75,6 +76,52 @@ public class MateriaControllerTest {
     }
 
     @Test
+    public void getMateriaByOrderTest() throws Exception {
+        List<Materia> materias = new ArrayList<>();
+        materias.add(new Materia("A",1,1,new Profesor("p","g","l")));
+        materias.add(new Materia("B",1,1,new Profesor("p","g","l")));
+        materias.add(new Materia("C",1,1,new Profesor("p","g","l")));
+
+        materias.sort(Comparator.comparing(Materia::getNombre));
+        Mockito.when(materiaService.getAllMateriasSortedByNameAsc()).thenReturn(materias);
+        mockMvc.perform(MockMvcRequestBuilders.get("/materias")
+                        .param("order", "nombre_asc")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        materias.sort(Comparator.comparing(Materia::getNombre).reversed());
+        Mockito.when(materiaService.getAllMateriasSortedByNameAsc()).thenReturn(materias);
+        mockMvc.perform(MockMvcRequestBuilders.get("/materias")
+                        .param("order", "nombre_desc")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        materias.sort(Comparator.comparing(Materia::getMateriaId));
+        Mockito.when(materiaService.getAllMateriasSortedByNameAsc()).thenReturn(materias);
+        mockMvc.perform(MockMvcRequestBuilders.get("/materias")
+                        .param("order", "codigo_asc")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        materias.sort(Comparator.comparing(Materia::getMateriaId).reversed());
+        Mockito.when(materiaService.getAllMateriasSortedByNameAsc()).thenReturn(materias);
+        mockMvc.perform(MockMvcRequestBuilders.get("/materias")
+                        .param("order", "codigo_desc")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getMateriaByIdTest() throws Exception {
+        Materia materia = new Materia("pepe 1",1,1,new Profesor("p","g","l"));
+        materia.setMateriaId(123);
+        Mockito.when(materiaService.getMateriaById(123)).thenReturn(materia);
+        mockMvc.perform(MockMvcRequestBuilders.get("/materia/{idMateria}", 123)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void putMateriaByIdTest() throws Exception {
         MateriaDto materiaDto = new MateriaDto();
         materiaDto.setNombre("pepe 1");
@@ -93,7 +140,9 @@ public class MateriaControllerTest {
 
     @Test
     void delMateriaByIdTest() throws Exception {
-        Mockito.when(materiaService.delMateriaById(123)).thenReturn(new Materia());
+        Materia materia = new Materia("pepe 1",1,1,new Profesor("p","g","l"));
+        materia.setMateriaId(123);
+        Mockito.when(materiaService.delMateriaById(123)).thenReturn(materia);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/materia/{idMateria}", 123))
                 .andExpect(status().isOk());

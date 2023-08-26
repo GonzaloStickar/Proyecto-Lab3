@@ -1,80 +1,73 @@
 package ar.edu.utn.frbb.tup.model;
 
-import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 
 public class AsignaturaTest {
 
-    private static Materia materia;
-    private static Profesor profesor;
-
-    @BeforeAll
-    public static void setUp(){
-        profesor = new Profesor("Luciano", "Salotto", "Lic.");
-        materia = new Materia("Laboratorio 3", 2, 1, profesor);
+    @Test
+    void getNota() {
+        Asignatura asignatura = new Asignatura(new Materia());
+        asignatura.setNota(8);
+        assertEquals(8, asignatura.getNota());
     }
 
     @Test
-    public void testNewAsignatura() {
-        Asignatura asignatura = new Asignatura(materia);
-        assertEquals(EstadoAsignatura.NO_CURSADA, asignatura.getEstado());
-        //assertFalse(asignatura.getNota().isPresent());
-        assertEquals("Laboratorio 3", asignatura.getNombreAsignatura());
+    void setNota() {
+        Asignatura asignatura = new Asignatura(new Materia());
+        asignatura.setNota(8);
+        assertEquals(8, asignatura.getNota());
     }
 
     @Test
-    public void testAprobarAasignatura(){
+    void getEstado() {
+        Asignatura asignatura = new Asignatura(new Materia());
+        asignatura.setEstado(EstadoAsignatura.APROBADA);
+        assertEquals(EstadoAsignatura.APROBADA, asignatura.getEstado());
+    }
+
+    @Test
+    void setEstado() {
+        Asignatura asignatura = new Asignatura(new Materia());
+        asignatura.setEstado(EstadoAsignatura.APROBADA);
+        assertEquals(EstadoAsignatura.APROBADA, asignatura.getEstado());
+    }
+
+    @Test
+    void getNombreAsignatura() {
+        Asignatura asignatura = new Asignatura(new Materia());
+        asignatura.getMateria().setNombre("pepe 1");
+        assertEquals("pepe 1", asignatura.getNombreAsignatura());
+    }
+
+    @Test
+    void getMateria() {
+        Materia materia = new Materia("pepe 1", 1,1, new Profesor("p","g","l"));
         Asignatura asignatura = new Asignatura(materia);
-        assertEquals(EstadoAsignatura.NO_CURSADA,asignatura.getEstado());
+        assertEquals(materia, asignatura.getMateria());
+    }
+
+    @Test
+    void setMateria() {
+        Materia materia1 = new Materia("pepe 1", 1,1, new Profesor("p","g","l"));
+        Materia materia2 = new Materia("pepe 2", 1,1, new Profesor("p","g","l"));
+        Asignatura asignatura = new Asignatura(materia1);
+        asignatura.setMateria(materia2);
+        assertEquals(materia2, asignatura.getMateria());
+    }
+
+    @Test
+    void cursarAsignatura() {
+        Asignatura asignatura = new Asignatura(new Materia());
         asignatura.cursarAsignatura();
-        try {
-            asignatura.aprobarAsignatura(8);
-            assertEquals(EstadoAsignatura.APROBADA,asignatura.getEstado());
-        } catch (EstadoIncorrectoException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-//    @Test(expected = EstadoIncorrectoException.class)
-//    public void testAprobarAsignaturaMateriaNoCursada() throws EstadoIncorrectoException{
-//        Asignatura asignatura = new Asignatura(materia);
-//        asignatura.aprobarAsignatura(8);
-//    }
-//
-//    @Test (expected = EstadoIncorrectoException.class)
-//    public void testAprobarAasignaturaYaAprobada() throws EstadoIncorrectoException{
-//        Asignatura asignatura = new Asignatura(materia);
-//        asignatura.cursarAsignatura();
-//        asignatura.aprobarAsignatura(8);
-//        assertEquals(EstadoAsignatura.APROBADA,asignatura.getEstado());
-//        asignatura.aprobarAsignatura(9);
-//
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void aprobarAsignaturaNotaMenorCero() throws EstadoIncorrectoException {
-//        Asignatura asignatura = new Asignatura(materia);
-//        asignatura.cursarAsignatura();
-//        asignatura.aprobarAsignatura(-3);
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void aprobarAsignaturaNotaMayorDiez() throws EstadoIncorrectoException {
-//        Asignatura asignatura = new Asignatura(materia);
-//        asignatura.cursarAsignatura();
-//        asignatura.aprobarAsignatura(13);
-//    }
-
-    @Test
-    public void aprobarAsignaturaNotaDesaprobado() throws EstadoIncorrectoException {
-        Asignatura asignatura = new Asignatura(materia);
-        asignatura.cursarAsignatura();
-        asignatura.aprobarAsignatura(3);
         assertEquals(EstadoAsignatura.CURSADA, asignatura.getEstado());
+    }
+
+    @Test
+    void aprobarAsignatura() {
+        Asignatura asignatura = new Asignatura(new Materia());
+        asignatura.aprobarAsignatura();
+        assertEquals(EstadoAsignatura.APROBADA, asignatura.getEstado());
     }
 }

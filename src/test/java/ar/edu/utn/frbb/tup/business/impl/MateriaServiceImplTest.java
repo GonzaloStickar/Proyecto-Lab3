@@ -173,6 +173,7 @@ class MateriaServiceImplTest {
 
         Mockito.verify(asignaturaService).delAsignaturaByMateria(materiaElegida);
         Mockito.verify(alumnoService).delMateriaAlumnoByMateriaDel(materiaElegida);
+        Mockito.verify(profesorService).delMateriaDictadaFromProfesor(materiaElegida.getNombre());
         Mockito.verify(dao).del(materiaElegida);
         assertEquals(materiaElegida, materiaEliminada);
         assertThrows(MateriaNotFoundException.class, () -> materiaService.delMateriaById(4));

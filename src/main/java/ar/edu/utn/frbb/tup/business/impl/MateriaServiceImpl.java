@@ -88,6 +88,7 @@ public class MateriaServiceImpl implements MateriaService {
                 if (materia.getMateriaId() == materiaId) {
                     asignaturaService.delAsignaturaByMateria(materia);
                     alumnoService.delMateriaAlumnoByMateriaDel(materia);
+                    profesorService.delMateriaDictadaFromProfesor(materia.getNombre());
                     dao.del(materia);
                     return materia;
                 }

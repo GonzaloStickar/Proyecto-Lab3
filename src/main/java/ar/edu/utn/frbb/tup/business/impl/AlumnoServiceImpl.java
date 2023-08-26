@@ -27,9 +27,7 @@ public class AlumnoServiceImpl implements AlumnoService {
     public Alumno crearAlumno(AlumnoDto alumnoDto) throws AlumnoServiceException, AsignaturaNotFoundException {
         Alumno a = new Alumno();
         checkAlumnoDto(alumnoDto);
-        if (alumnoDto.getDni() <= 0) {
-            throw new AlumnoServiceException("Falta el dni del alumno",HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+        if (alumnoDto.getDni() <= 0) {throw new AlumnoServiceException("Falta el dni del alumno",HttpStatus.UNPROCESSABLE_ENTITY);}
         else {
             a.setNombre(alumnoDto.getNombre());
             a.setApellido(alumnoDto.getApellido());

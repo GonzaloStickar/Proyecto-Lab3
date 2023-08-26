@@ -63,10 +63,6 @@ public class Alumno {
         return this.asignaturas;
     }
 
-    public boolean puedeAprobar(Asignatura asignatura) {
-        return true;
-    }
-
     public int getId() {
         return id;
     }

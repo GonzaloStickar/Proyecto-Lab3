@@ -1,8 +1,5 @@
 package ar.edu.utn.frbb.tup.model;
 
-import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
-import org.springframework.http.HttpStatus;
-
 public class Asignatura {
 
     private Materia materia;
@@ -49,24 +46,4 @@ public class Asignatura {
     public void aprobarAsignatura(){
         this.estado = EstadoAsignatura.APROBADA;
     }
-
-    public void aprobarAsignatura(int nota) throws EstadoIncorrectoException {
-        if (this.estado.equals(EstadoAsignatura.CURSADA)) {
-            if (nota >= 6) {
-                aprobarAsignatura();
-                setNota(nota);
-            }
-        } else if (this.estado.equals(EstadoAsignatura.NO_CURSADA)) {
-            if (nota >= 6) {
-                aprobarAsignatura();
-                setNota(nota);
-            } else {
-                cursarAsignatura();
-                setNota(nota);
-            }
-        } else {
-            throw new EstadoIncorrectoException("La materia ya está aprobada", HttpStatus.CONFLICT);
-        }
-    }
-
 }
