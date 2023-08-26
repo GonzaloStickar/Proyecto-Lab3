@@ -170,7 +170,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             int nota = crearNumeroEntreRangoRandom(4,10);
             asignatura.setNota(nota);
             if (numero==1 || nota>=6) {
-                asignatura.aprobarAsignatura();asignatura.setNota(crearNumeroEntreRangoRandom(4,10));} else {asignatura.cursarAsignatura();}} else {asignatura.setNota(0);asignatura.setEstado(EstadoAsignatura.NO_CURSADA);}
+                asignatura.aprobarAsignatura();asignatura.setNota(crearNumeroEntreRangoRandom(6,10));} else {asignatura.cursarAsignatura();}} else {asignatura.setNota(0);asignatura.setEstado(EstadoAsignatura.NO_CURSADA);}
     }
 
     public Asignatura buscarAsignaturaPorNombreAsignaturas(String correlativaNombre, List<Asignatura> listaAsignaturas) {

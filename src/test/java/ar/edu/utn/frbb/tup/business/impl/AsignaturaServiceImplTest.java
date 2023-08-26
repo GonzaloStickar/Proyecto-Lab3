@@ -238,7 +238,7 @@ class AsignaturaServiceImplTest {
             int nota = AsignaturaServiceImpl.crearNumeroEntreRangoRandom(4,10);
             asignatura.setNota(nota);
             if (numero==1 || nota>=6) {
-                asignatura.setNota(AsignaturaServiceImpl.crearNumeroEntreRangoRandom(4,10));
+                asignatura.setNota(AsignaturaServiceImpl.crearNumeroEntreRangoRandom(6,10));
                 asignatura.aprobarAsignatura();
             }
             else {

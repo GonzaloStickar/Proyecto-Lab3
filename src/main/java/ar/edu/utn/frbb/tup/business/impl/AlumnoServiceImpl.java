@@ -31,17 +31,12 @@ public class AlumnoServiceImpl implements AlumnoService {
             throw new AlumnoServiceException("Falta el dni del alumno",HttpStatus.UNPROCESSABLE_ENTITY);
         }
         else {
-            dao.getAllAlumnos();
             a.setNombre(alumnoDto.getNombre());
             a.setApellido(alumnoDto.getApellido());
             a.setDni(alumnoDto.getDni());
             Random random = new Random();
             a.setId(random.nextInt());
-            for (Alumno alumno : dao.getAllAlumnos().values()) {
-                if (alumno.getDni() == a.getDni()) {
-                    throw new AlumnoServiceException("Ya existe un Alumno con el mismo dni.", HttpStatus.CONFLICT);
-                }
-            }
+            for (Alumno alumno : dao.getAllAlumnos().values()) {if (alumno.getDni() == a.getDni()) {throw new AlumnoServiceException("Ya existe un Alumno con el mismo dni.", HttpStatus.CONFLICT);}}
             a.setAsignaturas(asignaturaService.getSomeAsignaturaRandomFromAsignaturasDao());
             dao.saveAlumno(a);
             return a;
@@ -62,18 +57,11 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
 
     public static void checkAlumnoDtoPut(Alumno alumno, AlumnoDto alumnoDto) throws AlumnoServiceException {
-        if (alumno.getNombre().equals(alumnoDto.getNombre()) && alumno.getApellido().equals(alumnoDto.getApellido())) {
-            throw new AlumnoServiceException("Este alumno ya fue actualizado con esos datos", HttpStatus.CONFLICT);
-        }
+        if (alumno.getNombre().equals(alumnoDto.getNombre()) && alumno.getApellido().equals(alumnoDto.getApellido())) {throw new AlumnoServiceException("Este alumno ya fue actualizado con esos datos", HttpStatus.CONFLICT);}
     }
 
     public void checkAlumnoDto(AlumnoDto alumnoDto) throws AlumnoServiceException {
-        if (!alumnoDto.getNombre().matches(".*[a-zA-Z]+.*")) {
-            throw new AlumnoServiceException("Falta el nombre del alumno",HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        else if (!alumnoDto.getApellido().matches(".*[a-zA-Z]+.*")) {
-            throw new AlumnoServiceException("Falta el apellido del alumno",HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+        if (!alumnoDto.getNombre().matches(".*[a-zA-Z]+.*")) throw new AlumnoServiceException("Falta el nombre del alumno",HttpStatus.UNPROCESSABLE_ENTITY);else if (!alumnoDto.getApellido().matches(".*[a-zA-Z]+.*")) throw new AlumnoServiceException("Falta el apellido del alumno",HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     public void delMateriaAlumnoByMateriaDel(Materia materia) {
