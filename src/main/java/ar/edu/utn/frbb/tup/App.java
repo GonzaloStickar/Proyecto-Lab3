@@ -14,10 +14,4 @@ public class App
     {
         SpringApplication.run(App.class);
     }
-
-//    @GetMapping("/")
-//    public String decirHola() {
-//        return "hola";
-//    }
-
 }

@@ -51,22 +51,15 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                     for (String correlativa : a.getMateria().getCorrelatividades()) {
                         Asignatura asignaturaCorrelativa = buscarAsignaturaByNameAsignaturasAlumno(alumno, correlativa);
                         if (asignaturaCorrelativa != null) {
-                            if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA)) {
-                                throw new AlumnoServiceException("La materia " + correlativa + " debe estar aprobada", HttpStatus.OK);
-                            }
-                            if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.CURSADA)) {
-                                throw new AlumnoServiceException("La materia " + correlativa + " debe estar cursada", HttpStatus.OK);}}}
+                            if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.CURSADA)) {throw new AlumnoServiceException("La materia " + correlativa + " debe estar cursada", HttpStatus.OK);}
+                            if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA)) {throw new AlumnoServiceException("La materia " + correlativa + " debe estar aprobada", HttpStatus.OK);}}}
                 }
                 else {
                     throw new AlumnoServiceException("Esta materia ya está aprobada", HttpStatus.BAD_REQUEST);
                 }
-            }
-            a.setNota(nota);
-            if (nota>=6) {
-                a.aprobarAsignatura();
-            }
-            else {
-                a.cursarAsignatura();
+                a.setNota(nota);
+                if (nota>=6) {
+                    a.aprobarAsignatura();} else {a.cursarAsignatura();}
             }
         }
         return alumno;
