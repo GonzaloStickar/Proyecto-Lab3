@@ -1,9 +1,6 @@
 package ar.edu.utn.frbb.tup.business.impl;
 
-import ar.edu.utn.frbb.tup.business.AlumnoService;
-import ar.edu.utn.frbb.tup.business.AsignaturaService;
-import ar.edu.utn.frbb.tup.business.MateriaService;
-import ar.edu.utn.frbb.tup.business.ProfesorService;
+import ar.edu.utn.frbb.tup.business.*;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
@@ -30,6 +27,9 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Autowired
     private AlumnoService alumnoService;
+
+    @Autowired
+    private CarreraService carreraService;
 
     @Override
     public Materia crearMateria(MateriaDto materiaDto) throws MateriaServiceException, ProfesorNotFoundException {
@@ -73,9 +73,25 @@ public class MateriaServiceImpl implements MateriaService {
         checkMateriaDtoPut(m, materiaDto);
         m.setAnio(materiaDto.getAnio());
         m.setCuatrimestre(materiaDto.getCuatrimestre());
-        m.setNombre(materiaDto.getNombre());
-        m.setProfesor(profesorService.buscarProfesor(materiaDto.getProfesorId()));
         asignaturaService.actualizarAsignaturaByMateria(m);
+        m.setProfesor(profesorService.buscarProfesor(materiaDto.getProfesorId()));
+
+        for (Materia materia : dao.getAllMaterias().values()) {
+            if (materia.getCorrelatividades().contains(m.getNombre())) {
+                materia.getCorrelatividades().remove(m.getNombre());
+                materia.getCorrelatividades().add(materiaDto.getNombre());
+            }
+            materia.getProfesor().getMateriasDictadas().remove(m.getNombre());
+            if (!materia.getProfesor().getMateriasDictadas().contains(materiaDto.getNombre())) {
+                materia.getProfesor().getMateriasDictadas().add(materiaDto.getNombre());
+            }
+        }
+
+        //Actualizar materias de las carreras.
+        m.setNombre(materiaDto.getNombre());
+        m.getProfesor().getMateriasDictadas().add(materiaDto.getNombre());
+
+
         return m;
     }
 
@@ -89,6 +105,7 @@ public class MateriaServiceImpl implements MateriaService {
                     asignaturaService.delAsignaturaByMateria(materia);
                     alumnoService.delMateriaAlumnoByMateriaDel(materia);
                     profesorService.delMateriaDictadaFromProfesor(materia.getNombre());
+                    //carreraService.eliminarMateriaDeCarreraSiMateriaEsEliminada(materia);
                     dao.del(materia);
                     return materia;
                 }

@@ -30,7 +30,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
 
     @Override
-    public Alumno putAsignatura(int idAlumno, int idAsignatura, AsignaturaDto asignaturaDto) throws AlumnoNotFoundException, AsignaturaServiceException, AlumnoServiceException {
+    public Alumno putAsignatura(int idAlumno, int idAsignatura, AsignaturaDto asignaturaDto) throws AlumnoNotFoundException, AsignaturaServiceException, AlumnoServiceException, AsignaturaNotFoundException {
         checkAsignaturaDto(asignaturaDto);
         return aprobarAsignatura(idAlumno, idAsignatura, asignaturaDto.getNota());
     }
@@ -42,25 +42,34 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
 
     @Override
-    public Alumno aprobarAsignatura(int idAlumno, int idAsignatura, int nota) throws AlumnoNotFoundException, AlumnoServiceException, AsignaturaServiceException {
+    public Alumno aprobarAsignatura(int idAlumno, int idAsignatura, int nota) throws AlumnoNotFoundException, AlumnoServiceException, AsignaturaServiceException, AsignaturaNotFoundException {
         Alumno alumno = alumnoDao.findById(idAlumno);
         if (alumno.getAsignaturas().isEmpty()) {throw new AsignaturaServiceException("El alumno no tiene asignaturas", HttpStatus.NOT_FOUND);}
-        for (Asignatura a : alumno.getAsignaturas()) {
-            if (a.getMateria().getMateriaId() == idAsignatura) {
-                if (a.getEstado() != (EstadoAsignatura.APROBADA)) {
-                    for (String correlativa : a.getMateria().getCorrelatividades()) {
-                        Asignatura asignaturaCorrelativa = buscarAsignaturaByNameAsignaturasAlumno(alumno, correlativa);
-                        if (asignaturaCorrelativa != null) {
-                            if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.CURSADA)) {throw new AlumnoServiceException("La materia " + correlativa + " debe estar cursada", HttpStatus.OK);}
-                            if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA)) {throw new AlumnoServiceException("La materia " + correlativa + " debe estar aprobada", HttpStatus.OK);}}}
-                }
-                else {
-                    throw new AlumnoServiceException("Esta materia ya está aprobada", HttpStatus.BAD_REQUEST);
-                }
-                a.setNota(nota);
-                if (nota>=6) {
-                    a.aprobarAsignatura();} else {a.cursarAsignatura();}
+
+        Asignatura a = null;
+        for (Asignatura asignatura : alumno.getAsignaturas()) {
+            if (asignatura.getMateria().getMateriaId() == idAsignatura) {
+                a = asignatura;
+                break;
             }
+        }
+
+        if (a != null) {
+            if (a.getEstado() != (EstadoAsignatura.APROBADA)) {
+                for (String correlativa : a.getMateria().getCorrelatividades()) {
+                    Asignatura asignaturaCorrelativa = buscarAsignaturaByNameAsignaturasAlumno(alumno, correlativa);
+                    if (asignaturaCorrelativa != null) {
+                        if (nota<6) {if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.CURSADA) && !asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA)) {throw new AlumnoServiceException("La materia " + correlativa + " debe estar cursada", HttpStatus.OK);} else {a.setNota(nota);a.cursarAsignatura();}}
+                        else {if (!asignaturaCorrelativa.getEstado().equals(EstadoAsignatura.APROBADA)) {throw new AlumnoServiceException("La materia " + correlativa + " debe estar aprobada", HttpStatus.OK);} else {a.setNota(nota);a.aprobarAsignatura();}}}}}
+            else {
+                throw new AlumnoServiceException("Esta materia ya está aprobada", HttpStatus.BAD_REQUEST);
+            }
+            a.setNota(nota);
+            if (nota>=6) {
+                a.aprobarAsignatura();} else {a.cursarAsignatura();}
+        }
+        else {
+            throw new AsignaturaNotFoundException("El alumno no tiene registro de la asignatura: "+idAsignatura);
         }
         return alumno;
     }

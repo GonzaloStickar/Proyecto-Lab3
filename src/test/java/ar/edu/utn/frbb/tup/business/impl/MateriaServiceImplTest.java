@@ -2,6 +2,7 @@ package ar.edu.utn.frbb.tup.business.impl;
 
 import ar.edu.utn.frbb.tup.business.AlumnoService;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
+import ar.edu.utn.frbb.tup.business.CarreraService;
 import ar.edu.utn.frbb.tup.business.ProfesorService;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
@@ -38,6 +39,9 @@ class MateriaServiceImplTest {
 
     @Mock
     private AlumnoService alumnoService;
+
+    @Mock
+    private CarreraService carreraService;
 
     @InjectMocks
     private MateriaServiceImpl materiaService;
@@ -174,6 +178,7 @@ class MateriaServiceImplTest {
         Mockito.verify(asignaturaService).delAsignaturaByMateria(materiaElegida);
         Mockito.verify(alumnoService).delMateriaAlumnoByMateriaDel(materiaElegida);
         Mockito.verify(profesorService).delMateriaDictadaFromProfesor(materiaElegida.getNombre());
+        Mockito.verify(carreraService).eliminarMateriaDeCarreraSiMateriaEsEliminada(materiaElegida);
         Mockito.verify(dao).del(materiaElegida);
         assertEquals(materiaElegida, materiaEliminada);
         assertThrows(MateriaNotFoundException.class, () -> materiaService.delMateriaById(4));

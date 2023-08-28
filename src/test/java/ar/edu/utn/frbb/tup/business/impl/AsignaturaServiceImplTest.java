@@ -44,7 +44,7 @@ class AsignaturaServiceImplTest {
     }
 
     @Test
-    void putAsignatura() throws AsignaturaServiceException, AlumnoServiceException, AlumnoNotFoundException {
+    void putAsignatura() throws AsignaturaServiceException, AlumnoServiceException, AlumnoNotFoundException, AsignaturaNotFoundException {
         Alumno alumno = new Alumno("Speedy", "Gonzales", 1);
 
         List<Asignatura> asignaturas = new ArrayList<>();
@@ -79,7 +79,7 @@ class AsignaturaServiceImplTest {
     }
 
     @Test
-    void aprobarAsignatura() throws AlumnoNotFoundException, AsignaturaServiceException, AlumnoServiceException {
+    void aprobarAsignatura() throws AlumnoNotFoundException, AsignaturaServiceException, AlumnoServiceException, AsignaturaNotFoundException {
         Alumno alumno = new Alumno("Speedy", "Gonzales", 1);
 
         List<Asignatura> asignaturas = new ArrayList<>();
@@ -101,13 +101,14 @@ class AsignaturaServiceImplTest {
         asignaturas.add(asignatura1);
         asignaturas.add(asignatura2);
         asignaturas.add(asignatura3);
+        asignaturas.add(asignatura4);
 
         alumno.setAsignaturas(asignaturas);
         Mockito.when(alumnoDao.findById(123)).thenReturn(alumno);
 
-        assertThrows(AlumnoServiceException.class, () -> asignaturaService.aprobarAsignatura(123, 2, 5));
         assertThrows(AlumnoServiceException.class, () -> asignaturaService.aprobarAsignatura(123, 2, 6));
         assertThrows(AlumnoServiceException.class, () -> asignaturaService.aprobarAsignatura(123, 3, 8));
+        assertThrows(AsignaturaNotFoundException.class, () -> asignaturaService.aprobarAsignatura(123, 123, 8));
         asignaturaService.aprobarAsignatura(123,4, 8);
     }
 

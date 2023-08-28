@@ -5,6 +5,7 @@ import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaServiceException;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.CarreraServiceException;
+import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
 
 import java.util.List;
 

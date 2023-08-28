@@ -20,7 +20,7 @@ public class AsignaturaController {
     @PutMapping("/alumno/{idAlumno}/asignatura/{idAsignatura}") //PUT: /alumno/{idAlumno}/asignatura/{idAsignatura}
     public ResponseEntity<Alumno> putEstadoAsignaturaByIdByAlumnoById(@PathVariable int idAlumno,
                                                                       @PathVariable int idAsignatura,
-                                                                      @RequestBody AsignaturaDto asignaturaDto) throws AsignaturaNotFoundException, AsignaturaServiceException, EstadoIncorrectoException, AlumnoServiceException, AlumnoNotFoundException {
+                                                                      @RequestBody AsignaturaDto asignaturaDto) throws AsignaturaNotFoundException, AsignaturaServiceException, EstadoIncorrectoException, AlumnoServiceException, AlumnoNotFoundException, MateriaNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(asignaturaService.putAsignatura(idAlumno,idAsignatura, asignaturaDto));
     }
 }
