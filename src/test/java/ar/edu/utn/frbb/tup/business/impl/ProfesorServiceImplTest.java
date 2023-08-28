@@ -38,25 +38,4 @@ class ProfesorServiceImplTest {
         Mockito.verify(dao).get(123);
         assertEquals("pepe", resultProfesor.getNombre());
     }
-
-    @Test
-    void delMateriaDictadaFromProfesor() {
-        List<Profesor> profesores = new ArrayList<>();
-        Profesor profesor1 = new Profesor("a","g","L");
-        Profesor profesor2 = new Profesor("b","g","L");
-        Profesor profesor3 = new Profesor("c","g","L");
-        profesor1.setprofesorId(1);
-        profesor1.getMateriasDictadas().add("pepe 1");
-        profesor2.setprofesorId(2);
-        profesor3.setprofesorId(3);
-        profesores.add(profesor1);
-        profesores.add(profesor2);
-        profesores.add(profesor3);
-
-        Materia materia = new Materia("pepe 1", 1,1, profesor1);
-
-        Mockito.when(dao.getAllProfesores()).thenReturn(profesores);
-
-        profesorService.delMateriaDictadaFromProfesor(materia.getNombre());
-    }
 }

@@ -150,4 +150,36 @@ class AlumnoServiceImplTest {
         assertEquals(alumno2, alumnoEliminado);
         assertThrows(AlumnoNotFoundException.class, () -> alumnoService.delAlumnoById(123456));
     }
+
+    @Test
+    void actualizarProfesoresDeLasMateriasDeLosAlumnos() throws ProfesorNotFoundException {
+        List<Alumno> alumnos = new ArrayList<>();
+        Alumno alumno1 = new Alumno("pepe", "gonzalez",1);
+        Alumno alumno2 = new Alumno("pepito", "gonzalez",1);
+        alumno1.setId(123);
+        alumno2.setId(456);
+
+        List<Asignatura> asignaturas = new ArrayList<>();
+        Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,new Profesor("pepito","gonzalez","Lic. Computación")));
+
+        asignatura1.getMateria().getProfesor().setprofesorId(123);
+        asignatura2.getMateria().getProfesor().setprofesorId(456);
+        asignatura2.getMateria().getCorrelatividades().add("pepe 1");
+        alumno1.getAsignaturas().add(asignatura1);
+        alumno2.getAsignaturas().add(asignatura1);
+        alumno2.getAsignaturas().add(asignatura2);
+
+        alumnos.add(alumno1);
+        alumnos.add(alumno2);
+        asignaturas.add(asignatura1);
+        asignaturas.add(asignatura2);
+
+        Map<Integer, Alumno> alumnosMap = new HashMap<>();
+        for (Alumno a : alumnos) {
+            alumnosMap.put(a.getId(), a);
+        }
+
+        alumnoService.actualizarProfesoresDeLasMateriasDeLosAlumnos();
+    }
 }
