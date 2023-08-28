@@ -6,5 +6,5 @@ import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
 public interface ProfesorService {
     Profesor buscarProfesor(int id) throws ProfesorNotFoundException;
 
-    void delMateriaDictadaFromProfesor(String materiaDictada);
+    void actualizarProfesores(String nombreViejo, String nombreNuevo, int profesorId);
 }

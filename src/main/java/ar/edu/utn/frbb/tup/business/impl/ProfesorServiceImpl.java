@@ -16,10 +16,15 @@ public class ProfesorServiceImpl implements ProfesorService {
     public Profesor buscarProfesor(int id) throws ProfesorNotFoundException {
         return dao.get(id);
     }
-    
-    public void delMateriaDictadaFromProfesor(String materiaDictada) {
+
+    public void actualizarProfesores(String nombreViejo, String nombreNuevo, int profesorId) {
         for (Profesor profesor : dao.getAllProfesores()) {
-            profesor.getMateriasDictadas().remove(materiaDictada);
+            profesor.getMateriasDictadas().remove(nombreViejo);
+            if (profesor.getprofesorId()==profesorId) {
+                if (!profesor.getMateriasDictadas().contains(nombreNuevo)) {
+                    profesor.getMateriasDictadas().add(nombreNuevo);
+                }
+            }
         }
     }
 }

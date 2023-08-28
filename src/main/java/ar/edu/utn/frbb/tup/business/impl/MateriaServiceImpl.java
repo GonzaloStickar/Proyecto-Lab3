@@ -69,30 +69,46 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Override
     public Materia putMateriaById(int idMateria, MateriaDto materiaDto) throws MateriaNotFoundException, MateriaServiceException, ProfesorNotFoundException {
-        Materia m = getMateriaById(idMateria);
-        checkMateriaDtoPut(m, materiaDto);
-        m.setAnio(materiaDto.getAnio());
-        m.setCuatrimestre(materiaDto.getCuatrimestre());
-        asignaturaService.actualizarAsignaturaByMateria(m);
-        m.setProfesor(profesorService.buscarProfesor(materiaDto.getProfesorId()));
+        //Verificar que obtenemos la materia, y existe
+        Materia m1 = getMateriaById(idMateria);
+        m1.setAnio(materiaDto.getAnio());
+        m1.setCuatrimestre(materiaDto.getCuatrimestre());
+        //Chequear que si existe dicha materia, no se actualize con los mismos datos
+        checkMateriaDtoPut(m1, materiaDto);
+        //Chequear que exista el profesor
+        profesorService.buscarProfesor(materiaDto.getProfesorId());
+
+        //Actualizo los profesores
+        profesorService.actualizarProfesores(m1.getNombre(), materiaDto.getNombre(), materiaDto.getProfesorId());
 
         for (Materia materia : dao.getAllMaterias().values()) {
-            if (materia.getCorrelatividades().contains(m.getNombre())) {
-                materia.getCorrelatividades().remove(m.getNombre());
-                materia.getCorrelatividades().add(materiaDto.getNombre());
+            //Actualizar los profesores de la materia
+            if (materia.getMateriaId()==idMateria) {
+                materia.setProfesor(profesorService.buscarProfesor(materiaDto.getProfesorId()));
             }
-            materia.getProfesor().getMateriasDictadas().remove(m.getNombre());
-            if (!materia.getProfesor().getMateriasDictadas().contains(materiaDto.getNombre())) {
-                materia.getProfesor().getMateriasDictadas().add(materiaDto.getNombre());
+            else {
+                materia.setProfesor(profesorService.buscarProfesor(materia.getProfesor().getprofesorId()));
+            }
+
+            //Correlativas
+            if (!materia.getCorrelatividades().isEmpty()) {
+                if (materia.getCorrelatividades().contains(m1.getNombre())) {
+                    materia.getCorrelatividades().remove(m1.getNombre());
+                    materia.getCorrelatividades().add(materiaDto.getNombre());
+                }
             }
         }
+        //Actualizar carreras
+        carreraService.actualizarProfesoresDeLasCarreras();
+        carreraService.actualizarNombreMateriaEnMateriaListDeCarreraYSusCorrelativas(m1.getNombre(), materiaDto.getNombre());
+        //Actualizar asignaturas
+        asignaturaService.actualizarProfesoresDeLasAsignaturas();
+        asignaturaService.actualizarNombreAsignaturaYSusCorrelativas(m1.getNombre(), materiaDto.getNombre());
+        //Actualizar alumnos
+        alumnoService.actualizarProfesoresDeLasMateriasDeLosAlumnos();
+        alumnoService.actualizarNombreMateriaYSusCorrelativasDeLasMateriasDelAlumno(m1.getNombre(), materiaDto.getNombre());
 
-        //Actualizar materias de las carreras.
-        m.setNombre(materiaDto.getNombre());
-        m.getProfesor().getMateriasDictadas().add(materiaDto.getNombre());
-
-
-        return m;
+        return getMateriaById(idMateria);
     }
 
     public Materia delMateriaById(Integer materiaId) throws MateriaNotFoundException {
@@ -104,8 +120,7 @@ public class MateriaServiceImpl implements MateriaService {
                 if (materia.getMateriaId() == materiaId) {
                     asignaturaService.delAsignaturaByMateria(materia);
                     alumnoService.delMateriaAlumnoByMateriaDel(materia);
-                    profesorService.delMateriaDictadaFromProfesor(materia.getNombre());
-                    //carreraService.eliminarMateriaDeCarreraSiMateriaEsEliminada(materia);
+                    //profesorService.delMateriaDictadaFromProfesor(materia.getNombre());
                     dao.del(materia);
                     return materia;
                 }

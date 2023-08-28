@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.business.impl;
 
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
+import ar.edu.utn.frbb.tup.business.ProfesorService;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
@@ -23,6 +24,9 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     @Autowired
     private AsignaturaDao dao;
+
+    @Autowired
+    private ProfesorService profesorService;
 
     public void crearAsignatura(Materia materia) {
         if (!(materia.getProfesor().getMateriasDictadas().contains(materia.getNombre()))) {materia.getProfesor().agregarMateriaDictada(materia.getNombre());}
@@ -200,8 +204,9 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return random.nextInt(max - min + 1) + min;
     }
 
+
     public void actualizarAsignaturaByMateria(Materia materia) {
-        for (Asignatura asignatura : getAllAsignaturas()) {if (asignatura.getMateria().equals(materia)) {asignatura.setMateria(materia);}}
+        for (Asignatura asignatura : getAllAsignaturas()) {if (asignatura.getMateria().getMateriaId()==(materia.getMateriaId())) {asignatura.setMateria(materia);}}
     }
 
     public void delAsignaturaByMateria(Materia materia) throws MateriaNotFoundException {
@@ -223,6 +228,28 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             else {
                 throw new MateriaNotFoundException("No se encontró la materia con el id: "+materia.getMateriaId());
             }
+        }
+    }
+
+    public void actualizarNombreAsignaturaYSusCorrelativas(String nombreMateriaViejo, String nombreMateriaNuevo) {
+        for (Asignatura asignatura : dao.getAllAsignaturas()) {
+            //Actualizar nombre de la asignatura por el nombre de la materia
+            if (asignatura.getMateria().getNombre().equals(nombreMateriaViejo)) {
+                asignatura.getMateria().setNombre(nombreMateriaNuevo);
+            }
+            //Correlativas
+            if (!asignatura.getMateria().getCorrelatividades().isEmpty()) {
+                if (asignatura.getMateria().getCorrelatividades().contains(nombreMateriaViejo)) {
+                    asignatura.getMateria().getCorrelatividades().remove(nombreMateriaViejo);
+                    asignatura.getMateria().getCorrelatividades().add(nombreMateriaNuevo);
+                }
+            }
+        }
+    }
+
+    public void actualizarProfesoresDeLasAsignaturas() throws ProfesorNotFoundException {
+        for (Asignatura asignatura : dao.getAllAsignaturas()) {
+            asignatura.getMateria().setProfesor(profesorService.buscarProfesor(asignatura.getMateria().getProfesor().getprofesorId()));
         }
     }
 }

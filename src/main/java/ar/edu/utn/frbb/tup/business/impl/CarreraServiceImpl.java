@@ -109,4 +109,31 @@ public class CarreraServiceImpl implements CarreraService {
         else if (carreraDto.getCantidadAnios() <= 0) throw new CarreraServiceException("Falta el año de la carrera",HttpStatus.UNPROCESSABLE_ENTITY);
         //Código = 422 - La petición estaba bien formada pero no se pudo seguir debido a errores de semántica.
     }
+
+    public void actualizarProfesoresDeLasCarreras() throws ProfesorNotFoundException {
+        for (Carrera carrera : dao.getAllCarreras().values()) {
+            //Actualizar los profesores de la carrera
+            for (Materia materia : carrera.getMateriasList()) {
+                materia.setProfesor(profesorService.buscarProfesor(materia.getProfesor().getprofesorId()));
+            }
+        }
+    }
+
+    public void actualizarNombreMateriaEnMateriaListDeCarreraYSusCorrelativas(String nombreMateriaViejo, String nombreMateriaNuevo) {
+        for (Carrera carrera : dao.getAllCarreras().values()) {
+            for (Materia materia : carrera.getMateriasList()) {
+                //Nombre de la materia en la lista de materias de la carrera
+                if (materia.getNombre().equals(nombreMateriaViejo)) {
+                    materia.setNombre(nombreMateriaNuevo);
+                }
+                //Correlativas
+                if (!materia.getCorrelatividades().isEmpty()) {
+                    if (materia.getCorrelatividades().contains(nombreMateriaViejo)) {
+                        materia.getCorrelatividades().remove(nombreMateriaViejo);
+                        materia.getCorrelatividades().add(nombreMateriaNuevo);
+                    }
+                }
+            }
+        }
+    }
 }

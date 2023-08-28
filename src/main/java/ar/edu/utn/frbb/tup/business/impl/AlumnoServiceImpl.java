@@ -2,12 +2,14 @@ package ar.edu.utn.frbb.tup.business.impl;
 
 import ar.edu.utn.frbb.tup.business.AlumnoService;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
+import ar.edu.utn.frbb.tup.business.ProfesorService;
 import ar.edu.utn.frbb.tup.model.*;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDao;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoNotFoundException;
 import ar.edu.utn.frbb.tup.persistence.exception.AlumnoServiceException;
 import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaNotFoundException;
+import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class AlumnoServiceImpl implements AlumnoService {
 
     @Autowired
     private AsignaturaService asignaturaService;
+
+    @Autowired
+    private ProfesorService profesorService;
 
     @Override
     public Alumno crearAlumno(AlumnoDto alumnoDto) throws AlumnoServiceException, AsignaturaNotFoundException {
@@ -83,6 +88,32 @@ public class AlumnoServiceImpl implements AlumnoService {
                 }
             }
             throw new AlumnoNotFoundException("No se encontró el alumno con id " + idAlumno);
+        }
+    }
+
+    public void actualizarProfesoresDeLasMateriasDeLosAlumnos() throws ProfesorNotFoundException {
+        for (Alumno alumno : dao.getAllAlumnos().values()) {
+            for (Asignatura asignatura : alumno.getAsignaturas()) {
+                asignatura.getMateria().setProfesor(profesorService.buscarProfesor(asignatura.getMateria().getProfesor().getprofesorId()));
+            }
+        }
+    }
+
+    public void actualizarNombreMateriaYSusCorrelativasDeLasMateriasDelAlumno(String nombreMateriaViejo, String nombreMateriaNuevo) {
+        for (Alumno alumno : dao.getAllAlumnos().values()) {
+            for (Asignatura asignatura : alumno.getAsignaturas()) {
+                //Nombre de la materia del alumno
+                if (asignatura.getMateria().getNombre().equals(nombreMateriaViejo)) {
+                    asignatura.getMateria().setNombre(nombreMateriaNuevo);
+                }
+                //Correlativas
+                if (!asignatura.getMateria().getCorrelatividades().isEmpty()) {
+                    if (asignatura.getMateria().getCorrelatividades().contains(nombreMateriaViejo)) {
+                        asignatura.getMateria().getCorrelatividades().remove(nombreMateriaViejo);
+                        asignatura.getMateria().getCorrelatividades().add(nombreMateriaNuevo);
+                    }
+                }
+            }
         }
     }
 }
