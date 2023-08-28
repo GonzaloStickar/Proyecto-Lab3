@@ -304,14 +304,6 @@ class AsignaturaServiceImplTest {
     }
 
     @Test
-    void actualizarAsignaturaByMateria() {
-        Materia materia = new Materia();
-        Asignatura asignatura = new Asignatura(materia);
-        asignaturaService.actualizarAsignaturaByMateria(materia);
-        assertEquals(materia, asignatura.getMateria());
-    }
-
-    @Test
     void delAsignaturaByMateria() throws MateriaNotFoundException {
         if (dao.getAllAsignaturas().isEmpty()) {
             assertThrows(MateriaNotFoundException.class, () -> asignaturaService.delAsignaturaByMateria(new Materia()));

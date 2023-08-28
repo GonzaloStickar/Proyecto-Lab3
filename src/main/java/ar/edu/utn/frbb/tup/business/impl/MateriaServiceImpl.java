@@ -111,7 +111,7 @@ public class MateriaServiceImpl implements MateriaService {
         return getMateriaById(idMateria);
     }
 
-    public Materia delMateriaById(Integer materiaId) throws MateriaNotFoundException {
+    public Materia delMateriaById(Integer materiaId) throws MateriaNotFoundException, ProfesorNotFoundException {
         if (dao.getAllMaterias().isEmpty()) {
             throw new MateriaNotFoundException("No hay materias.");
         }
@@ -120,7 +120,27 @@ public class MateriaServiceImpl implements MateriaService {
                 if (materia.getMateriaId() == materiaId) {
                     asignaturaService.delAsignaturaByMateria(materia);
                     alumnoService.delMateriaAlumnoByMateriaDel(materia);
-                    //profesorService.delMateriaDictadaFromProfesor(materia.getNombre());
+                    carreraService.delMateriaEnCarreraByMateria(materia);
+
+                    profesorService.actualizarProfesoresByNombreMateriaDeleted(materia.getNombre());
+
+                    for (Materia m : dao.getAllMaterias().values()) {
+                        //Actualizo los profesores de la materia
+                        materia.setProfesor(profesorService.buscarProfesor(materia.getProfesor().getprofesorId()));
+                        if (!m.getCorrelatividades().isEmpty()) {
+                            m.getCorrelatividades().remove(materia.getNombre());
+                        }
+                    }
+                    //Actualizo profesores
+                    carreraService.actualizarProfesoresDeLasCarreras();
+                    asignaturaService.actualizarProfesoresDeLasAsignaturas();
+                    alumnoService.actualizarProfesoresDeLasMateriasDeLosAlumnos();
+
+                    //Actualizo correlativas
+                    carreraService.actualizarCorrelativasCarreraByNameMateriaDeleted(materia.getNombre());
+                    asignaturaService.actualizarCorrelativasAsignaturaByNameMateriaDeleted(materia.getNombre());
+                    alumnoService.actualizarCorrelativasAlumnoByNameMateriaDeleted(materia.getNombre());
+
                     dao.del(materia);
                     return materia;
                 }

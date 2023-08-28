@@ -204,11 +204,6 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return random.nextInt(max - min + 1) + min;
     }
 
-
-    public void actualizarAsignaturaByMateria(Materia materia) {
-        for (Asignatura asignatura : getAllAsignaturas()) {if (asignatura.getMateria().getMateriaId()==(materia.getMateriaId())) {asignatura.setMateria(materia);}}
-    }
-
     public void delAsignaturaByMateria(Materia materia) throws MateriaNotFoundException {
         if (dao.getAllAsignaturas().isEmpty()) {
             throw new MateriaNotFoundException("No hay materias");
@@ -250,6 +245,12 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     public void actualizarProfesoresDeLasAsignaturas() throws ProfesorNotFoundException {
         for (Asignatura asignatura : dao.getAllAsignaturas()) {
             asignatura.getMateria().setProfesor(profesorService.buscarProfesor(asignatura.getMateria().getProfesor().getprofesorId()));
+        }
+    }
+
+    public void actualizarCorrelativasAsignaturaByNameMateriaDeleted(String nombreMateriaDeleted) {
+        for (Asignatura asignatura : dao.getAllAsignaturas()) {
+            asignatura.getMateria().getCorrelatividades().remove(nombreMateriaDeleted);
         }
     }
 }

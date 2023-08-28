@@ -7,4 +7,6 @@ public interface ProfesorService {
     Profesor buscarProfesor(int id) throws ProfesorNotFoundException;
 
     void actualizarProfesores(String nombreViejo, String nombreNuevo, int profesorId);
+
+    void actualizarProfesoresByNombreMateriaDeleted(String nombreMateriaDeleted);
 }

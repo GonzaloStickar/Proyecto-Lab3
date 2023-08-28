@@ -27,4 +27,10 @@ public class ProfesorServiceImpl implements ProfesorService {
             }
         }
     }
+
+    public void actualizarProfesoresByNombreMateriaDeleted(String nombreMateriaDeleted) {
+        for (Profesor profesor : dao.getAllProfesores()) {
+            profesor.getMateriasDictadas().remove(nombreMateriaDeleted);
+        }
+    }
 }

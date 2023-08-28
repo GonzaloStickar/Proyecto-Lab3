@@ -27,4 +27,8 @@ public interface CarreraService {
     void actualizarProfesoresDeLasCarreras() throws ProfesorNotFoundException;
 
     void actualizarNombreMateriaEnMateriaListDeCarreraYSusCorrelativas(String nombreMateriaViejo, String nombreMateriaNuevo);
+
+    void delMateriaEnCarreraByMateria(Materia materia);
+
+    void actualizarCorrelativasCarreraByNameMateriaDeleted(String nombreMateriaDeleted);
 }

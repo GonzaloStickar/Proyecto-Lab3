@@ -19,4 +19,6 @@ public interface AlumnoService {
     void actualizarProfesoresDeLasMateriasDeLosAlumnos() throws ProfesorNotFoundException;
 
     void actualizarNombreMateriaYSusCorrelativasDeLasMateriasDelAlumno(String nombreMateriaViejo, String nombreMateriaNuevo);
+
+    void actualizarCorrelativasAlumnoByNameMateriaDeleted(String nombreMateriaDeleted);
 }

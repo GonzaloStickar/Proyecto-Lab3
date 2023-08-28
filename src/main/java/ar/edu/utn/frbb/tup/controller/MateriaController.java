@@ -44,7 +44,7 @@ public class MateriaController {
     }
 
     @DeleteMapping("/materia/{idMateria}") //DELETE: /materia/{idMateria}
-    public ResponseEntity<?> delMateriaById(@PathVariable Integer idMateria) throws MateriaNotFoundException {
+    public ResponseEntity<?> delMateriaById(@PathVariable Integer idMateria) throws MateriaNotFoundException, ProfesorNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(materiaService.delMateriaById(idMateria));
     }
 }

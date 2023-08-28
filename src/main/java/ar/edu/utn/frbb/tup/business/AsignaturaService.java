@@ -19,8 +19,6 @@ public interface AsignaturaService {
 
     List<Asignatura> getAllAsignaturas();
 
-    void actualizarAsignaturaByMateria(Materia materia);
-
     void delAsignaturaByMateria(Materia materia) throws MateriaNotFoundException;
 
     List<Asignatura> getSomeAsignaturaRandomFromAsignaturasDao() throws AsignaturaNotFoundException;
@@ -34,4 +32,6 @@ public interface AsignaturaService {
     void actualizarProfesoresDeLasAsignaturas() throws ProfesorNotFoundException;
 
     void actualizarNombreAsignaturaYSusCorrelativas(String nombreMateriaViejo, String nombreMateriaNuevo);
+
+    void actualizarCorrelativasAsignaturaByNameMateriaDeleted(String nombreMateriaDeleted);
 }

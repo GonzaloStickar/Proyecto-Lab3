@@ -116,4 +116,12 @@ public class AlumnoServiceImpl implements AlumnoService {
             }
         }
     }
+
+    public void actualizarCorrelativasAlumnoByNameMateriaDeleted(String nombreMateriaDeleted) {
+        for (Alumno alumno : dao.getAllAlumnos().values()) {
+            for (Asignatura asignatura : alumno.getAsignaturas()) {
+                asignatura.getMateria().getCorrelatividades().remove(nombreMateriaDeleted);
+            }
+        }
+    }
 }

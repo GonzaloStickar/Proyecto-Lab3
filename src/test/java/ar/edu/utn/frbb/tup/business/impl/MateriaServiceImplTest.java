@@ -145,12 +145,11 @@ class MateriaServiceImplTest {
         materia.setNombre(materiaDto.getNombre());
         materia.setProfesor(new Profesor("pepito", "gonzalez", "lic Computación"));
         materiaService.putMateriaById(materia.getMateriaId(), materiaDto);
-        Mockito.verify(asignaturaService).actualizarAsignaturaByMateria(materia);
         assertEquals(materia.getNombre(), materiaDto.getNombre());
     }
 
     @Test
-    void delMateriaById() throws MateriaNotFoundException {
+    void delMateriaById() throws MateriaNotFoundException, ProfesorNotFoundException {
         if (dao.getAllMaterias().isEmpty()) {
             assertThrows(MateriaNotFoundException.class, () -> materiaService.delMateriaById(1));
         }

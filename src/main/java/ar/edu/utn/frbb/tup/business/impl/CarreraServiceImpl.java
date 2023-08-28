@@ -136,4 +136,18 @@ public class CarreraServiceImpl implements CarreraService {
             }
         }
     }
+
+    public void delMateriaEnCarreraByMateria(Materia materia) {
+        for (Carrera carrera : dao.getAllCarreras().values()) {
+            carrera.getMateriasList().remove(materia);
+        }
+    }
+
+    public void actualizarCorrelativasCarreraByNameMateriaDeleted(String nombreMateriaDeleted) {
+        for (Carrera carrera : dao.getAllCarreras().values()) {
+            for (Materia materia : carrera.getMateriasList()) {
+                materia.getCorrelatividades().remove(nombreMateriaDeleted);
+            }
+        }
+    }
 }
