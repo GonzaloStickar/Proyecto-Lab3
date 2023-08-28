@@ -36,7 +36,7 @@ class CarreraServiceImplTest {
     }
 
     @Test
-    void crearCarrera() throws CarreraServiceException, AsignaturaServiceException {
+    void crearCarrera() throws CarreraServiceException, AsignaturaServiceException, AsignaturaNotFoundException {
         Carrera c = new Carrera("carrera 1", 1);
         c.setCodigoCarrera(1);
 

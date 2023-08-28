@@ -3,21 +3,18 @@ package ar.edu.utn.frbb.tup.business.impl;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.business.CarreraService;
 import ar.edu.utn.frbb.tup.business.ProfesorService;
+import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.persistence.CarreraDao;
-import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaServiceException;
-import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
-import ar.edu.utn.frbb.tup.persistence.exception.CarreraServiceException;
-import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
+import ar.edu.utn.frbb.tup.persistence.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CarreraServiceImpl implements CarreraService {
@@ -32,7 +29,7 @@ public class CarreraServiceImpl implements CarreraService {
     private ProfesorService profesorService;
 
     @Override
-    public Carrera crearCarrera(CarreraDto carreraDto) throws CarreraServiceException, AsignaturaServiceException {
+    public Carrera crearCarrera(CarreraDto carreraDto) throws CarreraServiceException, AsignaturaServiceException, AsignaturaNotFoundException {
         Carrera c = new Carrera();
         checkCarreraDto(carreraDto);
         if (carreraDto.getCodigoCarrera() <= 0) throw new CarreraServiceException("Falta el código de la carrera", HttpStatus.UNPROCESSABLE_ENTITY);
@@ -41,18 +38,8 @@ public class CarreraServiceImpl implements CarreraService {
         c.setCantidadCuatrimestres((carreraDto.getCantidadAnios()*12)/4);
         c.setCodigoCarrera(carreraDto.getCodigoCarrera());
 
-        int numero = crearNumeroEntreRangoRandom(0,asignaturaService.getAllAsignaturas().size());
-        ArrayList<Integer> numerosRandom = new ArrayList<>();
-        while (numerosRandom.size()<numero) {
-            int numeroNuevo = crearNumeroEntreRangoRandom(0,(asignaturaService.getAllAsignaturas().size())-1);
-            if (!numerosRandom.contains(numeroNuevo)) {
-                numerosRandom.add(numeroNuevo);
-            }
-        }
-        List<Materia> materias = new ArrayList<>();
-        for (Integer n : numerosRandom) {
-            materias.add(asignaturaService.getAllAsignaturas().get(n).getMateria());
-        }
+        List<Asignatura> asignaturas = new ArrayList<>(asignaturaService.getSomeAsignaturaRandomFromAsignaturasDao());
+        List<Materia> materias = asignaturas.stream().map(Asignatura::getMateria).collect(Collectors.toList());
 
         c.setMateriasList(materias);
         for (Carrera carrera : dao.getAllCarreras().values()) if (carrera.getCodigoCarrera() == c.getCodigoCarrera()) throw new CarreraServiceException("Ya existe una Carrera con el mismo código.", HttpStatus.CONFLICT);

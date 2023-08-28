@@ -3,16 +3,13 @@ package ar.edu.utn.frbb.tup.business;
 import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
-import ar.edu.utn.frbb.tup.persistence.exception.AsignaturaServiceException;
-import ar.edu.utn.frbb.tup.persistence.exception.CarreraNotFoundException;
-import ar.edu.utn.frbb.tup.persistence.exception.CarreraServiceException;
-import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
+import ar.edu.utn.frbb.tup.persistence.exception.*;
 
 import java.util.List;
 
 public interface CarreraService {
 
-    Carrera crearCarrera(CarreraDto inputData) throws CarreraServiceException, AsignaturaServiceException;
+    Carrera crearCarrera(CarreraDto inputData) throws CarreraServiceException, AsignaturaServiceException, AsignaturaNotFoundException;
 
     Carrera getCarreraById(int idCarrera) throws CarreraNotFoundException;
 
