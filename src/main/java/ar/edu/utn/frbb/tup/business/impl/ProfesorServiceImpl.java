@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProfesorServiceImpl implements ProfesorService {
+
     @Autowired
     private ProfesorDao dao;
 

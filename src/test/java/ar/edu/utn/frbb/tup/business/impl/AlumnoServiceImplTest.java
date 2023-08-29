@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.business.impl;
 
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
+import ar.edu.utn.frbb.tup.business.ProfesorService;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
@@ -27,6 +28,9 @@ class AlumnoServiceImplTest {
 
     @Mock
     private AsignaturaService asignaturaService;
+
+    @Mock
+    private ProfesorService profesorService;
 
     @InjectMocks
     private AlumnoServiceImpl alumnoService;
@@ -159,12 +163,14 @@ class AlumnoServiceImplTest {
         alumno1.setId(123);
         alumno2.setId(456);
 
-        List<Asignatura> asignaturas = new ArrayList<>();
-        Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
-        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,new Profesor("pepito","gonzalez","Lic. Computación")));
+        Profesor pA = new Profesor("a", "g", "L");
+        Profesor pB = new Profesor("b", "g", "L");
 
-        asignatura1.getMateria().getProfesor().setprofesorId(123);
-        asignatura2.getMateria().getProfesor().setprofesorId(456);
+        Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,pA));
+        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,pB));
+
+        asignatura1.getMateria().getProfesor().setprofesorId(1);
+        asignatura2.getMateria().getProfesor().setprofesorId(2);
         asignatura2.getMateria().getCorrelatividades().add("pepe 1");
         alumno1.getAsignaturas().add(asignatura1);
         alumno2.getAsignaturas().add(asignatura1);
@@ -172,14 +178,84 @@ class AlumnoServiceImplTest {
 
         alumnos.add(alumno1);
         alumnos.add(alumno2);
-        asignaturas.add(asignatura1);
-        asignaturas.add(asignatura2);
 
         Map<Integer, Alumno> alumnosMap = new HashMap<>();
         for (Alumno a : alumnos) {
             alumnosMap.put(a.getId(), a);
         }
 
+        Mockito.when(dao.getAllAlumnos()).thenReturn(alumnosMap);
+        Mockito.when(profesorService.buscarProfesor(1)).thenReturn(pA);
+        Mockito.when(profesorService.buscarProfesor(2)).thenReturn(pB);
+
         alumnoService.actualizarProfesoresDeLasMateriasDeLosAlumnos();
+    }
+
+    @Test
+    void actualizarNombreMateriaYSusCorrelativasDeLasMateriasDelAlumno() {
+        List<Alumno> alumnos = new ArrayList<>();
+        Alumno alumno1 = new Alumno("pepe", "gonzalez",1);
+        Alumno alumno2 = new Alumno("pepito", "gonzalez",1);
+        alumno1.setId(123);
+        alumno2.setId(456);
+
+        Profesor pA = new Profesor("a", "g", "L");
+        Profesor pB = new Profesor("b", "g", "L");
+
+        Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,pA));
+        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,pB));
+
+        asignatura1.getMateria().getProfesor().setprofesorId(1);
+        asignatura2.getMateria().getProfesor().setprofesorId(2);
+        asignatura2.getMateria().getCorrelatividades().add("pepe 1");
+        alumno1.getAsignaturas().add(asignatura1);
+        alumno2.getAsignaturas().add(asignatura1);
+        alumno2.getAsignaturas().add(asignatura2);
+
+        alumnos.add(alumno1);
+        alumnos.add(alumno2);
+
+        Map<Integer, Alumno> alumnosMap = new HashMap<>();
+        for (Alumno a : alumnos) {
+            alumnosMap.put(a.getId(), a);
+        }
+
+        Mockito.when(dao.getAllAlumnos()).thenReturn(alumnosMap);
+
+        alumnoService.actualizarNombreMateriaYSusCorrelativasDeLasMateriasDelAlumno("pepe 1", "zepe123");
+    }
+
+    @Test
+    void actualizarCorrelativasAlumnoByNameMateriaDeleted() {
+        List<Alumno> alumnos = new ArrayList<>();
+        Alumno alumno1 = new Alumno("pepe", "gonzalez",1);
+        Alumno alumno2 = new Alumno("pepito", "gonzalez",1);
+        alumno1.setId(123);
+        alumno2.setId(456);
+
+        Profesor pA = new Profesor("a", "g", "L");
+        Profesor pB = new Profesor("b", "g", "L");
+
+        Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,pA));
+        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,pB));
+
+        asignatura1.getMateria().getProfesor().setprofesorId(1);
+        asignatura2.getMateria().getProfesor().setprofesorId(2);
+        asignatura2.getMateria().getCorrelatividades().add("pepe 1");
+        alumno1.getAsignaturas().add(asignatura1);
+        alumno2.getAsignaturas().add(asignatura1);
+        alumno2.getAsignaturas().add(asignatura2);
+
+        alumnos.add(alumno1);
+        alumnos.add(alumno2);
+
+        Map<Integer, Alumno> alumnosMap = new HashMap<>();
+        for (Alumno a : alumnos) {
+            alumnosMap.put(a.getId(), a);
+        }
+
+        Mockito.when(dao.getAllAlumnos()).thenReturn(alumnosMap);
+
+        alumnoService.actualizarCorrelativasAlumnoByNameMateriaDeleted("pepe 1");
     }
 }

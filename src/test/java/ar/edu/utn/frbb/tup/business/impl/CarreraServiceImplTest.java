@@ -1,10 +1,8 @@
 package ar.edu.utn.frbb.tup.business.impl;
 
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
-import ar.edu.utn.frbb.tup.model.Asignatura;
-import ar.edu.utn.frbb.tup.model.Carrera;
-import ar.edu.utn.frbb.tup.model.Materia;
-import ar.edu.utn.frbb.tup.model.Profesor;
+import ar.edu.utn.frbb.tup.business.ProfesorService;
+import ar.edu.utn.frbb.tup.model.*;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.persistence.CarreraDao;
 import ar.edu.utn.frbb.tup.persistence.exception.*;
@@ -26,6 +24,9 @@ class CarreraServiceImplTest {
 
     @Mock
     private AsignaturaService asignaturaService;
+
+    @Mock
+    private ProfesorService profesorService;
 
     @InjectMocks
     private CarreraServiceImpl carreraService;
@@ -203,5 +204,162 @@ class CarreraServiceImplTest {
         else if (carreraDto.getCantidadAnios() <= 0) {
             assertThrows(CarreraServiceException.class, () -> carreraService.checkCarreraDto(carreraDto));
         }
+    }
+
+    @Test
+    void actualizarProfesoresDeLasCarreras() throws ProfesorNotFoundException {
+        List<Carrera> carreras = new ArrayList<>();
+
+        Profesor pA = new Profesor("a", "g", "L");
+        Profesor pB = new Profesor("b", "g", "L");
+
+        pA.setprofesorId(1);
+        pB.setprofesorId(2);
+
+        Materia materia1 = new Materia("pepe1", 1,1, pA);
+        Materia materia2 = new Materia("pepe2", 1,1, pB);
+
+        List<Materia> materias = new ArrayList<>();
+
+        Carrera carrera1 = new Carrera("pepe 1", 1);
+        carrera1.setCodigoCarrera(1);
+        materias.add(materia1);
+        carrera1.setMateriasList(materias);
+        Carrera carrera2 = new Carrera("pepe 2", 2);
+        carrera2.setCodigoCarrera(2);
+        materias.add(materia2);
+        carrera2.setMateriasList(materias);
+        carrera2.getMateriasList().add(materia2);
+
+        carreras.add(carrera1);
+        carreras.add(carrera2);
+
+        Map<Integer, Carrera> carrerasMap = new HashMap<>();
+        for (Carrera c : carreras) {
+            carrerasMap.put(c.getCodigoCarrera(), c);
+        }
+
+        Mockito.when(dao.getAllCarreras()).thenReturn(carrerasMap);
+        Mockito.when(profesorService.buscarProfesor(1)).thenReturn(pA);
+        Mockito.when(profesorService.buscarProfesor(2)).thenReturn(pB);
+
+        carreraService.actualizarProfesoresDeLasCarreras();
+    }
+
+    @Test
+    void actualizarNombreMateriaEnMateriaListDeCarreraYSusCorrelativas() {
+        List<Carrera> carreras = new ArrayList<>();
+
+        Profesor pA = new Profesor("a", "g", "L");
+        Profesor pB = new Profesor("b", "g", "L");
+
+        pA.setprofesorId(1);
+        pB.setprofesorId(2);
+
+        Materia materia1 = new Materia("pepe1", 1,1, pA);
+        Materia materia2 = new Materia("pepe2", 1,1, pB);
+        materia2.getCorrelatividades().add("pepe1");
+
+        List<Materia> materias = new ArrayList<>();
+
+        Carrera carrera1 = new Carrera("pepe 1", 1);
+        carrera1.setCodigoCarrera(1);
+        materias.add(materia1);
+        carrera1.setMateriasList(materias);
+        Carrera carrera2 = new Carrera("pepe 2", 2);
+        carrera2.setCodigoCarrera(2);
+        materias.add(materia2);
+        carrera2.setMateriasList(materias);
+        carrera2.getMateriasList().add(materia2);
+
+        carreras.add(carrera1);
+        carreras.add(carrera2);
+
+        Map<Integer, Carrera> carrerasMap = new HashMap<>();
+        for (Carrera c : carreras) {
+            carrerasMap.put(c.getCodigoCarrera(), c);
+        }
+
+        Mockito.when(dao.getAllCarreras()).thenReturn(carrerasMap);
+
+        carreraService.actualizarNombreMateriaEnMateriaListDeCarreraYSusCorrelativas("pepe1","zepe123");
+    }
+
+    @Test
+    void delMateriaEnCarreraByMateria() {
+        List<Carrera> carreras = new ArrayList<>();
+
+        Profesor pA = new Profesor("a", "g", "L");
+        Profesor pB = new Profesor("b", "g", "L");
+
+        pA.setprofesorId(1);
+        pB.setprofesorId(2);
+
+        Materia materia1 = new Materia("pepe1", 1,1, pA);
+        Materia materia2 = new Materia("pepe2", 1,1, pB);
+        materia2.getCorrelatividades().add("pepe1");
+
+        List<Materia> materias = new ArrayList<>();
+
+        Carrera carrera1 = new Carrera("pepe 1", 1);
+        carrera1.setCodigoCarrera(1);
+        materias.add(materia1);
+        carrera1.setMateriasList(materias);
+        Carrera carrera2 = new Carrera("pepe 2", 2);
+        carrera2.setCodigoCarrera(2);
+        materias.add(materia2);
+        carrera2.setMateriasList(materias);
+        carrera2.getMateriasList().add(materia2);
+
+        carreras.add(carrera1);
+        carreras.add(carrera2);
+
+        Map<Integer, Carrera> carrerasMap = new HashMap<>();
+        for (Carrera c : carreras) {
+            carrerasMap.put(c.getCodigoCarrera(), c);
+        }
+
+        Mockito.when(dao.getAllCarreras()).thenReturn(carrerasMap);
+
+        carreraService.delMateriaEnCarreraByMateria(materia1);
+    }
+
+    @Test
+    void actualizarCorrelativasCarreraByNameMateriaDeleted() {
+        List<Carrera> carreras = new ArrayList<>();
+
+        Profesor pA = new Profesor("a", "g", "L");
+        Profesor pB = new Profesor("b", "g", "L");
+
+        pA.setprofesorId(1);
+        pB.setprofesorId(2);
+
+        Materia materia1 = new Materia("pepe1", 1,1, pA);
+        Materia materia2 = new Materia("pepe2", 1,1, pB);
+        materia2.getCorrelatividades().add("pepe1");
+
+        List<Materia> materias = new ArrayList<>();
+
+        Carrera carrera1 = new Carrera("pepe 1", 1);
+        carrera1.setCodigoCarrera(1);
+        materias.add(materia1);
+        carrera1.setMateriasList(materias);
+        Carrera carrera2 = new Carrera("pepe 2", 2);
+        carrera2.setCodigoCarrera(2);
+        materias.add(materia2);
+        carrera2.setMateriasList(materias);
+        carrera2.getMateriasList().add(materia2);
+
+        carreras.add(carrera1);
+        carreras.add(carrera2);
+
+        Map<Integer, Carrera> carrerasMap = new HashMap<>();
+        for (Carrera c : carreras) {
+            carrerasMap.put(c.getCodigoCarrera(), c);
+        }
+
+        Mockito.when(dao.getAllCarreras()).thenReturn(carrerasMap);
+
+        carreraService.actualizarCorrelativasCarreraByNameMateriaDeleted("pepe1");
     }
 }

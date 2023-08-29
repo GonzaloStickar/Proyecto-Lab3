@@ -1,5 +1,6 @@
 package ar.edu.utn.frbb.tup.business.impl;
 
+import ar.edu.utn.frbb.tup.business.ProfesorService;
 import ar.edu.utn.frbb.tup.model.*;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDao;
@@ -24,6 +25,9 @@ class AsignaturaServiceImplTest {
 
     @Mock
     private AsignaturaDao dao;
+
+    @Mock
+    private ProfesorService profesorService;
 
     @InjectMocks
     private AsignaturaServiceImpl asignaturaService;
@@ -326,5 +330,74 @@ class AsignaturaServiceImplTest {
         asignaturaService.delAsignaturaByMateria(asignaturaElegida.getMateria());
         Mockito.verify(dao).del(asignaturaElegida.getMateria());
         assertThrows(MateriaNotFoundException.class, () -> asignaturaService.delAsignaturaByMateria(new Materia()));
+    }
+
+    @Test
+    void actualizarNombreAsignaturaYSusCorrelativas() {
+        List<Asignatura> asignaturas = new ArrayList<>();
+        Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura3 = new Asignatura(new Materia("pepe 3",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        asignatura1.getMateria().setMateriaId(1);
+        asignatura2.getMateria().setMateriaId(2);
+        asignatura3.getMateria().setMateriaId(3);
+        asignatura2.getMateria().getCorrelatividades().add("pepe 1");
+        asignatura3.getMateria().getCorrelatividades().add("pepe 1");
+        asignatura3.getMateria().getCorrelatividades().add("pepe 2");
+        asignaturas.add(asignatura1);
+        asignaturas.add(asignatura2);
+        asignaturas.add(asignatura3);
+
+        List<Asignatura> asignaturasList = new ArrayList<>(asignaturas);
+        Mockito.when(dao.getAllAsignaturas()).thenReturn(asignaturasList);
+
+        asignaturaService.actualizarNombreAsignaturaYSusCorrelativas("pepe 1", "zepe123");
+    }
+
+    @Test
+    void actualizarProfesoresDeLasAsignaturas() throws ProfesorNotFoundException {
+        Profesor pA = new Profesor("a", "g", "L");
+        Profesor pB = new Profesor("b", "g", "L");
+
+        Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,pA));
+        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,pB));
+
+        asignatura1.getMateria().getProfesor().setprofesorId(1);
+        asignatura2.getMateria().getProfesor().setprofesorId(2);
+
+        List<Asignatura> asignaturas = new ArrayList<>();
+
+        asignaturas.add(asignatura1);
+        asignaturas.add(asignatura2);
+
+        List<Asignatura> asignaturasList = new ArrayList<>(asignaturas);
+        Mockito.when(dao.getAllAsignaturas()).thenReturn(asignaturasList);
+
+        Mockito.when(profesorService.buscarProfesor(1)).thenReturn(pA);
+        Mockito.when(profesorService.buscarProfesor(2)).thenReturn(pB);
+
+        asignaturaService.actualizarProfesoresDeLasAsignaturas();
+    }
+
+    @Test
+    void actualizarCorrelativasAsignaturaByNameMateriaDeleted() {
+        List<Asignatura> asignaturas = new ArrayList<>();
+        Asignatura asignatura1 = new Asignatura(new Materia("pepe 1",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura3 = new Asignatura(new Materia("pepe 3",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        asignatura1.getMateria().setMateriaId(1);
+        asignatura2.getMateria().setMateriaId(2);
+        asignatura3.getMateria().setMateriaId(3);
+        asignatura2.getMateria().getCorrelatividades().add("pepe 1");
+        asignatura3.getMateria().getCorrelatividades().add("pepe 1");
+        asignatura3.getMateria().getCorrelatividades().add("pepe 2");
+        asignaturas.add(asignatura1);
+        asignaturas.add(asignatura2);
+        asignaturas.add(asignatura3);
+
+        List<Asignatura> asignaturasList = new ArrayList<>(asignaturas);
+        Mockito.when(dao.getAllAsignaturas()).thenReturn(asignaturasList);
+
+        asignaturaService.actualizarCorrelativasAsignaturaByNameMateriaDeleted("pepe 1");
     }
 }

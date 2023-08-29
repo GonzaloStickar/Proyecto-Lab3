@@ -16,6 +16,7 @@ import java.util.*;
 
 @Service
 public class MateriaServiceImpl implements MateriaService {
+
     @Autowired
     private MateriaDao dao;
 
@@ -126,7 +127,7 @@ public class MateriaServiceImpl implements MateriaService {
 
                     for (Materia m : dao.getAllMaterias().values()) {
                         //Actualizo los profesores de la materia
-                        materia.setProfesor(profesorService.buscarProfesor(materia.getProfesor().getprofesorId()));
+                        m.setProfesor(profesorService.buscarProfesor(m.getProfesor().getprofesorId()));
                         if (!m.getCorrelatividades().isEmpty()) {
                             m.getCorrelatividades().remove(materia.getNombre());
                         }
@@ -142,6 +143,7 @@ public class MateriaServiceImpl implements MateriaService {
                     alumnoService.actualizarCorrelativasAlumnoByNameMateriaDeleted(materia.getNombre());
 
                     dao.del(materia);
+
                     return materia;
                 }
             }

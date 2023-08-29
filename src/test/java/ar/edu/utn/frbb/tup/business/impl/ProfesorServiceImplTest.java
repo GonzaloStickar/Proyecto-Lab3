@@ -1,6 +1,5 @@
 package ar.edu.utn.frbb.tup.business.impl;
 
-import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.persistence.ProfesorDao;
 import ar.edu.utn.frbb.tup.persistence.exception.ProfesorNotFoundException;
@@ -37,5 +36,47 @@ class ProfesorServiceImplTest {
         Profesor resultProfesor = profesorService.buscarProfesor(123);
         Mockito.verify(dao).get(123);
         assertEquals("pepe", resultProfesor.getNombre());
+    }
+
+    @Test
+    void actualizarProfesores() {
+        List<Profesor> profesores = new ArrayList<>();
+
+        Profesor pA = new Profesor("a", "g", "L");
+        Profesor pB = new Profesor("b", "g", "L");
+
+        pA.setprofesorId(1);
+        pB.setprofesorId(2);
+        pA.getMateriasDictadas().add("pepe1");
+        pA.getMateriasDictadas().add("pepe2");
+        pB.getMateriasDictadas().add("pepe1");
+
+        profesores.add(pA);
+        profesores.add(pB);
+
+        Mockito.when(dao.getAllProfesores()).thenReturn(profesores);
+
+        profesorService.actualizarProfesores("pepe1","zepe123",1);
+    }
+
+    @Test
+    void actualizarProfesoresByNombreMateriaDeleted() {
+        List<Profesor> profesores = new ArrayList<>();
+
+        Profesor pA = new Profesor("a", "g", "L");
+        Profesor pB = new Profesor("b", "g", "L");
+
+        pA.setprofesorId(1);
+        pB.setprofesorId(2);
+        pA.getMateriasDictadas().add("pepe1");
+        pA.getMateriasDictadas().add("pepe2");
+        pB.getMateriasDictadas().add("pepe1");
+
+        profesores.add(pA);
+        profesores.add(pB);
+
+        Mockito.when(dao.getAllProfesores()).thenReturn(profesores);
+
+        profesorService.actualizarProfesoresByNombreMateriaDeleted("pepe1");
     }
 }
