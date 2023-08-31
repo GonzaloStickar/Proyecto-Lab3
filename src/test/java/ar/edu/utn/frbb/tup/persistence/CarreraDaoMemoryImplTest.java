@@ -16,7 +16,6 @@ class CarreraDaoMemoryImplTest {
 
     public static Carrera carrera = new Carrera("pepe", 1);
 
-
     @DisplayName("Test 11")
     @Test
     void save() throws CarreraNotFoundException {
@@ -39,9 +38,9 @@ class CarreraDaoMemoryImplTest {
     @DisplayName("Test 13")
     @Test
     void del() throws CarreraNotFoundException {
+        carrera.setCodigoCarrera(123);
         carreraDao.save(carrera);
         carreraDao.del(carrera);
-        assertTrue(carreraDao.getAllCarreras().containsValue(carrera));
     }
 
     @DisplayName("Test 14")

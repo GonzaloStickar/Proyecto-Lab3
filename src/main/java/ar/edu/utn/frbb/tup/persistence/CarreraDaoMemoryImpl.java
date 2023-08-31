@@ -33,7 +33,11 @@ public class CarreraDaoMemoryImpl implements CarreraDao {
 
     public void del(Carrera delCarrera) throws CarreraNotFoundException {
         hayCarreras();
-        repositorioCarrera.remove(delCarrera.getCodigoCarrera());
+        for (Carrera carrera : repositorioCarrera.values())
+            if (carrera.getCodigoCarrera() == delCarrera.getCodigoCarrera()) {
+                repositorioCarrera.values().remove(delCarrera);
+                break;
+            }
     }
 
     public Map<Integer, Carrera> getAllCarreras() {
