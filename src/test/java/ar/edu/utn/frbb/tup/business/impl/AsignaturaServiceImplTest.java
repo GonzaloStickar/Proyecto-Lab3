@@ -91,6 +91,9 @@ class AsignaturaServiceImplTest {
         Asignatura asignatura2 = new Asignatura(new Materia("pepe 2",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
         Asignatura asignatura3 = new Asignatura(new Materia("pepe 3",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
         Asignatura asignatura4 = new Asignatura(new Materia("pepe 4",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura5 = new Asignatura(new Materia("pepe 5",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura6 = new Asignatura(new Materia("pepe 6",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
+        Asignatura asignatura7 = new Asignatura(new Materia("pepe 7",1,1,new Profesor("pepe","gonzalez","Lic. Computación")));
 
         asignatura1.getMateria().setMateriaId(1);
         asignatura1.setEstado(EstadoAsignatura.CURSADA);
@@ -102,10 +105,19 @@ class AsignaturaServiceImplTest {
         asignatura4.setEstado(EstadoAsignatura.NO_CURSADA);
         asignatura4.getMateria().setMateriaId(4);
 
+        asignatura5.setEstado(EstadoAsignatura.NO_CURSADA);
+        asignatura6.setEstado(EstadoAsignatura.NO_CURSADA);
+        asignatura7.setEstado(EstadoAsignatura.NO_CURSADA);
+        asignatura7.getMateria().getCorrelatividades().add("pepe 6");
+        asignatura6.getMateria().getCorrelatividades().add("pepe 5");
+
         asignaturas.add(asignatura1);
         asignaturas.add(asignatura2);
         asignaturas.add(asignatura3);
         asignaturas.add(asignatura4);
+        asignaturas.add(asignatura5);
+        asignaturas.add(asignatura6);
+        asignaturas.add(asignatura7);
 
         alumno.setAsignaturas(asignaturas);
         Mockito.when(alumnoDao.findById(123)).thenReturn(alumno);
